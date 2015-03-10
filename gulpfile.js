@@ -66,7 +66,7 @@ gulp.task('modernizr', function () {
 gulp.task('libscripts', function () {
 	//JS lib list (from bower)
 	var src = 	[
-			config.bower + "threejs/build/three.js",
+			config.bower + "threejs/index.js",
 			config.bower + "dat.gui/dat.gui.js",
 			config.bower + "page/page.js",
 			config.bower + "stats.js/build/stats.min.js",

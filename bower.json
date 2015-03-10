@@ -1,5 +1,5 @@
 {
-  "name": "canterbury-onecoffee",
+  "name": "portfolio",
   "version": "0.0.0",
   "homepage": "https://github.com/tribalworldwide/canterbury-onecoffee",
   "authors": [
@@ -17,7 +17,7 @@
   "dependencies": {
     "lesshat": "~3.0.2",
     "modernizr": "~2.8.3",
-    "threejs": "*",
+    "threejs": "https://raw.github.com/mrdoob/three.js/master/build/three.js",
     "dat.gui": "*",
     "stats.js": "*",
     "greensock": "~1.15.0",
