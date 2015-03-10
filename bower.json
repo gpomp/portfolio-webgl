@@ -22,7 +22,7 @@
     "stats.js": "*",
     "greensock": "~1.15.0",
     "three-effectComposer": "git@github.com:gpomp/three-effectComposer.git",
-    "DefinitelyTyped" : "https://github.com/borisyankov/DefinitelyTyped.git",
+    "DefinitelyTyped" : "git@github.com:borisyankov/DefinitelyTyped.git",
     "svg.js": "~1.0.1",
     "page": "visionmedia/page.js#~1.6.1"
   }
