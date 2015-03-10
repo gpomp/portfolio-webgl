@@ -1,0 +1,47 @@
+@font-face {
+	font-family: "glyph";
+	src: url('../fonts/glyph.eot');
+	src: url('../fonts/glyph.eot?#iefix') format('eot'),
+		url('../fonts/glyph.woff') format('woff'),
+		url('../fonts/glyph.ttf') format('truetype'),
+		url('../fonts/glyph.svg#glyph') format('svg');
+}
+
+.icon-base-pseudo {
+	font-family: "glyph";
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	// speak: none; // only necessary if not using the private unicode range (firstGlyph option)
+	text-decoration: none;
+	text-transform: none;
+}
+
+.icon-char(@filename) {
+	@arrow-left: "\E001";
+	@arrow-right: "\E002";
+	@circlefull-linkedin: "\E003";
+	
+	content: @@filename;
+}
+
+.icon(@filename, @insert: before) {
+	@pseudo-selector: ~":@{insert}";
+
+	&@{pseudo-selector} {
+		&:extend(.icon-base-pseudo);
+		.icon-char(@filename);
+	}
+}
+
+.icon-arrow-left {
+	.icon(arrow-left);
+}
+.icon-arrow-right {
+	.icon(arrow-right);
+}
+.icon-circlefull-linkedin {
+	.icon(circlefull-linkedin);
+}

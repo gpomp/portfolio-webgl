@@ -1,0 +1,83 @@
+{% extends "base.twig" %}
+
+{% block content %}
+
+	<header id="home-intro">{{post.content}}</header>
+	
+	<div id="sphere-buttons">
+		{% for project in posts %}
+			<a href="{% do action('make_link_relative', project.link) %}" class="hiddenButton"></a>
+			<a href="#" class="overButton">
+			    <div class="container">
+			        <div class="bg1"></div>
+			        <div class="bg2"></div>
+			        <div class="container-text">
+			          <div class="text">{{project.title}}</div>
+			        </div>
+			    </div>
+		    </a>
+		{% endfor %}
+	</div>
+
+	<a href="#" id="open-menu">Open Menu</a>
+	<div id="projects-buttons">
+		<div class="table">
+			<div class="table-cell">
+				{% for project in posts %}
+					<a href="{% do action('make_link_relative', project.link) %}">
+			          	<div class="bg"><img src="{{TimberImage(project.get_field('link_image')).src('large')}}" alt=""></div>
+			          	<div class="container">
+			        		<div class="table"><div class="table-cell">{{project.title}}</div></div>
+				      	</div>
+			        </a>
+		        {% endfor %}
+			</div>
+		</div>
+	</div>
+
+	<div id="projects">
+		{% for project in posts %}
+			<div class="project {{project.post_name}}">
+	            <a class="project-slug" name="{% do action('make_link_relative', project.link) %}"></a>
+	          	<div class="text">
+	              	<h1>{{project.title}}</h1>
+	              	<p>{{project.content}}</p>
+	          	</div>
+	          	<div class="images">
+	             	{% for image in project.get_field('images') %}
+						<img data-src="{{TimberImage(image).src('large')}}" alt="">
+					{% endfor %}
+	          	</div>                       
+	        </div>
+		{% endfor %}
+	</div>
+
+	<div id="next-prev">
+		<div class="container">
+			<a href="#" class="left">
+				<div class="arrow"><span class="icon-arrow-left"></span></div><!-- 
+			--><div class="text">
+					<div class="ctn"><span>Previous</span></div>
+				</div>
+			</a>
+			<a href="#" class="right">
+				<div class="text">
+					<div class="ctn"><span>Next</span></div>
+				</div><!-- 
+			--><div class="arrow"><span class="icon-arrow-right"></span></div>
+			</a>
+		</div>
+	</div>
+
+	<div id="intro">
+		<div class="bg"></div>
+		<div class="table">
+			<div class="table-cell">
+				<div class="container">{{post.content}}</div>
+			</div>
+		</div>
+	</div>
+
+	<script data-src="{{theme.path}}/js/shaders.xml" data-type="all-shaders"></script>
+
+{% endblock %}

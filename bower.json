@@ -1,0 +1,29 @@
+{
+  "name": "canterbury-onecoffee",
+  "version": "0.0.0",
+  "homepage": "https://github.com/tribalworldwide/canterbury-onecoffee",
+  "authors": [
+    "Gauthier Pompougnac <gauthier.pompougnac@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/js/vendor",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lesshat": "~3.0.2",
+    "modernizr": "~2.8.3",
+    "threejs": "*",
+    "dat.gui": "*",
+    "stats.js": "*",
+    "greensock": "~1.15.0",
+    "three-effectComposer": "git@github.com:gpomp/three-effectComposer.git",
+    "DefinitelyTyped" : "https://github.com/borisyankov/DefinitelyTyped.git",
+    "svg.js": "~1.0.1",
+    "page": "visionmedia/page.js#~1.6.1"
+  }
+}
