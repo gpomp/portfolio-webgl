@@ -124,6 +124,8 @@ module webglExp {
 				if(this.scene.children[i] === this.camera) {console.log("camera stay"); continue;}
 			 	this.scene.remove(this.scene.children[i]);
 			}
+
+			this.getRenderer().clear();
 		}
 
 		private turnAround  = (event) => {

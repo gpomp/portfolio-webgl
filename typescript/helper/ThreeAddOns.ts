@@ -109,7 +109,6 @@ module THREE {
 
 declare module THREE {
 	export class HorizontalBlurShader{}
-	
 	export class VerticalBlurShader{}
 	export class BloomPass {
 		public static blurX;

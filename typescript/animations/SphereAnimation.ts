@@ -790,6 +790,19 @@ module webglExp {
 		}
 
 		clear() {
+
+			this.blendPass.uniforms["tDiffuse1"].value = null;
+			this.blendPass.uniforms["tDiffuse2"].value = null;
+			this.blendPass.uniforms["tDiffuse3"].value = null;
+
+			this.composer.getComposer().setSize(1, 1);
+			this.composerButton.getComposer().setSize(1, 1);
+			this.composerBloom.getComposer().setSize(1, 1);
+			this.blendComposer.setSize(1, 1);
+
+
+			this.render();
+
 			for (var i = this.buttonScene.children.length - 1; i >= 0; i--) {
 			 	this.buttonScene.remove(this.buttonScene.children[i]);
 			}
@@ -803,6 +816,7 @@ module webglExp {
 			for (var i = this.spots.length - 1; i >= 0; i--) {
 				this.spots[i].clear();
 			}
+
 			super.clear();
 		}
 
