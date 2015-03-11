@@ -153,7 +153,17 @@ module THREE {
 
 		  	this.oldOr = new THREE.Vector2();
 
+		  	document.addEventListener( 'mousedown', this.onMouseDown, false );
+		  	document.addEventListener( 'mouseup', this.onMouseUp, false );
 		  	document.addEventListener( 'mousemove', this.onMouseMove, false );
+		}
+
+		onMouseDown = (event) => {
+			(<HTMLElement>document.querySelectorAll("body").item(0)).classList.add("drag");
+		}
+
+		onMouseUp = (event) => {
+			(<HTMLElement>document.querySelectorAll("body").item(0)).classList.remove("drag");
 		}
 
 		onMouseMove = (event) => {
