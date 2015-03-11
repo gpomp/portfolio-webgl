@@ -774,7 +774,7 @@ module webglExp {
 				TweenLite.to(this.spots[j].uniforms.alpha, 2, { value: 0.0, delay: 1 + i * 0.5 });
 			}
 
-			TweenLite.to(this.sphereCtn.rotation, 6, { y : Math.PI * 2 + Math.random() * Math.PI * 2, ease: Sine.easeIn });
+			TweenLite.to(this.sphereCtn.rotation, 3, { y : 0, x: 0, z: 0, ease: Sine.easeInOut });
 			TweenLite.to(this.uniforms.radius, 5, { value : 0, ease: Strong.easeInOut, delay: 2, onComplete: this.exit });
 			for (var i = 0; i < this.introThetra.length; ++i) {
 				TweenLite.to(this.introThetra[i], 1 + Math.random() * 2, { t : 0.0, ease:Expo.easeInOut, delay: i * 0.1 + Math.random() * .3 });
