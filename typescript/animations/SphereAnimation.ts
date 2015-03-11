@@ -533,9 +533,9 @@ module webglExp {
 			document.addEventListener(webglExp.SphereAnimation.ON_CLICK, this.mouseClick, false);
 
 			for(var i:number = 0; i < nbSpot; i++) {
-				var phi = Math.acos(-1 + ( 2 * i ) / (nbSpot - 1));
+				var phi = Math.acos(-1 + ( 2 * i ) / (nbSpot));
 
-				var theta = Math.sqrt((nbSpot - 1) * Math.PI) * phi;
+				var theta = Math.sqrt((nbSpot) * Math.PI) * phi;
 				var spot:webglExp.HotSpot = new webglExp.HotSpot(theta, phi, i);
 				spot.sphereRad = this.uniforms.radius.value;
 				this.spots.push(spot);
