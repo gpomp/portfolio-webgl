@@ -195,6 +195,10 @@ canvas {
 	width: 200px;
 	overflow: hidden;
 	display: none;
+	html.webgl & {
+		.transform-origin(0 50%);
+		.transform(perspective(200px) rotateY(15deg));
+	}
 	&.show {
 		display: block;
 	}
