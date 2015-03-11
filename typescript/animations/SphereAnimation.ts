@@ -333,7 +333,7 @@ module webglExp {
 		private blendPass;
 
 		private particleList:webglExp.Particle[];
-		private superMesh:THREE.PointCloud;
+		private superMesh:THREE.Line;
 		private sphereCtn:THREE.Object3D;
 		private sceneCtn:THREE.Object3D;
 		private buttonCtn:THREE.Object3D;
@@ -582,7 +582,7 @@ module webglExp {
 
 			superGeom.computeFaceNormals();
 			superGeom.computeVertexNormals();
-			this.superMesh = new THREE.PointCloud(superGeom, shaderMaterial);
+			this.superMesh = new THREE.Line(superGeom, shaderMaterial);
 
 			// this.superMesh =  <THREE.Mesh>THREE.SceneUtils.createMultiMaterialObject(superGeom, materials);
 			
