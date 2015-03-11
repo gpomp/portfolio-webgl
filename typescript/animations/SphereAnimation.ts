@@ -248,7 +248,7 @@ module webglExp {
 			this.startSpot = (SphereAnimation.overID !== -1) ? this.randSpot(SphereAnimation.overID) : this.randSpot();
 			this.start = this.startSpot.pos;
 
-			this.speed = 0.0005 + Math.random() * 0.0003;
+			this.speed = 0.005 + Math.random() * 0.003;
 			this.distFrac = 0;
 			this.currSpot = this.randSpot(this.startSpot.id, true);
 			this.spotRad = Math.random() * this.currSpot.rad;
@@ -459,7 +459,7 @@ module webglExp {
   				},
   				alpha: {
   					type: 'f',
-  					value: 0.2
+  					value: 0.17
   				}
 			}
 
@@ -749,7 +749,7 @@ module webglExp {
 			TweenLite.to(webglExp.Particle, .3, { addedSpeed : 0.01 });
 			TweenLite.to(this.tetraUniforms.pointAmplitude, .4, { value: 1.0 });
 			this.tetraUniforms.pointsTo.value = this.spots[event.detail.id].overPlane.position;
-			this.blurh = 2.3;
+			// this.blurh = 2.3;
 			TweenLite.to(THREE.BloomPass.blurX, .3, { x : this.blurh / (Scene3D.WIDTH * 2) });
 			TweenLite.to(THREE.BloomPass.blurY, .3, { y : this.blurh / (Scene3D.HEIGHT * 2) });
 		}
@@ -757,7 +757,7 @@ module webglExp {
 		mouseOut = (event) => {
 			SphereAnimation.overID = -1;
 			TweenLite.to(webglExp.Particle, 3, { addedSpeed : 0.0 });
-			this.blurh = 0.7;
+			// this.blurh = 0.7;
 			TweenLite.to(this.tetraUniforms.pointAmplitude, .4, { value: 0.0 });
 			TweenLite.to(THREE.BloomPass.blurX, .3, { x : this.blurh / (Scene3D.WIDTH * 2) });
 			TweenLite.to(THREE.BloomPass.blurY, .3, { y : this.blurh / (Scene3D.HEIGHT * 2) });
@@ -934,9 +934,9 @@ module webglExp {
 			var renderPass = new THREE.RenderPass(this.bloomScene, this.getCamera());
 			
 			// renderPass.clear = false;
-			this.bloomStrength = 11;
+			this.bloomStrength = 14;
 			this.effectBloom = new THREE.BloomPass(this.bloomStrength, 20, 8.0, 512, true);
-			this.blurh = 0.7;
+			this.blurh = 10.26;
 
 			THREE.BloomPass.blurX = new THREE.Vector2( this.blurh / (Scene3D.WIDTH * 2), 0.0 );
 			THREE.BloomPass.blurY = new THREE.Vector2( 0.0, this.blurh / (Scene3D.HEIGHT * 2) );
