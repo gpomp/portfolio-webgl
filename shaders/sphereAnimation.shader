@@ -40,13 +40,13 @@
 	    float a = sin((1.0 - distFrac) * distance) / sin(distance);
 	   	float b = sin(distFrac * distance) / sin(distance);
 
-	    float x = a * cos(lat1) * cos(lng1) 	+ b * cos(lat2) * cos(lng2);
-	    float y = a * cos(lat1) * sin(lng1) 	+ b * cos(lat2) * sin(lng2);
-	    float z = a * sin(lat1) 				+ b * sin(lat2);
+	    float x =	a * cos(lat1) * cos(lng1) 	+ b * cos(lat2) * cos(lng2);
+	    float y =	a * cos(lat1) * sin(lng1) 	+ b * cos(lat2) * sin(lng2);
+	    float z =	a * sin(lat1) 				+ b * sin(lat2);
 
 	    float finalRadius = radius * outFrac + displacement * sin(amplitude + gap);
 
-	    vec3 pos = vec3(finalRadius * x, finalRadius * y, finalRadius * z);
+	    vec3 pos = vec3(finalRadius * x, finalRadius * y +  500.0 * (1.0 - outFrac), finalRadius * z +  100.0 * (1.0 - outFrac));
 	    SphereRadius = finalRadius;
 
 	    localPos = pos;
