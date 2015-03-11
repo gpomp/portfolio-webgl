@@ -522,7 +522,7 @@ canvas {
 	left: 0;
 	z-index: 7;
 	visibility: hidden;
-	.transition(all 1.3s);
+	.transition(all 0.3s);
 
 	&.show {
 		visibility: visible;
@@ -546,7 +546,7 @@ canvas {
 		left: 0;
 		background: black;
 		.opacity(0);
-		.transition(all 0.3s ease-out 1s);
+		.transition(all 0.3s ease-out);
 	}
 
 	.container {
@@ -558,7 +558,7 @@ canvas {
 		z-index: 2;
 		overflow: hidden;
 		max-height: 0;
-		.transition(max-height 1s ease-out);
+		.transition(max-height 0.3s ease-out);
 
 		h1 {
 			font-weight: 900;
