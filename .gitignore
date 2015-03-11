@@ -1,0 +1,35 @@
+# WordPress
+web/wp
+
+# WP-CLI
+db-sync
+sql-dump-*.sql
+
+# Dotenv
+.env.php
+!.env.example.php
+
+# Application
+web/app/plugins/*
+!web/app/plugins/acf-repeater/
+web/app/uploads/*
+
+# Vendor (e.g. Composer)
+vendor/*
+
+# Node Package Manager
+node_modules
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# Bower
+web/app/themes/portfolio/vendors
+
+#generated files
+web/app/themes/portfolio/css/main.css
+
+web/app/themes/onecoffee/assets/fonts/Glyph*
+
+web/app/themes/portfolio/js
