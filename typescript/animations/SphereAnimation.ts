@@ -12,6 +12,7 @@ module webglExp {
 		public pos:THREE.Vector2;
 		public rad:number;
 		public sphereRad:number;
+		public uniforms;
 		
 		public id:number;
 		public projectName:string;
@@ -46,7 +47,7 @@ module webglExp {
 
 			this.projectName = projectName;
 
-			var uniforms = {
+			this.uniforms = {
 				camPosition: {
 			    	type: 'v3',
 			    	value: new THREE.Vector3(0, 0, this.sphereRad + 20)
@@ -55,6 +56,11 @@ module webglExp {
 				fogDistance: {
 					type: 'f',
 					value: 630.0
+				},
+
+				alpha: {
+					type: 'f',
+					value: 0
 				}
 			};
 
@@ -63,7 +69,7 @@ module webglExp {
 			  	new THREE.ShaderMaterial({
 				    vertexShader:   shaders.vertex,
 				    fragmentShader: shaders.fragment,
-				    uniforms: uniforms,
+				    uniforms: this.uniforms,
 				    side: THREE.DoubleSide,
 				    transparent:true
 			  	});
@@ -669,6 +675,7 @@ module webglExp {
 			for (var i = 0; i < this.spots.length; ++i) {
 				this.spots[i].sphereRad = this.uniforms.radius.value;
 				this.spots[i].changeRadius();
+				TweenLite.to(this.spots[i].uniforms.alpha, 2, { value: 1.0, delay: 4 + i * 0.5 });
 			}
 
 			/*this.skipIntro();
@@ -756,6 +763,7 @@ module webglExp {
 
 			for (var j:number = 0; j < this.spots.length; ++j) {
 				this.spots[j].exit();
+				TweenLite.to(this.spots[j].uniforms.alpha, 2, { value: 0.0, delay: 1 + i * 0.5 });
 			}
 
 			TweenLite.to(this.sphereCtn.rotation, 6, { y : Math.PI * 2 + Math.random() * Math.PI * 2, ease: Sine.easeIn });

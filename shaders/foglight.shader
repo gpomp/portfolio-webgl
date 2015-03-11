@@ -33,6 +33,7 @@
 
 	uniform vec3 camPosition;
 	uniform float fogDistance;
+	uniform float alpha;
 
 	void main() {
 		float fog = 1.0 - min(1.0, max(0.0, (camPosition.z - stagePos.z) / 100.0)); 
@@ -45,7 +46,7 @@
 		light = normalize(light);
 		 float dProd = max(0.0,
 	                    dot(normal, light));
-	  	gl_FragColor = vec4(vec3(fog * dProd), 1.0);
+	  	gl_FragColor = vec4(vec3(fog * dProd), alpha);
 	}
 </fragment>
 
