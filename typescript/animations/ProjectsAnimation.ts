@@ -584,7 +584,7 @@ module webglExp {
 			var longest:number = 0;
 			for (var i = 0; i < this.fracTween.length; ++i) {
 				var t:number = 0.1 + Math.random() * 0.1;
-				var d:number = Math.random() * 0.3;
+				var d:number = Math.random() * 0.03;
 				TweenLite.to(this.fracTween[i], t, { f : 0, delay: d });
 				longest = Math.max(longest, t + d);
 			}
@@ -608,7 +608,7 @@ module webglExp {
 			var longest:number = 0;
 			for (var i = 0; i < this.fracTween.length; ++i) {
 				var t:number = 0.1 + Math.random() * 0.1;
-				var d:number = Math.random() * 0.3;
+				var d:number = i * 0.03;
 				TweenLite.to(this.fracTween[i], t, { f : 1, delay: d });
 				longest = Math.max(longest, t + d);
 			}

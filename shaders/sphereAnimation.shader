@@ -79,7 +79,7 @@
 
 	void main() {
 		float halfRad = SphereRadius / 2.0;
-		float distance = distance(camPos, stagePos.xyz);
+		float distance = distance(camPos, stagePos.xyz); 
 		float fog = 1.0 - min(1.0, max(0.0, distance / fogDistance));
 		vec3 normPos = vec3((halfRad + stagePos.x) / SphereRadius, (halfRad + stagePos.y) / SphereRadius, (halfRad + stagePos.z) / SphereRadius);
 	  	gl_FragColor = vec4(fog * normPos * (0.1 + distNow / 0.5), 0.2);
