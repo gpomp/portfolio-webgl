@@ -645,7 +645,12 @@ module webglExp {
 		private floor:webglExp.Floor;
 
 		private particleList:webglExp.FloorParticle[];
+		
 		private composer:webglExp.EffectComposer;
+		private composerObjects:webglExp.EffectComposer;
+		private blendComposer;
+		private blendPass;
+
 		private copyPass;
 		private renderPass;
 		private effectBloom;
@@ -670,6 +675,8 @@ module webglExp {
 		private scrollVal:number;
 		private currScroll:number;
 
+		private objectScene:THREE.Scene;
+
 		private mouseVel:webglExp.MouseSpeed;
 		private mSpeed:number;
 
@@ -693,10 +700,13 @@ module webglExp {
 
 			super.getLeaveEvent().detail.name = super.getID();
 
+			this.objectScene = new THREE.Scene();
+
 			this._renderer = super.getRenderer();
 			this._renderer.autoClear = false;
 			this._renderer.gammaInput = true;
 		    this._renderer.gammaOutput = true;
+		    // this._renderer.autoClear = false;
 
 		    this.bloomStrength = 0;
 
@@ -863,39 +873,30 @@ module webglExp {
 		createPostEffects() {
 
 		    this.composer = new webglExp.EffectComposer(this._renderer, super.getScene(), super.getCamera(), Scene3D.WIDTH, Scene3D.HEIGHT);
-			
-			this.renderPass = new THREE.RenderPass(this.getScene(), this.getCamera());
-			/*var sHorizontal:THREE.Shader = <any>(THREE.HorizontalBlurShader);
-			var sVertical:THREE.Shader = <any>(THREE.VerticalBlurShader);*/
-			/*this.effectBlurH = new THREE.ShaderPass( sHorizontal );
-			this.effectBlurV = new THREE.ShaderPass( sVertical );
+		    this.composerObjects = new webglExp.EffectComposer(this._renderer, this.objectScene, super.getCamera(), Scene3D.WIDTH, Scene3D.HEIGHT);
+			this.blendComposer = new THREE.EffectComposer(this._renderer);
 
-			this.blurh = 0;
-
-			this.effectBlurH.uniforms[ 'h' ].value = this.blurh;
-			this.effectBlurV.uniforms[ 'v' ].value = this.blurh;*/
+			var objectRender = new THREE.RenderPass(this.objectScene, super.getCamera());
+			this.composerObjects.addPass(objectRender);
 
 			var bloomStrength = 0;
 			this.updateBloomBlur(0);
 			this.effectBloom = new THREE.BloomPass(bloomStrength, 25, 5.0, 1024);
+			this.renderPass = new THREE.RenderPass(this.getScene(), super.getCamera());
+			this.composer.addPass(this.renderPass);
+			this.composer.addPass(this.effectBloom);
+
+			this.blendPass = new THREE.ShaderPass( <any>THREE.BlendShader );
+			this.blendPass.uniforms["tDiffuse1"].value = this.composer.getComposer().renderTarget2;
+			this.blendPass.uniforms["tDiffuse3"].value = this.composerObjects.getComposer().renderTarget2;
+			this.blendPass.renderToScreen = true;
+
+			/*this.composer.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
+			this.composerObjects.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
+			this.blendComposer.setSize(Scene3D.WIDTH, Scene3D.HEIGHT);*/
 
 			
-
-			this.composer.getComposer().setSize(Scene3D.WIDTH * dpr, Scene3D.HEIGHT * dpr);
-
-			var effectFXAAShader:THREE.Shader = <any>(THREE.FXAAShader);
-			this.effectFXAA = new THREE.ShaderPass(effectFXAAShader);
-
-			var dpr = 1;
-			if (window.devicePixelRatio !== undefined) {
-			  dpr = window.devicePixelRatio;
-			}
-			this.effectFXAA.uniforms['resolution'].value.set(1 / (Scene3D.WIDTH * dpr), 1 / (Scene3D.HEIGHT * dpr));
-
-			this.effectFXAA.renderToScreen = true;
-
-			this.toggleBlurPass(true);
-
+			this.blendComposer.addPass(this.blendPass);
 			//this.sceneBlured();
 
 		}
@@ -907,7 +908,7 @@ module webglExp {
 			//camCurves.push(new THREE.Vector3(0, 0, 1000));
 			for (var i = 0; i < this.buttonList.length; ++i) {
 				var project:webglExp.Project = new webglExp.Project(i, super.getCamera());
-		  		super.getScene().add(project);
+		  		this.objectScene.add(project);
 		  		project.position.set(-100 + Math.random() * 200, -100 + Math.random() * 200, z);
 		  		
 		  		//camCurves.push(project.getRandomPointAround());
@@ -1021,10 +1022,7 @@ module webglExp {
 		}
 
 		toggleBlurPass(b:boolean) {
-			this.composer.reset();
-			this.composer.addPass(this.renderPass);
-			this.composer.addPass(this.effectBloom);
-			this.composer.addPass(this.effectFXAA);
+			
 		}
 
 		sceneBlured = () => {
@@ -1070,8 +1068,17 @@ module webglExp {
 			this.uniforms.camPosition.value = super.getCamera().position;
 
 			this.attributes.time.needsUpdate = true;
-			super.render();
+
  			this.composer.getComposer().render();
+ 			this.composerObjects.getComposer().render();
+ 			this.blendComposer.render();
+			super.render();
+
+			for (var i = 0; i < this.projectsList.length; ++i) {
+				if(this.projectsList[i].inAnimation) {
+					this.projectsList[i].render();
+				}
+			}
  			
 
  			if(this.project !== null && this.project.galleryReady) {
@@ -1094,13 +1101,12 @@ module webglExp {
 		}
 
 		resize() {
-			var dpr = 1;
-			if (window.devicePixelRatio !== undefined) {
-			  dpr = window.devicePixelRatio;
-			}
-			this.effectFXAA.uniforms['resolution'].value.set(1 / (Scene3D.WIDTH * dpr), 1 / (Scene3D.HEIGHT * dpr));
-			
 			this.composer.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
+			this.composerObjects.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
+			this.blendComposer.setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
+
+			this.blendPass.uniforms["tDiffuse1"].value = this.composer.getComposer().renderTarget2;
+			this.blendPass.uniforms["tDiffuse3"].value = this.composerObjects.getComposer().renderTarget2;
 
 			if(this.project !== null && this.project.galleryReady) {
 				this.project.resize();
