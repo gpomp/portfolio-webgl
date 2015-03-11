@@ -456,6 +456,10 @@ module webglExp {
 				amplitude: {
     				type: 'f',
     				value: 0
+  				},
+  				alpha: {
+  					type: 'f',
+  					value: 0.2
   				}
 			}
 
@@ -473,6 +477,7 @@ module webglExp {
 			}.bind(this));
 
 			var folder = gui.addFolder('Sphere Animation');
+			folder.add(this.uniforms.alpha, 'value', 0.00, 1.00);
 
 			var psfolder = folder.addFolder('Point Size');
 			psfolder.add(this.uniforms.pointSize, 'value', 1, 5);
