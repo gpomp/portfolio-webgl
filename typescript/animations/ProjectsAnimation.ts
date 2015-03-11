@@ -418,6 +418,7 @@ module webglExp {
 		public projectHTML:HTMLElement;
 		public galleryReady:boolean;
 		public galleryLoading:boolean;
+		public inAnimation:boolean;
 
 		private planeList:THREE.Mesh[];
 		private sizeList:any[];
@@ -435,6 +436,8 @@ module webglExp {
 		private currTexture:number;
 
 		public uniforms;
+		public attributes;
+		private fracTween:any[];
 
 		private mesh:THREE.Mesh;
 
@@ -443,6 +446,8 @@ module webglExp {
 		private event:CustomEvent;
 
 		private scrollV:number;
+		private dummy:number;
+
 
 
 		constructor(id:number, camera:THREE.PerspectiveCamera) {
@@ -455,12 +460,14 @@ module webglExp {
 		    this.totalTexture = 6;
 		    this.currTexture = 0;
 
+		    this.inAnimation = false;
+
 		    this.createButton();
 
-		    var geometry:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(200, 2);
+		    var geometry:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(1, 2);
 		    geometry.computeFaceNormals();
 		    geometry.computeVertexNormals();
-		   	this.size = { width: 200, height: 200 };	
+		   	this.size = { width: 200, height: 200 };
 
 		    var shaders = GLAnimation.SHADERLIST.dotImage;
 
@@ -471,16 +478,36 @@ module webglExp {
 			  	}
 			};
 
+			this.attributes = {
+			  displacement: {
+		    	type: 'v3',
+		    	value: []
+			  },
+			  frac: {
+			   	type: 'f',
+			   	value: []
+			  }
+			};
+
 			var mat:THREE.ShaderMaterial =
 		  	new THREE.ShaderMaterial({
 			    vertexShader:   shaders.vertex,
 			    fragmentShader: shaders.fragment,
 			    uniforms: this.uniforms,
-			    wireframe: true,
+			    attributes: this.attributes,
 			    side: THREE.DoubleSide
 		  	});
 
+		  	this.fracTween = [];
+
+		  	for (var i = 0; i < geometry.vertices.length; ++i) {
+		  		this.attributes.displacement.value.push(new THREE.Vector3(0, 0, 0));
+		  		this.attributes.frac.value.push(0);
+		  		this.fracTween.push({ f : 0 });
+		  	}
+
 		  	this.mesh = new THREE.Mesh(geometry, mat);
+		  	this.mesh.scale.set(50, 50, 50);
 			this.add(this.mesh);
 
 			this.projectHTML = <HTMLElement>document.getElementById("projects").querySelectorAll('.project').item(id);
@@ -548,11 +575,21 @@ module webglExp {
 		}
 
 		leaveFront() {
-			TweenLite.to(this.mesh.scale, 2, { 
+			/*TweenLite.to(this.mesh.scale, 2, { 
 				x: 1, 
 				y: 1, 
 				z: 1, 
-				ease: Expo.easeInOut });
+				ease: Expo.easeInOut });*/
+			this.inAnimation = true;
+			var longest:number = 0;
+			for (var i = 0; i < this.fracTween.length; ++i) {
+				var t:number = 0.1 + Math.random() * 0.1;
+				var d:number = Math.random() * 0.3;
+				TweenLite.to(this.fracTween[i], t, { f : 0, delay: d });
+				longest = Math.max(longest, t + d);
+			}
+			this.dummy = 0;
+			TweenLite.to(this, longest, { dummy: 1,  onComplete: this.endAnimation });
 
 			this.gallery.hide();
 			(<HTMLElement>this.projectHTML.querySelectorAll(".text").item(0)).classList.remove("show");
@@ -566,15 +603,36 @@ module webglExp {
 		}
 
 		cameraInFront() {
-			TweenLite.to(this.mesh.scale, 2, { 
-				x: 0.0001, 
-				y: 0.0001, 
-				z: 0.0001, 
-				ease: Expo.easeInOut })
+			this.inAnimation = true;
+
+			var longest:number = 0;
+			for (var i = 0; i < this.fracTween.length; ++i) {
+				var t:number = 0.1 + Math.random() * 0.1;
+				var d:number = Math.random() * 0.3;
+				TweenLite.to(this.fracTween[i], t, { f : 1, delay: d });
+				longest = Math.max(longest, t + d);
+			}
+			this.dummy = 0;
+			TweenLite.to(this, longest, { dummy: 1,  onComplete: this.endAnimation });
+
+		}
+
+		endAnimation = () => {
+			this.inAnimation = false;
 		}
 
 		render() {
+			this.attributes.displacement.needsUpdate = true;
+			this.attributes.frac.needsUpdate = true;
+
+			for (var i = 0; i < this.fracTween.length; ++i) {
+				this.attributes.frac.value[i] = this.fracTween[i].f;
+			}
+		}
+
+		renderGallery() {
 			this.gallery.render();
+			
 		}
 	}
 
@@ -1021,7 +1079,7 @@ module webglExp {
  				//this.effectBloom.copyUniforms[ "opacity" ].value = this.bloomStrength;
  				this.updateBloomBlur(1.0 + Math.abs(this.mSpeed * 0.1));
 
- 				this.project.render();
+ 				this.project.renderGallery();
  				this.currScroll += (this.scrollVal - this.currScroll) * 0.1;
  				super.getCamera().position.y = this.currScroll;
  			}
