@@ -268,7 +268,7 @@ module webglExp {
 		}
 
 		render() {
-	        this.distFrac += this.speed;//this.easeInOutSine(Date.now() - this.startTime,0,1,this.duration);
+	        this.distFrac += this.speed + webglExp.Particle.addedSpeed;//this.easeInOutSine(Date.now() - this.startTime,0,1,this.duration);
 	        if(this.distFrac > 0.999) this.reset();
 		}
 
@@ -547,7 +547,7 @@ module webglExp {
 				button.lookAt(new THREE.Vector3());
 			}
 
-			webglExp.Particle.addedSpeed = 1.0;
+			webglExp.Particle.addedSpeed = 0.0;
 
 			for(var i:number = 0; i < 20000; i++) {
 				var p:webglExp.Particle = new webglExp.Particle(this.spots);
@@ -741,21 +741,24 @@ module webglExp {
 
 		mouseOver = (event) => {
 			SphereAnimation.overID = event.detail.id;
-			webglExp.Particle.addedSpeed = 0.5;
+			TweenLite.to(webglExp.Particle, .3, { addedSpeed : 0.01 });
 			TweenLite.to(this.tetraUniforms.pointAmplitude, .4, { value: 1.0 });
 			this.tetraUniforms.pointsTo.value = this.spots[event.detail.id].overPlane.position;
-
-
+			this.blurh = 2.0;
+			TweenLite.to(THREE.BloomPass.blurX, .3, { x : this.blurh / (Scene3D.WIDTH * 2) });
+			TweenLite.to(THREE.BloomPass.blurY, .3, { y : this.blurh / (Scene3D.HEIGHT * 2) });
 		}
 
 		mouseOut = (event) => {
 			SphereAnimation.overID = -1;
-			webglExp.Particle.addedSpeed = 1.0;
+			TweenLite.to(webglExp.Particle, .3, { addedSpeed : 0.0 });
+			this.blurh = 1.0;
 			TweenLite.to(this.tetraUniforms.pointAmplitude, .4, { value: 0.0 });
+			TweenLite.to(THREE.BloomPass.blurX, .3, { x : this.blurh / (Scene3D.WIDTH * 2) });
+			TweenLite.to(THREE.BloomPass.blurY, .3, { y : this.blurh / (Scene3D.HEIGHT * 2) });
 		}
 
 		mouseClick = (event:CustomEvent) => {
-			// document.dispatchEvent(super.getLeaveEvent());
 			this.inOutTransition = true;
 			this.outCounter = 0;
 
