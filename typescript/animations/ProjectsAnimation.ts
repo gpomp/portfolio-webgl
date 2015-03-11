@@ -869,7 +869,7 @@ module webglExp {
 			this.blurh = 2;
 			THREE.BloomPass.blurX = new THREE.Vector2( this.blurh / (Scene3D.WIDTH * 2), 0.0 );
 			THREE.BloomPass.blurY = new THREE.Vector2( 0.0, this.blurh / (Scene3D.HEIGHT * 2) );
-			var folder = super.getGui().get_gui().addFolder("Effect Composer");
+			var folder = super.getGui().get_gui().addFolder("Projects Animation");
 			var vbGUI = folder.add(this, "blurh", 0.00, 30.00);
 			vbGUI.onChange(function(value) {
 				THREE.BloomPass.blurX = new THREE.Vector2( value / (Scene3D.WIDTH * 2), 0.0 );
