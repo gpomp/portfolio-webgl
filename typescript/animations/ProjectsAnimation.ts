@@ -60,7 +60,7 @@ module webglExp {
 		}
 	}
 
-	export class Floor extends THREE.PointCloud {
+	export class Floor extends THREE.Mesh {
 		constructor(geometry:THREE.Geometry, material:THREE.ShaderMaterial) {
 		    super(geometry, material);
 		}
@@ -467,7 +467,7 @@ module webglExp {
 		    var geometry:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(1, 2);
 		    geometry.computeFaceNormals();
 		    geometry.computeVertexNormals();
-		   	this.size = { width: 200, height: 200 };
+		   	this.size = { width: 50, height: 50 };
 
 		    var shaders = GLAnimation.SHADERLIST.dotImage;
 
@@ -507,7 +507,7 @@ module webglExp {
 		  	}
 
 		  	this.mesh = new THREE.Mesh(geometry, mat);
-		  	this.mesh.scale.set(50, 50, 50);
+		  	this.mesh.scale.set(this.size.width, this.size.width, this.size.width);
 			this.add(this.mesh);
 
 			this.projectHTML = <HTMLElement>document.getElementById("projects").querySelectorAll('.project').item(id);
@@ -637,6 +637,7 @@ module webglExp {
 	}
 
 	export class ProjectsAnimation extends webglExp.GLAnimation {
+		public blurh;
 		private _renderer:THREE.WebGLRenderer;
 
 		private attributes;
@@ -644,7 +645,7 @@ module webglExp {
 
 		private floor:webglExp.Floor;
 
-		private particleList:webglExp.FloorParticle[];
+		private particleList:THREE.Vector3[];
 		
 		private composer:webglExp.EffectComposer;
 		private composerObjects:webglExp.EffectComposer;
@@ -657,7 +658,6 @@ module webglExp {
 		private effectBlurH;
 		private effectBlurV;
 		private effectFXAA;
-		private blurh;
 		private bloomStrength;
 
 
@@ -689,6 +689,7 @@ module webglExp {
 		private onProjectY:number;
 
 		private frame:number;
+		private floorCtn:THREE.Object3D;
 
 		constructor(scene:THREE.Scene, camera:THREE.PerspectiveCamera, renderer:THREE.WebGLRenderer, index?:number) {
 
@@ -729,7 +730,7 @@ module webglExp {
 			  }
 			};
 
-			var squareWidth:number = 2000;
+			var squareWidth:number = 1500;
 
 			this.uniforms = {
 				square: {
@@ -758,32 +759,18 @@ module webglExp {
 			  	}
 			};
 
-			var floorGeom:THREE.Geometry = new THREE.Geometry();
+			var floorGeom:THREE.Geometry = new THREE.PlaneGeometry(squareWidth, squareWidth, 70, 70);
 
 			this.frame = 0;
 			this.particleList = [];
 
-			for (var i = 0; i < 10000; i++) {
-				var v:webglExp.FloorParticle = new webglExp.FloorParticle(1, 0, i);
-				var cor = -1;
-				if(i%2 === 0) {
-					v.x = 0;
-					v.y = 1;
-				}
+			for (var i = 0; i < floorGeom.vertices.length; i++) {
 
-
-				if(Math.floor(i/2)%2 === 0) {
-					cor = 1;
-				}
-
-				this.attributes.corridor.value.push(cor);
-				this.attributes.time.value.push(0);
-				this.attributes.time.value.push(0);
-				this.attributes.displacement.value.push(Math.random() * 20);
-				this.attributes.gap.value.push(i * 0.01);
-				floorGeom.vertices.push(v);
-				this.particleList.push(v);
+				this.attributes.displacement.value.push(2 + Math.random() * 5);
+				this.attributes.gap.value.push(i * 0.1);
+				// floorGeom.vertices.push(v);
 			}
+			this.particleList = floorGeom.vertices;
 			var shaders = GLAnimation.SHADERLIST.projectsAnimation;
 
 			var shaderMaterial:THREE.ShaderMaterial =
@@ -798,9 +785,13 @@ module webglExp {
 
 		  	this.floor = new webglExp.Floor(floorGeom, shaderMaterial);
 
-		  	this.floor.position.y = -400;
 
-		  	super.getScene().add(this.floor);
+		  	this.floorCtn = new THREE.Object3D();
+		  	this.floorCtn.rotation.x = Math.PI / 2;
+		  	this.floorCtn.position.y = -200;
+
+		  	this.floorCtn.add(this.floor);
+		  	super.getScene().add(this.floorCtn);
 		  	this.currProject = -1;
 		  	this.project = null;
 
@@ -865,7 +856,7 @@ module webglExp {
 
 		projectsMove(projects:HTMLElement) {
 			var v:number = projects.scrollTop / (projects.scrollHeight - window.innerHeight);
-			this.scrollVal = v * -500;
+			this.scrollVal = v * -150;
 
 			this.project.checkGallery();
 		}
@@ -875,11 +866,19 @@ module webglExp {
 		    this.composer = new webglExp.EffectComposer(this._renderer, super.getScene(), super.getCamera(), Scene3D.WIDTH, Scene3D.HEIGHT);
 		    this.composerObjects = new webglExp.EffectComposer(this._renderer, this.objectScene, super.getCamera(), Scene3D.WIDTH, Scene3D.HEIGHT);
 			this.blendComposer = new THREE.EffectComposer(this._renderer);
-
+			this.blurh = 2;
+			THREE.BloomPass.blurX = new THREE.Vector2( this.blurh / (Scene3D.WIDTH * 2), 0.0 );
+			THREE.BloomPass.blurY = new THREE.Vector2( 0.0, this.blurh / (Scene3D.HEIGHT * 2) );
+			var folder = super.getGui().get_gui().addFolder("Effect Composer");
+			var vbGUI = folder.add(this, "blurh", 0.00, 30.00);
+			vbGUI.onChange(function(value) {
+				THREE.BloomPass.blurX = new THREE.Vector2( value / (Scene3D.WIDTH * 2), 0.0 );
+				THREE.BloomPass.blurY = new THREE.Vector2( 0.0, value / (Scene3D.HEIGHT * 2) );
+			}.bind(this));
 			var objectRender = new THREE.RenderPass(this.objectScene, super.getCamera());
 			this.composerObjects.addPass(objectRender);
 
-			var bloomStrength = 0;
+			var bloomStrength = 11;
 			this.updateBloomBlur(0);
 			this.effectBloom = new THREE.BloomPass(bloomStrength, 25, 5.0, 1024);
 			this.renderPass = new THREE.RenderPass(this.getScene(), super.getCamera());
@@ -1038,12 +1037,12 @@ module webglExp {
 		}
 
 		render() {
-			this.frame += 0.01;
-			for (var i = 0; i < this.floor.geometry.vertices.length; i++) {
+			this.frame += 0.1;
+			/*for (var i = 0; i < this.floor.geometry.vertices.length; i++) {
 				var p:webglExp.FloorParticle = this.particleList[i];
 				p.render();
 				this.attributes.time.value[i] = p.time;
-			}
+			}*/
 
 			this.uniforms.amplitude.value = this.frame;
 
@@ -1052,17 +1051,17 @@ module webglExp {
 				var speedZ:number = Math.abs(curvPos.z - super.getCamera().position.z) / 50;
 				super.getCamera().position.set(curvPos.x, curvPos.y, curvPos.z);
 
-				this.effectBloom.copyUniforms[ "opacity" ].value = Math.min(7.5, speedZ * 40);
+				//this.effectBloom.copyUniforms[ "opacity" ].value = Math.min(7.5, speedZ * 40);
 				this.updateBloomBlur(0.3 + speedZ);
 				for (var i = 0; i < this.projectsList.length; ++i) {
 					this.projectsList[i].update(speedZ);
 				}
 			} else if(this.isBluring) {
-				this.effectBloom.copyUniforms[ "opacity" ].value = this.bloomStrength;
+				//this.effectBloom.copyUniforms[ "opacity" ].value = this.bloomStrength;
 				this.updateBloomBlur(this.bloomStrength / 30 * 2);
 			}
 
-			this.floor.position.z = super.getCamera().position.z - 2000.0;
+			this.floorCtn.position.z = super.getCamera().position.z - 700;
 
 			this.uniforms.timePassed.value = Math.cos(Date.now() * 0.001);
 			this.uniforms.camPosition.value = super.getCamera().position;
@@ -1095,9 +1094,9 @@ module webglExp {
 		}
 
 		updateBloomBlur(n:number) {
-			this.blurh = n;
+			/*this.blurh = 2;
 			THREE.BloomPass.blurX = new THREE.Vector2( this.blurh / (Scene3D.WIDTH * 2), 0.0 );
-			THREE.BloomPass.blurY = new THREE.Vector2( 0.0, this.blurh / (Scene3D.HEIGHT * 2) );
+			THREE.BloomPass.blurY = new THREE.Vector2( 0.0, this.blurh / (Scene3D.HEIGHT * 2) );*/
 		}
 
 		resize() {

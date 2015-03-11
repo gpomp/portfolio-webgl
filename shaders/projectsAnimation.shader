@@ -132,21 +132,16 @@
 	}
 
 	uniform float timePassed;
+	varying vec4 stagePos;
 
 	void main() {
-		gl_PointSize = 2.0;
 
-	    float nbCorridor = square.w / 20.0;
-
-	    float arrPos = position.z / total;
-
-	    vec3 currPos = vec3(    (square.x * corridor + position.x * floor(arrPos * square.z / nbCorridor) * nbCorridor * corridor + position.y * time * square.w * corridor), 
-	                            0.0,
-	                            (square.y * corridor + position.y * floor(arrPos * square.w / nbCorridor) * nbCorridor * corridor + position.x * time * square.z * corridor));
-	    vec2 noise = vec2(currPos.x / 500.0, (camPosition.z + currPos.z) / 500.0);
-
-	    currPos.y = cnoise(noise) * (50.0 + 50.0 * ((timePassed) + 1.0) * .5) + displacement * sin(amplitude + gap);
-	    finalPos = vec3(currPos.x, currPos.y , currPos.z);
+	  
+	    vec2 noise = vec2(position.x / 200.0, (camPosition.z * 0.3 + position.y) / 200.0);
+	    vec3 pos = position;
+	    pos.z = cnoise(noise) * 50.0 + displacement * sin(amplitude + gap);
+	    stagePos = modelMatrix * vec4(pos,1.0);
+	    finalPos = pos;
 	    sharedTime = time;
 
 	  	gl_Position = projectionMatrix *
@@ -156,6 +151,7 @@
 </vertex>
 
 <fragment>
+	#extension GL_OES_standard_derivatives : enable
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -166,19 +162,25 @@
 	uniform vec3 camPosition;
 	uniform float timePassed;
 	uniform float alpha;
+	varying vec4 stagePos;
 
 	varying vec3 finalPos;
 	varying float sharedTime;
 
 	void main() {
-		float fog = min(1.0, max(0.0, 1.0 - distance(vec2(0.0), finalPos.xz) / (square.w * 0.5)));
-		float l = square.w * 2.0;	
+		vec3 light = vec3(0.5, 1.0, 1.0);
+		vec3 normal  = normalize(cross(dFdx(stagePos.xyz), dFdy(stagePos.xyz)));
+		light = normalize(light);
+		float dProd = max(0.0,
+	                    dot(normal, light));
+		float fog = min(1.0, max(0.0, 1.0 - distance(vec2(0.0), finalPos.xy) / (square.w * 0.5)));
+		float l = square.w;	
 		float t1 = (timePassed + 1.0) * 0.5;
-
-	  	gl_FragColor = vec4(vec3((	finalPos.x + square.w) / l * 0.5 + t1 * 0.5 ,
-	  								0.5 + finalPos.y / 100.0 * 0.5, 
-	  								(finalPos.z + square.w) / l * 0.5 + 0.5 * (1.0 - t1)) * fog, 
-	  								alpha);
+		float ratio = 0.3;
+	  	gl_FragColor = vec4(vec3((	finalPos.x + square.w) / l * ratio + t1 * ratio ,
+	  								ratio + finalPos.y / 50.0 * ratio, 
+	  								(finalPos.z + square.w) / l * ratio + ratio * (1.0 - t1)) * dProd * fog, 
+	  								0.3);
 	}
 </fragment>
 
