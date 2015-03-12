@@ -366,23 +366,53 @@ canvas {
 			position: relative;
 			.perspective(1000px);
 
-			svg {
+			& > div {
 				position: absolute;
 				top: 0;
 				left: 0;
 				.transform-origin(50% 0);
-				&.show {
-					
+
+				svg {
+					position: absolute;
+					top: 0;
+					left: 0;
+					z-index: 2;
+					visibility: hidden;
+					/*&.show {
+						visibility: visible;
+					}*/
 				}
-				/*
-				.transform(perspective(200px) rotateX(3deg));*/
-				/*&:nth-child(odd) {
-					.transform(perspective(2000px) rotateX(-10deg));
+
+				div.bg {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					.perspective(1000px);
+
+					& > div {
+						background: white;
+						width: 100%;
+						height: 25%;
+						.transform-origin(50% 0);
+						.transform(rotateX(-90deg));
+						.opacity(0);
+						overflow: hidden;
+						position: relative;
+						border-left: 20px solid white;
+						border-right: 20px solid white;
+						img {
+							position: absolute;
+							top: 0;
+							left: 0;
+							width: 100%;
+						}
+					}
 				}
-				&:nth-child(even) {
-					.transform(perspective(2000px) rotateX(10deg));
-				}*/
 			}
+
+			
 		}
 
 

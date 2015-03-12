@@ -45,7 +45,15 @@
 	          	</div>
 	          	<div class="images">
 	             	{% for image in project.get_field('images') %}
-						<img data-src="{{TimberImage(image).src('large')}}" alt="">
+	             		<div>
+	             			<div class="bg">
+	             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
+	             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
+	             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
+	             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
+	             			</div>
+	             		</div>
+						<img class="main" data-src="{{TimberImage(image).src('large')}}" alt="">
 					{% endfor %}
 	          	</div>                       
 	        </div>

@@ -74,6 +74,7 @@ module webglExp {
 		public svgEl:HTMLElement;
 		public requestRender:boolean;
 		public isDone:boolean;
+		public ctnEl:HTMLElement;
 
 		private image;
 		private imageWidth;
@@ -90,15 +91,17 @@ module webglExp {
 
 		private callback:Function;
 		private ctn:HTMLElement;
+		private bg:NodeList;
 		private reveal:number;
 
 		private resizeTimeout;
 
-		constructor(url:string, ctn:Node, callback:Function, reveal:number = 0) {
+		constructor(url:string, ctn:Node, callback:Function, id:number, reveal:number = 0) {
 			this.reveal = reveal;
 			this.ctn = <HTMLElement>ctn;
+			this.ctnEl = <HTMLElement>(<HTMLElement>ctn).querySelectorAll(".images > div").item(id);
 			this.callback = callback;
-			this.svg = SVG(<HTMLElement>ctn).size(this.ctn.offsetWidth, 0);
+			this.svg = SVG(this.ctnEl).size(this.ctn.offsetWidth, 0);
 			this.image = (<any>this.svg.image(url));
 			this.resizeTimeout = -1;
 			this.image.loaded(this.imgLoaded);
@@ -111,6 +114,15 @@ module webglExp {
 			this.svgEl = <HTMLElement>this.svg.node;
 			this.svgEl.style.width = this.ctn.offsetWidth + "px";
 			this.svgEl.style.height = h + "px";
+
+			for (var i = 0; i < this.ctnEl.querySelectorAll("img").length; ++i) {
+				var img:HTMLElement = <HTMLElement>this.ctnEl.querySelectorAll("img").item(i);
+				img.setAttribute("src", img.getAttribute("data-src"));
+				img.style.top = (i * -100) + "%";
+			}
+
+			this.ctnEl.style.width = this.ctn.offsetWidth + "px";
+			this.ctnEl.style.height = h + "px";
 			//this.svg.size(this.ctn.offsetWidth, h);
 			this.svg.viewbox(0, 0, this.ctn.offsetWidth, h);
 			this.image.size(this.ctn.offsetWidth, h);
@@ -122,7 +134,7 @@ module webglExp {
 			this.gapX = divideX;
 			this.gapY = divideY;
 
-			this.scaleList = [];
+			/*this.scaleList = [];
 
 			this.rectCtn = this.svg.group();
 
@@ -161,7 +173,7 @@ module webglExp {
 
 			this.requestRender = true;
 			this.render();
-			this.requestRender = false;
+			this.requestRender = false;*/
 
 			// this.image.maskWith(this.rectCtn);
 
@@ -170,7 +182,7 @@ module webglExp {
 		}
 
 		sortList(h:number) {
-			var cX:number = 0;
+			/*var cX:number = 0;
 			var cY:number = 0;
 
 			switch (this.reveal) {
@@ -208,7 +220,7 @@ module webglExp {
 				if(dist1 > dist2) return 1;
 				else if(dist1 < dist2) return -1;
 				return 0;
-			})
+			})*/
 		}
 
 		resize() {
@@ -222,7 +234,7 @@ module webglExp {
 		}
 
 		resizeAction() {
-			if(!this.imgReady) return;
+			/*if(!this.imgReady) return;
 			var w = this.ctn.offsetWidth;
 			var h = w / this.imageWidth * this.imageHeight;
 			var svgEl:HTMLElement = <HTMLElement>this.svg.node;
@@ -274,40 +286,72 @@ module webglExp {
 				this.requestRender = true;
 				this.render();
 				this.requestRender = false;
-			}
+			}*/
 			
 		}
 
 		show() {
-			this.requestRender = true;
+			this.buildBG();
+			this.isDone = true;
+			/*this.requestRender = true;
 			this.renderedNb = 0;
 			this.isDone = true;
 			this.resizeAction();
-			this.svgEl.classList.add("show");
+			
+			var delay:number = this.buildBG();
+			window.setTimeout(function(){ this.svgEl.classList.add("show"); }.bind(this), delay * 1000);
 			for (var i = 0; i < this.scaleList.length; ++i) {
-				TweenLite.to(this.scaleList[i], 0.5, { sX: 0, sY: 0, onComplete: this.animDone, delay: i * 0.03, ease:Strong.easeInOut });
+				TweenLite.to(this.scaleList[i], 0.5, { sX: 0, sY: 0, onComplete: this.animDone, delay: delay + i * 0.03, ease:Strong.easeInOut });
+			}*/
+		}
+
+		buildBG():number {
+			this.bg = this.ctnEl.querySelectorAll("div.bg > div");
+			var t:number = .25;
+			for (var i = 0; i < this.bg.length; ++i) {
+				var el:HTMLElement = <HTMLElement>this.bg[i];
+
+				TweenLite.to(el, t, { rotationX: "0deg", delay: i * t, ease: Back.easeOut });
+				TweenLite.to(el, .1, { opacity: 1, delay: i * t, ease: Back.easeOut });
 			}
+
+			return this.bg.length * t;
 		}
 
 		hide() {
-			this.requestRender = true;
+			/*this.requestRender = true;
 			this.renderedNb = 0;
 			this.resizeAction();
 			for (var i = 0; i < this.scaleList.length; ++i) {
 				TweenLite.to(this.scaleList[i], 0.1, { sX: 1.1, sY: 1.1, onComplete: this.animDone, delay: i * 0.005, ease:Strong.easeInOut });
+			}
+
+			var delay:number = this.scaleList.length * 0.005 + 0.1;
+			window.setTimeout(function(){ this.svgEl.classList.remove("show"); }.bind(this), delay * 1000);*/
+
+			this.bg = this.ctnEl.querySelectorAll("div.bg > div");
+			var count:number = 0;
+
+			for (var i = this.bg.length - 1; i > -1; --i) {
+				var el:HTMLElement = <HTMLElement>this.bg[i];
+
+				TweenLite.to(el, .15, { rotationX: "-90deg", delay: count * .15, ease: Sine.easeOut });
+				TweenLite.to(el, .1, { opacity: 0, delay: count * .15 + .05, ease: Sine.easeOut });
+				count++;
 			}
 		}
 
 		animDone = () => {
 			this.renderedNb++;
 			if(this.renderedNb >= this.scaleList.length) {
+				
 				this.requestRender = false;
 				// this.image.unmask();
 			}
 		}
 
 		render() {
-			if(!this.requestRender) return;
+			/*if(!this.requestRender) return;
 			for (var i = 0; i < this.scaleList.length; ++i) {
 				var s = this.scaleList[i];
 				var invScale:number = 1 - s.sX;
@@ -318,11 +362,12 @@ module webglExp {
 					scaleX: s.sX,
 					scaleY: s.sY
 				});
-			}
+			}*/
 		}
 
 		reset() {
 			this.isDone = false;
+			/*this.isDone = false;
 			for (var i = 0; i < this.scaleList.length; ++i) {
 				var s = this.scaleList[i];
 				s.sX = s.sY = 1.1;
@@ -330,7 +375,7 @@ module webglExp {
 					scaleX: s.sX, 
 					scaleY: s.sY
 				});
-			}
+			}*/
 
 			// this.image.maskWith(this.rectCtn);
 		}
@@ -355,12 +400,12 @@ module webglExp {
 			this.callback = callback;
 			this.ctn = ctn;
 
-			this.imgList = (<HTMLElement>ctn).querySelectorAll("img");
+			this.imgList = (<HTMLElement>ctn).querySelectorAll("img.main");
 			this.svgList = [];
 			var nbImage = this.imgList.length;
 			this.nbLoaded = 0;
 			for (var i = 0; i < nbImage; ++i) {
-				var imgMask:webglExp.MaskImg = new webglExp.MaskImg((<HTMLImageElement>this.imgList[i]).getAttribute("data-src"), ctn, this.imgLoaded, Math.floor(Math.random() * 5));
+				var imgMask:webglExp.MaskImg = new webglExp.MaskImg((<HTMLImageElement>this.imgList[i]).getAttribute("data-src"), ctn, this.imgLoaded, i, Math.floor(Math.random() * 5));
 				
 				this.svgList.push(imgMask);
 			}			
@@ -380,7 +425,7 @@ module webglExp {
 				var angle:number = 5;
 				var z:number = 0;
 				for (var i = 0; i < this.svgList.length; ++i) {
-					var el:HTMLElement = this.svgList[i].svgEl;
+					var el:HTMLElement = this.svgList[i].ctnEl;
 					var dir:number = (i%2 === 0) ? 1 : -1;
 					var translate:string = "translate3d(0, "+ y +"px, " + z + "px)";
 					var rotate:string = "rotateX(" + (dir * angle) + "deg)";
@@ -621,7 +666,7 @@ module webglExp {
 			this.gallery.hide();
 			(<HTMLElement>this.projectHTML.querySelectorAll(".text").item(0)).classList.remove("show");
 
-			TweenLite.to(document.getElementById("projects"), 0.7, { scrollTop: 0, onComplete:this.hideProject })
+			TweenLite.to(document.getElementById("projects"), 1.4, { scrollTop: 0, onComplete:this.hideProject })
 
 		}
 
