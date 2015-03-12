@@ -59,11 +59,12 @@ module THREE {
 	export class BlendShader {
 		static uniforms = {
 
-			"tDiffuse1": { type: "t", value: null },
-			"tDiffuse2": { type: "t", value: null },
-			"tDiffuse3": { type: "t", value: null },
-			"mixRatio":  { type: "f", value: 0.5 },
-			"opacity":   { type: "f", value: 1.0 }
+			"tBackground": 	{ type: "t", value: null },
+			"tDiffuse1": 	{ type: "t", value: null },
+			"tDiffuse2": 	{ type: "t", value: null },
+			"tDiffuse3": 	{ type: "t", value: null },
+			"mixRatio":  	{ type: "f", value: 0.5 },
+			"opacity":   	{ type: "f", value: 1.0 }
 
 		};
 
@@ -85,21 +86,29 @@ module THREE {
 			"uniform float opacity;",
 			"uniform float mixRatio;",
 
+			"uniform sampler2D tBackground;",
 			"uniform sampler2D tDiffuse1;",
 			"uniform sampler2D tDiffuse2;",
 			"uniform sampler2D tDiffuse3;",
 
 			"varying vec2 vUv;",
 
+			"vec3 textOnTop(vec4 c1, vec4 c2) {",
+				"float cPresent = ceil(c2.r);",
+				"return vec3(max((1.0 - cPresent) * c1.r, cPresent * c2.r), max((1.0 - cPresent) * c1.g, cPresent * c2.g), max((1.0 - cPresent) * c1.b, cPresent * c2.b));",
+			"}",
+
 			"void main() {",
 
+				"vec4 texel0 = texture2D( tBackground, vUv );",
 				"vec4 texel1 = texture2D( tDiffuse1, vUv );",
 				"vec4 texel2 = texture2D( tDiffuse2, vUv );",
 				"vec4 texel3 = texture2D( tDiffuse3, vUv );",
-				"vec4 c1 = texel1 + texel2;",
+				"vec4 cbg = vec4(textOnTop(texel0, texel1), 1.0);",
+				"vec4 c1 = cbg + texel2;",
 				"vec4 c = texel3;",
 				"float cPresent = ceil(c.r);",
-				"gl_FragColor = vec4(max((1.0 - cPresent) * c1.r, cPresent * c.r), max((1.0 - cPresent) * c1.g, cPresent * c.g), max((1.0 - cPresent) * c1.b, cPresent * c.b), 1.0);",
+				"gl_FragColor = vec4(textOnTop(c1, c), 1.0);",
 
 			"}"
 

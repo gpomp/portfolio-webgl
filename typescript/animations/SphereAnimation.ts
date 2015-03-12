@@ -327,6 +327,7 @@ module webglExp {
 		private composer:webglExp.EffectComposer;
 		private composerBloom:webglExp.EffectComposer;
 		private composerButton:webglExp.EffectComposer;
+		private composerBackground:webglExp.EffectComposer;
 		private blendComposer;
 		private bloomScene:THREE.Scene;
 		private buttonScene:THREE.Scene;
@@ -337,6 +338,11 @@ module webglExp {
 		private sphereCtn:THREE.Object3D;
 		private sceneCtn:THREE.Object3D;
 		private buttonCtn:THREE.Object3D;
+
+		private bgScene:THREE.Scene;
+		private bgCam:THREE.OrthographicCamera;
+		private bgMesh:THREE.Mesh;
+		private bgUniforms;
 
 		private sphere:THREE.Mesh;
 
@@ -394,7 +400,7 @@ module webglExp {
 			super.setInternalRender(true);
 
 			this._renderer = super.getRenderer();
-		    this._renderer.autoClear = false;
+		    // this._renderer.autoClear = false;
 
 		    this.bloomScene = new THREE.Scene();
 		    this.buttonScene = new THREE.Scene();
@@ -411,6 +417,36 @@ module webglExp {
 		    this.composerBloom = new webglExp.EffectComposer(this._renderer, this.bloomScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
 		    this.composerButton = new webglExp.EffectComposer(this._renderer, this.bloomScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
 		    
+		    this.composerBackground = new webglExp.EffectComposer(this._renderer, this.bloomScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
+		    this.bgScene = new THREE.Scene();
+		    this.bgCam = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
+		    this.bgUniforms = {
+		    	time: {
+    				type: 'f',
+    				value: 0
+  				},
+
+		    	width: {
+    				type: 'f',
+    				value: Scene3D.WIDTH
+  				},
+
+		    	height: {
+    				type: 'f',
+    				value: Scene3D.HEIGHT
+  				}
+		    };
+
+		    var bgShader = GLAnimation.SHADERLIST.bgsphere;
+		    var bgMat:THREE.ShaderMaterial = new THREE.ShaderMaterial({
+			    vertexShader:   bgShader.vertex,
+			    fragmentShader: bgShader.fragment,
+			    uniforms: this.bgUniforms
+		  	});
+		    this.bgMesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ),  bgMat);
+			this.bgScene.add( this.bgMesh );
+
+
 		    var renderTargetParams = {	minFilter: THREE.LinearFilter,
         								magFilter: THREE.LinearFilter, 
         								format: THREE.RGBAFormat,
@@ -459,7 +495,7 @@ module webglExp {
   				},
   				alpha: {
   					type: 'f',
-  					value: 0.08
+  					value: 0.085
   				}
 			}
 
@@ -599,6 +635,7 @@ module webglExp {
 			this.mouseVel = new webglExp.MouseSpeed(0.01);
 			this.mSpeed = 0;
 
+			this.createBGPass();
 			this.createButtonPasses();
 			this.createPasses();
 			this.createBloomPasses();
@@ -738,7 +775,7 @@ module webglExp {
 			super.enableCameraAround(this.sphereCtn, document.getElementById("sphere-buttons"));
 			var intro:HTMLElement = (<HTMLElement>document.getElementById("intro"));
 			var containerIntro:HTMLElement = (<HTMLElement>document.querySelectorAll("#intro .container").item(0));
-			intro.classList.add("show");
+			// intro.classList.add("show");
 		}
 
 		getPointOnSphere(lat:number, lng:number):THREE.Vector3 {
@@ -798,12 +835,14 @@ module webglExp {
 
 		clear() {
 
+			this.blendPass.uniforms["tBackground"].value = null;
 			this.blendPass.uniforms["tDiffuse1"].value = null;
 			this.blendPass.uniforms["tDiffuse2"].value = null;
 			this.blendPass.uniforms["tDiffuse3"].value = null;
 
 			this.composer.getComposer().setSize(1, 1);
 			this.composerButton.getComposer().setSize(1, 1);
+			this.composerBackground.getComposer().setSize(1, 1);
 			this.composerBloom.getComposer().setSize(1, 1);
 			this.blendComposer.setSize(1, 1);
 
@@ -820,6 +859,11 @@ module webglExp {
 			}
 			this.bloomScene = null;
 
+			for (var i = this.bgScene.children.length - 1; i >= 0; i--) {
+			 	this.bgScene.remove(this.bgScene.children[i]);
+			}
+			this.bgScene = null;
+
 			for (var i = this.spots.length - 1; i >= 0; i--) {
 				this.spots[i].clear();
 			}
@@ -830,9 +874,11 @@ module webglExp {
 		resize() {
 			this.composer.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
 			this.composerButton.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
+			this.composerBackground.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
 			this.composerBloom.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
 			this.blendComposer.setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
 
+			this.blendPass.uniforms["tBackground"].value = this.composerBackground.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse1"].value = this.composer.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse2"].value = this.composerBloom.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse3"].value = this.composerButton.getComposer().renderTarget2;
@@ -893,6 +939,7 @@ module webglExp {
 			this.frame += 0.1;
 			this.tetraUniforms.amplitude.value = this.frame;
 			this.uniforms.amplitude.value = this.frame * 0.05;
+			this.bgUniforms.time.value = this.frame;
 
 			this.sceneCtn.quaternion.copy(this.sphereCtn.quaternion);
 			this.buttonCtn.quaternion.copy(this.sphereCtn.quaternion);
@@ -921,6 +968,7 @@ module webglExp {
 			}
 
 
+			this.composerBackground.getComposer().render();
 			this.composer.getComposer().render();
 			this.composerButton.getComposer().render();
 			this.composerBloom.getComposer().render();
@@ -933,9 +981,8 @@ module webglExp {
 
 
 		createBloomPasses() {
-			var renderPass = new THREE.RenderPass(this.bloomScene, this.getCamera());
-			
-			// renderPass.clear = false;
+			var renderPass = new THREE.RenderPass(this.bloomScene, this.getCamera(), null, new THREE.Color(0, 0, 0), 0);
+			renderPass.clear = false;
 			this.bloomStrength = 14;
 			this.effectBloom = new THREE.BloomPass(this.bloomStrength, 20, 8.0, 512, true);
 			this.blurh = 10.26;
@@ -957,6 +1004,7 @@ module webglExp {
 
 
 			this.blendPass = new THREE.ShaderPass( <any>THREE.BlendShader );
+			this.blendPass.uniforms["tBackground"].value = this.composerBackground.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse1"].value = this.composer.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse2"].value = this.composerBloom.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse3"].value = this.composerButton.getComposer().renderTarget2;
@@ -966,6 +1014,11 @@ module webglExp {
 			this.composerBloom.addPass(renderPass);
 			this.composerBloom.addPass(this.effectBloom);
 			this.blendComposer.addPass(this.blendPass);
+		}
+
+		createBGPass() {
+			var renderPass = new THREE.RenderPass(this.bgScene, this.bgCam);
+			this.composerBackground.addPass(renderPass);
 		}
 
 		createPasses() {
