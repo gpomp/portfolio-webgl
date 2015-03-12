@@ -173,13 +173,14 @@
 		light = normalize(light);
 		float dProd = max(0.0,
 	                    dot(normal, light));
-		float fog = min(1.0, max(0.0, 1.0 - distance(vec2(0.0), finalPos.xy) / (square.w * 0.5)));
-		float l = square.w;	
+
+		float l = 1500.0;	
+		float fog = min(1.0, max(0.0, 1.0 - distance(vec2(0.0), finalPos.xy) / (l * 0.5)));
 		float t1 = (timePassed + 1.0) * 0.5;
 		float ratio = 0.3;
-	  	gl_FragColor = vec4(vec3((	finalPos.x + square.w) / l * ratio + t1 * ratio ,
-	  								ratio + finalPos.y / 50.0 * ratio, 
-	  								(finalPos.z + square.w) / l * ratio + ratio * (1.0 - t1)) * dProd * fog, 
+	  	gl_FragColor = vec4(vec3((	finalPos.x + l * 0.5) / l * ratio + t1 * ratio,
+	  								(finalPos.y + l * 0.5) / l * ratio + ratio * (1.0 - t1), 
+	  								ratio + finalPos.z / 60.0 * ratio) * dProd * fog, 
 	  								alpha);
 	}
 </fragment>
