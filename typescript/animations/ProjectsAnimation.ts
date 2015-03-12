@@ -6,6 +6,7 @@
 /// <reference path="../core/EffectComposer.ts" />
 /// <reference path="../helper/ThreeAddOns.ts" />
 /// <reference path="../helper/ThreeToDom.ts" />
+/// <reference path="../helper/polyfill.ts" />
 declare var page;
 
 module webglExp {
@@ -70,6 +71,7 @@ module webglExp {
 	export class MaskImg {
 
 		public svg;
+		public svgEl:HTMLElement;
 		public requestRender:boolean;
 		public isDone:boolean;
 
@@ -106,14 +108,14 @@ module webglExp {
 			this.imageWidth = loader.width;
 			this.imageHeight = loader.height;
 			var h = this.ctn.offsetWidth / loader.width * loader.height;
-			var svgEl:HTMLElement = <HTMLElement>this.svg.node;
-			svgEl.style.width = this.ctn.offsetWidth + "px";
-			svgEl.style.height = h + "px";
+			this.svgEl = <HTMLElement>this.svg.node;
+			this.svgEl.style.width = this.ctn.offsetWidth + "px";
+			this.svgEl.style.height = h + "px";
 			//this.svg.size(this.ctn.offsetWidth, h);
 			this.svg.viewbox(0, 0, this.ctn.offsetWidth, h);
 			this.image.size(this.ctn.offsetWidth, h);
 
-			var nb:number = 5;
+			var nb:number = 3;
 
 			var divideX:number = Math.round(this.ctn.offsetWidth / nb);
 			var divideY:number = Math.round(h / nb);
@@ -133,8 +135,8 @@ module webglExp {
 															" " + (divideX) + "," + (divideY))
 															.fill('#FFFFFF')
 															.stroke({width: 0})
-															.transform({ scaleX: 0, scaleY: 0});
-					this.scaleList.push({	sX: 0, sY: 0, 
+															.transform({ scaleX: 1.1, scaleY: 1.1});
+					this.scaleList.push({	sX: 1.1, sY: 1.1, 
 											x: sx + divideX * j, y: divideY * i, 
 											t: triangle1 });
 
@@ -143,19 +145,25 @@ module webglExp {
 															" " + (0) + "," + (0))
 															.fill('#FFFFFF')
 															.stroke({width: 0})
-															.transform({ scaleX: 0, scaleY: 0});
-					this.scaleList.push({	sX: 0, sY: 0, 
+															.transform({ scaleX: 1.1, scaleY: 1.1});
+					this.scaleList.push({	sX: 1.1, sY: 1.1, 
 											x: divideX * j, y: divideY * i, 
 											t:triangle2 });
 					
 				}
 			}
+			var borderWidth:number = 20;
+			this.svg.rect(this.ctn.offsetWidth, h).fill('none').stroke({width: borderWidth, color:'#FFFFFF'})
 
 			this.untouchedList = this.scaleList.slice();
 
 			this.sortList(h);
 
-			this.image.maskWith(this.rectCtn);
+			this.requestRender = true;
+			this.render();
+			this.requestRender = false;
+
+			// this.image.maskWith(this.rectCtn);
 
 			this.callback();
 			this.imgReady = true;
@@ -223,7 +231,7 @@ module webglExp {
 			this.svg.viewbox(0, 0, w, h);
 			this.image.size(w, h);
 
-			var nb:number = 5;
+			var nb:number = 3;
 
 			var divideX:number = Math.round(this.ctn.offsetWidth / nb);
 			var divideY:number = Math.round(h / nb);
@@ -275,8 +283,9 @@ module webglExp {
 			this.renderedNb = 0;
 			this.isDone = true;
 			this.resizeAction();
+			this.svgEl.classList.add("show");
 			for (var i = 0; i < this.scaleList.length; ++i) {
-				TweenLite.to(this.scaleList[i], 0.5, { sX: 1.1, sY: 1.1, onComplete: this.animDone, delay: i * 0.03, ease:Strong.easeInOut });
+				TweenLite.to(this.scaleList[i], 0.5, { sX: 0, sY: 0, onComplete: this.animDone, delay: i * 0.03, ease:Strong.easeInOut });
 			}
 		}
 
@@ -285,7 +294,7 @@ module webglExp {
 			this.renderedNb = 0;
 			this.resizeAction();
 			for (var i = 0; i < this.scaleList.length; ++i) {
-				TweenLite.to(this.scaleList[i], 0.1, { sX: 0, sY: 0, onComplete: this.animDone, delay: i * 0.005, ease:Strong.easeInOut });
+				TweenLite.to(this.scaleList[i], 0.1, { sX: 1.1, sY: 1.1, onComplete: this.animDone, delay: i * 0.005, ease:Strong.easeInOut });
 			}
 		}
 
@@ -316,7 +325,7 @@ module webglExp {
 			this.isDone = false;
 			for (var i = 0; i < this.scaleList.length; ++i) {
 				var s = this.scaleList[i];
-				s.sX = s.sY = 0;
+				s.sX = s.sY = 1.1;
 				s.t.transform({
 					scaleX: s.sX, 
 					scaleY: s.sY
@@ -352,6 +361,7 @@ module webglExp {
 			this.nbLoaded = 0;
 			for (var i = 0; i < nbImage; ++i) {
 				var imgMask:webglExp.MaskImg = new webglExp.MaskImg((<HTMLImageElement>this.imgList[i]).getAttribute("data-src"), ctn, this.imgLoaded, Math.floor(Math.random() * 5));
+				
 				this.svgList.push(imgMask);
 			}			
 		}
@@ -365,6 +375,23 @@ module webglExp {
 		imgLoaded = () => {
 			this.nbLoaded++;
 			if(this.nbLoaded >= this.imgList.length) {
+				var y:number = 0;
+
+				var angle:number = 5;
+				var z:number = 0;
+				for (var i = 0; i < this.svgList.length; ++i) {
+					var el:HTMLElement = this.svgList[i].svgEl;
+					var dir:number = (i%2 === 0) ? 1 : -1;
+					var translate:string = "translate3d(0, "+ y +"px, " + z + "px)";
+					var rotate:string = "rotateX(" + (dir * angle) + "deg)";
+					console.log(translate, rotate, el.clientHeight);
+					el.style[utils.Prefix.transformPrefix()] = translate + " " + rotate;
+					var h:number = el.clientHeight;
+					var rad:number = dir * angle * Math.PI / 180;
+					z += Math.sin(rad) * h;
+					y += Math.cos(rad) * h;
+				}
+				(<HTMLElement>this.ctn).style.height = (y + 30) + "px";
 				this.launch();
 			}
 		}
