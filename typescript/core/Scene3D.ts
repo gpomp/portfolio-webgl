@@ -98,6 +98,9 @@ module webglExp {
 			this.currentAnim.clear();
 			this.currentAnim = null;
 			this.renderer.clear();
+
+			document.getElementById("projects").classList.remove("show");
+			document.getElementById("projects-buttons").classList.remove("show");
 			this.gui.clear();
 			page(event.detail.href);
 		}

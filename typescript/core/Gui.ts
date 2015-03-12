@@ -15,16 +15,28 @@ module webglExp {
 		}
 
 		public clear() {
-			for (var folder in this._gui.__folders){
-			    this.removeFolder(this._gui.__folders[folder]);
+			var n:NodeList = document.querySelectorAll("div.dg.main > ul li");
+			for (var i = 0; i < n.length; ++i) {
+				var f:HTMLElement = <HTMLElement>n.item(i);
+				f.parentNode.removeChild(f);
 			}
+			this._gui.onResize();
+
+
+			for (var folder in this._gui.__folders){
+			    folder = undefined;
+			}
+
+			this._gui.__folders = [];
+			this._gui.onResize();
 		}
 
 		private removeFolder(folder) {
-			folder.close();
-		    folder.domElement.parentNode.parentNode.removeChild(folder.domElement.parentNode);
+			/*folder.close();
+			console.log(folder.domElement, folder.domElement.parentNode);
+		    folder.domElement.parentNode.removeChild(folder.domElement);
 		    folder = undefined;
-		    this._gui.onResize();
+		    this._gui.onResize();*/
 		}
 
 		public get_gui():dat.GUI {

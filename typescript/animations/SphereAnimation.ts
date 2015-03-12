@@ -184,7 +184,11 @@ module webglExp {
 		}
 
 		clear() {
-			this.domEl.parentNode.removeChild(this.domEl);
+			this.domEl.removeEventListener("click",this.elementClick);
+
+			this.domEl.removeEventListener('mouseover', this.over, false);
+			this.domEl.removeEventListener('mouseout', this.out, false);
+			// this.domEl.parentNode.removeChild(this.domEl);
 		}
 
 		exit() {
@@ -400,7 +404,7 @@ module webglExp {
 			super.setInternalRender(true);
 
 			this._renderer = super.getRenderer();
-		    // this._renderer.autoClear = false;
+		    this._renderer.autoClear = true;
 
 		    this.bloomScene = new THREE.Scene();
 		    this.buttonScene = new THREE.Scene();
@@ -834,6 +838,9 @@ module webglExp {
 		}
 
 		clear() {
+			document.removeEventListener(webglExp.SphereAnimation.ON_OVER, this.mouseOver, false);
+			document.removeEventListener(webglExp.SphereAnimation.ON_OUT, this.mouseOut, false);
+			document.removeEventListener(webglExp.SphereAnimation.ON_CLICK, this.mouseClick, false);
 
 			this.blendPass.uniforms["tBackground"].value = null;
 			this.blendPass.uniforms["tDiffuse1"].value = null;

@@ -483,6 +483,44 @@ module webglExp {
 			
 	}
 
+	export class Title {
+		public mesh:THREE.Mesh;
+
+		private geom:THREE.PlaneGeometry;
+		private material:THREE.ShaderMaterial;
+
+		private uniforms;
+		private attributes;
+
+		constructor(title:string) {
+			this.geom = new THREE.PlaneGeometry(1100, 300);
+
+			var canvas:HTMLCanvasElement = document.createElement("canvas");
+			var context = canvas.getContext("2d");
+			
+
+			var shaders = GLAnimation.SHADERLIST.text;
+			this.uniforms = {};
+			this.attributes = {};
+			
+			this.material =
+			  	new THREE.ShaderMaterial({
+				    vertexShader:   shaders.vertex,
+				    fragmentShader: shaders.fragment,
+				    uniforms: this.uniforms,
+				    attributes: this.attributes,
+				    side: THREE.DoubleSide,
+				    wireframe:true
+			  	});
+
+			this.mesh = new THREE.Mesh(this.geom, this.material);
+		}
+
+		render() {
+
+		}
+	}
+
 	export class Project extends THREE.Object3D {
 
 		public projectID:number;
@@ -520,7 +558,7 @@ module webglExp {
 		private scrollV:number;
 		private dummy:number;
 
-
+		private title:webglExp.Title;
 
 		constructor(id:number, camera:THREE.PerspectiveCamera) {
 		    super();
@@ -700,11 +738,17 @@ module webglExp {
 			for (var i = 0; i < this.fracTween.length; ++i) {
 				this.attributes.frac.value[i] = this.fracTween[i].f;
 			}
+
+			// this.title.render();
 		}
 
 		renderGallery() {
 			this.gallery.render();
 			
+		}
+
+		clear() {
+			this.link.removeEventListener('click', this.goToProject);
 		}
 	}
 
@@ -762,6 +806,8 @@ module webglExp {
 
 		private frame:number;
 		private floorCtn:THREE.Object3D;
+
+		private isBackToSphere:boolean;
 
 		constructor(scene:THREE.Scene, camera:THREE.PerspectiveCamera, renderer:THREE.WebGLRenderer, index?:number) {
 
@@ -893,6 +939,8 @@ module webglExp {
 			this.scrollVal = this.currScroll = 0;
 			document.getElementById("projects").addEventListener("scroll", this.projectScroll);
 
+			this.isBackToSphere = false;
+
 			this.launchProject(index);
 
 			(<HTMLElement>document.querySelectorAll("#next-prev a.left").item(0)).addEventListener("click", this.prevProject);
@@ -993,7 +1041,29 @@ module webglExp {
 
 		  		z -= 4000 + Math.random() * 4000;
 			}
-			
+
+			var link:HTMLElement = <HTMLElement>document.querySelectorAll("#projects-buttons a.sphere").item(0);
+			link.addEventListener('click', this.clickBackToSphere, false);
+		}
+
+		clickBackToSphere = (event:MouseEvent) => {
+			event.preventDefault();
+			if(this.isBackToSphere) return;
+			this.isBackToSphere = true;
+			this.closeProject();
+		}
+
+		backtoSphere() {
+			Array.prototype.forEach.call(this.buttonList, function(el:HTMLElement, i:number) {
+				window.setTimeout(function() {
+					el.classList.remove("show");
+				}, 750 + i * 200);
+			});
+			this.calcRoute(this.projectsList[this.projectsList.length - 1], true);
+			this.posOnPath = 0;
+			this.isCamMoving = true;
+			TweenLite.to(this, 8, { posOnPath : 1, ease:Expo.easeIn, onComplete: this.clearProjects });
+			TweenLite.to(this.uniforms.alpha, 2, { value: 0, ease:Sine.easeOut, delay : 6 });
 		}
 
 		launchProject(index:number) {
@@ -1018,8 +1088,12 @@ module webglExp {
 
 			this.nextPrev.classList.remove("show");
 
-			// TweenLite.to(super.getCamera().position, 1, { y : this.onProjectY , expo:Sine.easeOut });
-			TweenLite.to(this, 2, { bloomStrength:0, onComplete: this.showProject });
+			if(this.isBackToSphere) {
+				this.backtoSphere();
+			} else {
+				TweenLite.to(this, 2, { bloomStrength:0, onComplete: this.showProject });
+			}
+			
 		}
 
 		showProject = () => {
@@ -1046,7 +1120,7 @@ module webglExp {
 			TweenLite.to(this, speed, { posOnPath : 1, ease: ease, onComplete: this.atProject, overwrite:"all" })
 		}
 
-		calcRoute(project:webglExp.Project) {
+		calcRoute(project:webglExp.Project, toSphere?:boolean) {
 			var camCurves:THREE.Vector3[] = [];
 			var camPos:THREE.Vector3 = super.getCamera().position.clone();
 			camCurves.push(camPos);
@@ -1064,7 +1138,7 @@ module webglExp {
 			var signY:number = -1;
 			for (var i = 0; i < projList.length; ++i) {
 				var p:webglExp.Project = projList[i];
-				if(p.position.z < max && p.position.z > min && p.id !== project.id) {
+				if(p.position.z < max && p.position.z > min && (p.id !== project.id || toSphere)) {
 					camCurves.push(p.getRandomPointAround(signX, signY));
 					signX *= -1;
 					signY *= -1;
@@ -1076,7 +1150,14 @@ module webglExp {
 			}
 
 			var v:THREE.Vector3 = project.position.clone();
-			v.z += 500;
+			
+
+			if(toSphere) {
+				v.z -= 5000;
+			}
+			else {
+				v.z += 500;
+			}
 
 			camCurves.push(v);
 
@@ -1187,6 +1268,42 @@ module webglExp {
 				this.project.resize();
 			}
 			super.resize();
+		}
+
+		clearProjects = () => {
+			var event:CustomEvent = super.getLeaveEvent();
+			event.detail.href = "/homepage/";
+			document.dispatchEvent(event);
+		}
+
+		clear() {
+			console.log("clear projects");
+
+			for (var i = 0; i < this.projectsList.length; ++i) {
+				this.projectsList[i].clear();
+			}
+			document.getElementById("projects").removeEventListener("scroll", this.projectScroll);
+			(<HTMLElement>document.querySelectorAll("#next-prev a.left").item(0)).removeEventListener("click", this.prevProject);
+			(<HTMLElement>document.querySelectorAll("#next-prev a.right").item(0)).removeEventListener("click", this.nextProject);
+			(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).removeEventListener('click', this.toggleMenu);
+			(<HTMLElement>document.querySelectorAll("#projects-buttons a.sphere").item(0)).removeEventListener('click', this.clickBackToSphere, false);
+
+			this.blendPass.uniforms["tBackground"].value = null;
+			this.blendPass.uniforms["tDiffuse1"].value = null;
+			this.blendPass.uniforms["tDiffuse2"].value = null;
+			this.blendPass.uniforms["tDiffuse3"].value = null;
+
+			this.composer.getComposer().setSize(1, 1);
+			this.composerObjects.getComposer().setSize(1, 1);
+			this.blendComposer.setSize(1, 1);
+
+			for (var i = this.objectScene.children.length - 1; i >= 0; i--) {
+			 	this.objectScene.remove(this.objectScene.children[i]);
+			}
+			this.objectScene = null;
+			
+
+			super.clear();
 		}
 	}
 }
