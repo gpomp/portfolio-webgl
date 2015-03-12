@@ -36,7 +36,7 @@
 	uniform float alpha;
 
 	void main() {
-		float fog = 1.0 - min(1.0, max(0.0, (camPosition.z - stagePos.z) / 100.0)); 
+		float fog = 1.0 - min(1.0, max(0.0, (camPosition.z - stagePos.z) / 50.0)); 
 		vec3 light = vec3(0.5, 0.2, 1.0);
 		vec3 normal  = normalize(cross(dFdx(stagePos.xyz), dFdy(stagePos.xyz)));
 

@@ -554,7 +554,7 @@ module webglExp {
 
 			webglExp.Particle.addedSpeed = 0.0;
 
-			for(var i:number = 0; i < 20000; i++) {
+			for(var i:number = 0; i < 10000; i++) {
 				var p:webglExp.Particle = new webglExp.Particle(this.spots);
 				this.attributes.start.value.push(p.start);
 				this.attributes.dest.value.push(p.dest);
@@ -611,7 +611,7 @@ module webglExp {
 
 		buildThetra() {
 
-			var geom:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(1, 2);
+			var geom:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(1, 3);
 			
 			this.tetraAttr = {
 		  		displacement: {
@@ -707,8 +707,10 @@ module webglExp {
 			super.getCamera().position.set(0, 0, 500);
 
 			for (var i = 0; i < this.introThetra.length; ++i) {
-				TweenLite.to(this.introThetra[i], 1 + Math.random() * 2, { t : 1.0, ease:Expo.easeInOut, delay: (i * 0.1 + Math.random() * .05) + 7 });
-				maxTime = Math.max(maxTime, ((i * 0.1 + Math.random() * .05) + 7) + (1 + Math.random() * 2));
+				var t:number = 1 + Math.random() * 2;
+				var d:number = (i * 0.01 + Math.random() * .01) + 5;
+				TweenLite.to(this.introThetra[i], t, { t : 1.0, ease:Expo.easeInOut, delay: d });
+				maxTime = Math.max(maxTime, d + t);
 			}
 
 			this.dummyAnim = 0;

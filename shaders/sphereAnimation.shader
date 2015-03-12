@@ -53,9 +53,7 @@
 	    stagePos = modelMatrix * vec4(pos,1.0);
 
 	    distNow = distFrac;
-
-
-		gl_PointSize = pointSize;
+	    
 	  	gl_Position = projectionMatrix *
 	                modelViewMatrix *
 	                vec4(pos,1.0);
