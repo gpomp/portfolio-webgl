@@ -622,6 +622,7 @@ module webglExp {
 
 			this.projectHTML = <HTMLElement>document.getElementById("projects").querySelectorAll('.project').item(id);
 
+			
 			this.gallery = null;
 		}
 
