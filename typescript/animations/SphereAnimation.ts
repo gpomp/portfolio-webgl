@@ -459,7 +459,7 @@ module webglExp {
   				},
   				alpha: {
   					type: 'f',
-  					value: 0.17
+  					value: 0.08
   				}
 			}
 

@@ -810,7 +810,7 @@ module webglExp {
 
 		  	this.createPostEffects();
 
-			TweenLite.to(this.uniforms.alpha, 2, { value: 1.0, ease: Sine.easeOut });
+			TweenLite.to(this.uniforms.alpha, 3, { value: 0.3, delay:1.5, ease: Sine.easeOut });
 
 			this.isStarted = false;
 
@@ -875,6 +875,10 @@ module webglExp {
 				THREE.BloomPass.blurX = new THREE.Vector2( value / (Scene3D.WIDTH * 2), 0.0 );
 				THREE.BloomPass.blurY = new THREE.Vector2( 0.0, value / (Scene3D.HEIGHT * 2) );
 			}.bind(this));
+
+			var alphaGUI = folder.add(this.uniforms.alpha, "value", 0.00, 1.00);
+			
+
 			var objectRender = new THREE.RenderPass(this.objectScene, super.getCamera());
 			this.composerObjects.addPass(objectRender);
 

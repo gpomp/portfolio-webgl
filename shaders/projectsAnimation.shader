@@ -180,8 +180,8 @@
 	  	gl_FragColor = vec4(vec3((	finalPos.x + square.w) / l * ratio + t1 * ratio ,
 	  								ratio + finalPos.y / 50.0 * ratio, 
 	  								(finalPos.z + square.w) / l * ratio + ratio * (1.0 - t1)) * dProd * fog, 
-	  								0.3);
+	  								alpha);
 	}
 </fragment>
-
+\
 </shader>
