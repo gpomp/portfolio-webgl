@@ -20,7 +20,6 @@ module webglExp {
 				var f:HTMLElement = <HTMLElement>n.item(i);
 				f.parentNode.removeChild(f);
 			}
-			this._gui.onResize();
 
 
 			for (var folder in this._gui.__folders){

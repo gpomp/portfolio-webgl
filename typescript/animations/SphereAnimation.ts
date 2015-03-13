@@ -318,6 +318,111 @@ module webglExp {
 		}
 	}
 
+	export class SphereBackground {
+		public mesh:THREE.Object3D;
+		public uniforms;
+		public scrollSpeed:THREE.Vector2;
+
+
+		private nbPoints:number;
+		private mousePos:THREE.Vector2;
+		private actMousePos:THREE.Vector2;
+
+		private plane:THREE.Mesh;
+		private scroll:number;
+		private camera:THREE.PerspectiveCamera;
+
+		constructor(camera:THREE.PerspectiveCamera) {
+			this.camera = camera;
+
+			var objSize:THREE.Vector2 = this.getWidthHeight();
+
+			this.uniforms = {
+		    	time: {
+    				type: 'f',
+    				value: 0
+  				},
+
+  				
+		    	width: {
+    				type: 'f',
+    				value: objSize.x
+  				},
+
+		    	height: {
+    				type: 'f',
+    				value: objSize.y
+  				},
+
+		    	alpha: {
+    				type: 'f',
+    				value: 0
+  				},
+
+  				mousePos: {
+  					type: 'v2',
+  					value:new THREE.Vector2()
+  				},
+
+  				scroll: {
+  					type: 'v2',
+  					value:new THREE.Vector2()
+  				}
+  				
+		    };
+
+		   
+		    this.mesh = new THREE.Object3D();
+
+		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x + 300, objSize.y + 300, 40, 40);
+		     var bgShader = GLAnimation.SHADERLIST.bgsphere;
+		    var bgMat:THREE.ShaderMaterial = new THREE.ShaderMaterial({
+			    vertexShader:   bgShader.vertex,
+			    fragmentShader: bgShader.fragment,
+			    uniforms: this.uniforms,
+			    wireframe:true
+		  	});
+
+		  	this.plane = new THREE.Mesh(planeGeom, bgMat);
+		  	this.mesh.add(this.plane);
+
+		    this.mousePos = new THREE.Vector2();
+		    this.actMousePos = new THREE.Vector2();
+		    this.scrollSpeed = new THREE.Vector2(0.5, 0.6);
+		    document.addEventListener("mousemove", this.mouseMove);
+		}
+
+		getWidthHeight():THREE.Vector2 {
+			var vFOV = this.camera.fov * Math.PI / 180;        // convert vertical fov to radians
+			var height = 2 * Math.tan( vFOV / 2 ) * Math.abs(this.camera.position.z); // visible height
+
+			var aspect = Scene3D.WIDTH /  Scene3D.HEIGHT;
+			var width = height * aspect;
+			return new THREE.Vector2(width, height);
+		}
+
+		mouseMove = (event:MouseEvent) => {
+			this.mousePos.x = (event.clientX - Scene3D.WIDTH * .5) / Scene3D.WIDTH;
+			this.mousePos.y = -(event.clientY - Scene3D.HEIGHT * .5) / Scene3D.HEIGHT;
+		}
+
+		resize(w:number, h:number) {
+			var objSize:THREE.Vector2 = this.getWidthHeight();
+			this.uniforms.width = objSize.x;
+			this.uniforms.height = objSize.y;
+		}
+
+		render() {
+			this.actMousePos.x += (this.mousePos.x - this.actMousePos.x) * 0.1;
+			this.actMousePos.y += (this.mousePos.y - this.actMousePos.y) * 0.1;
+			this.uniforms.mousePos.value = this.actMousePos;
+			this.uniforms.scroll.value.x += this.scrollSpeed.x;
+			this.uniforms.scroll.value.y += this.scrollSpeed.y;
+			this.scrollSpeed.x += (0.5 - this.scrollSpeed.x) * 0.1;
+			this.scrollSpeed.y += (0.6 - this.scrollSpeed.y) * 0.1;
+		}
+	} 
+
 	export class SphereAnimation extends webglExp.GLAnimation {
 
 		public static ON_OVER:string = "hs_over";
@@ -344,9 +449,7 @@ module webglExp {
 		private buttonCtn:THREE.Object3D;
 
 		private bgScene:THREE.Scene;
-		private bgCam:THREE.OrthographicCamera;
-		private bgMesh:THREE.Mesh;
-		private bgUniforms;
+		private bgMesh:THREE.Object3D;
 
 		private sphere:THREE.Mesh;
 
@@ -391,6 +494,8 @@ module webglExp {
 
 		private dummyAnim:number;
 
+		private background:webglExp.SphereBackground;
+
 		constructor(scene:THREE.Scene, camera:THREE.PerspectiveCamera, renderer:THREE.WebGLRenderer) {
 
 			super(scene, camera, renderer);
@@ -408,6 +513,7 @@ module webglExp {
 
 		    this.bloomScene = new THREE.Scene();
 		    this.buttonScene = new THREE.Scene();
+		    this.bgScene = new THREE.Scene();
 
 
 			var gui = super.getGui().get_gui();
@@ -420,34 +526,13 @@ module webglExp {
 		    this.composer = new webglExp.EffectComposer(this._renderer, scene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
 		    this.composerBloom = new webglExp.EffectComposer(this._renderer, this.bloomScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
 		    this.composerButton = new webglExp.EffectComposer(this._renderer, this.bloomScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
+
+			super.getCamera().position.z = -500;
+
+			this.background = new webglExp.SphereBackground(camera);
+			this.bgMesh = this.background.mesh;
+		    this.composerBackground = new webglExp.EffectComposer(this._renderer, this.bgScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
 		    
-		    this.composerBackground = new webglExp.EffectComposer(this._renderer, this.bloomScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
-		    this.bgScene = new THREE.Scene();
-		    this.bgCam = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
-		    this.bgUniforms = {
-		    	time: {
-    				type: 'f',
-    				value: 0
-  				},
-
-		    	width: {
-    				type: 'f',
-    				value: Scene3D.WIDTH
-  				},
-
-		    	height: {
-    				type: 'f',
-    				value: Scene3D.HEIGHT
-  				}
-		    };
-
-		    var bgShader = GLAnimation.SHADERLIST.bgsphere;
-		    var bgMat:THREE.ShaderMaterial = new THREE.ShaderMaterial({
-			    vertexShader:   bgShader.vertex,
-			    fragmentShader: bgShader.fragment,
-			    uniforms: this.bgUniforms
-		  	});
-		    this.bgMesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ),  bgMat);
 			this.bgScene.add( this.bgMesh );
 
 
@@ -457,6 +542,7 @@ module webglExp {
         								stencilBuffer: true };
 
 			var rt:THREE.WebGLRenderTarget = new THREE.WebGLRenderTarget(Scene3D.WIDTH, Scene3D.HEIGHT, renderTargetParams);
+
 
 		    this.blendComposer = new THREE.EffectComposer(this._renderer);
 		    
@@ -468,7 +554,6 @@ module webglExp {
 		    scene.add(this.sceneCtn);
 		    this.buttonScene.add(this.buttonCtn);
 
-			super.getCamera().position.z = -500;
 			var superGeom:THREE.Geometry = new THREE.Geometry();
 			var shaders = GLAnimation.SHADERLIST.sphereAnimation;
 
@@ -741,6 +826,8 @@ module webglExp {
 			var maxTime:number = 0;
 			TweenLite.to(this.sphereCtn.rotation, 10, { y : 0, ease: Sine.easeInOut});
 			maxTime = Math.max(maxTime, 10);
+
+			TweenLite.to(this.background.uniforms.alpha, 3, { value: 1, ease:Sine.easeOut });
 			
 			TweenLite.to(this.uniforms.radius, 5, { value : 150, ease: Strong.easeInOut, delay: 2 });
 			maxTime = Math.max(maxTime, 7);
@@ -775,8 +862,8 @@ module webglExp {
 		}
 
 		startDone() {
-			this.inTransition = false;
 			super.enableCameraAround(this.sphereCtn, document.getElementById("sphere-buttons"));
+			this.inTransition = false;
 			var intro:HTMLElement = (<HTMLElement>document.getElementById("intro"));
 			var containerIntro:HTMLElement = (<HTMLElement>document.querySelectorAll("#intro .container").item(0));
 			// intro.classList.add("show");
@@ -817,6 +904,8 @@ module webglExp {
 				TweenLite.to(this.spots[j].uniforms.alpha, 2, { value: 0.0, delay: 1 + i * 0.5 });
 			}
 
+
+			TweenLite.to(this.background.uniforms.alpha, 3, { value: 0, ease:Sine.easeIn });
 			TweenLite.to(this.sphereCtn.rotation, 3, { y : 0, x: 0, z: 0, ease: Sine.easeInOut });
 			TweenLite.to(this.uniforms.radius, 5, { value : 0, ease: Strong.easeInOut, delay: 2, onComplete: this.exit });
 			for (var i = 0; i < this.introThetra.length; ++i) {
@@ -879,6 +968,8 @@ module webglExp {
 		}
 
 		resize() {
+			this.background.resize(Scene3D.WIDTH, Scene3D.HEIGHT);
+
 			this.composer.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
 			this.composerButton.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
 			this.composerBackground.getComposer().setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
@@ -923,6 +1014,8 @@ module webglExp {
 			this.attributes.dest.needsUpdate = true;
 			this.attributes.distance.needsUpdate = true;
 
+			this.background.render();
+
 			if(this.inStartTransition || this.inOutTransition) {
 				for (var i = 0; i < this.tetraAttr.appear.value.length; ++i) {
 					this.tetraAttr.appear.value[i] = this.introThetra[i].t;
@@ -946,8 +1039,12 @@ module webglExp {
 			this.frame += 0.1;
 			this.tetraUniforms.amplitude.value = this.frame;
 			this.uniforms.amplitude.value = this.frame * 0.05;
-			this.bgUniforms.time.value = this.frame;
-
+			this.background.uniforms.time.value = this.frame;
+			if(!this.inTransition) {
+				this.background.scrollSpeed.y += (super.getControl().oldOr.x - super.getControl().orientation.x) * 20;
+				this.background.scrollSpeed.x += (super.getControl().oldOr.y - super.getControl().orientation.y) * 20;
+			}
+			
 			this.sceneCtn.quaternion.copy(this.sphereCtn.quaternion);
 			this.buttonCtn.quaternion.copy(this.sphereCtn.quaternion);
 
@@ -1024,7 +1121,7 @@ module webglExp {
 		}
 
 		createBGPass() {
-			var renderPass = new THREE.RenderPass(this.bgScene, this.bgCam);
+			var renderPass = new THREE.RenderPass(this.bgScene, this.getCamera());
 			this.composerBackground.addPass(renderPass);
 		}
 

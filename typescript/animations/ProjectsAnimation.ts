@@ -665,8 +665,8 @@ module webglExp {
 			var v:THREE.Vector3 = new THREE.Vector3();
 			v.z = this.position.z;
 
-			v.x = signX * (this.size.width * 2);
-			v.y = signY * (this.size.height * 2);
+			v.x = signX * (this.size.width * 3);
+			v.y = signY * (this.size.height * 3);
 
 			return v;
 		}
@@ -1030,7 +1030,7 @@ module webglExp {
 			var z:number = super.getCamera().position.z - 1000;
 			//var camCurves:THREE.Vector3[] = [];
 			//camCurves.push(new THREE.Vector3(0, 0, 1000));
-			for (var i = 0; i < this.buttonList.length; ++i) {
+			for (var i = 0; i < this.buttonList.length - 1; ++i) {
 				var project:webglExp.Project = new webglExp.Project(i, super.getCamera());
 		  		this.objectScene.add(project);
 		  		project.position.set(-100 + Math.random() * 200, -100 + Math.random() * 200, z);
@@ -1163,6 +1163,7 @@ module webglExp {
 			camCurves.push(v);
 
 			this.cameraCurve = new THREE.SplineCurve3(camCurves);
+			var geom:THREE.Geometry = new THREE.Geometry();
 
 		}
 

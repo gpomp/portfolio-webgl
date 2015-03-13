@@ -134,14 +134,14 @@ module THREE {
 
 		public enabled;
 
-	  	private orientation;
+	  	public orientation;
 
 	  	private PI_2:number;
 	  	private mouseQuat;
 	  	private object; 
 	  	private xVector;
 	  	private yVector;
-	  	private oldOr:THREE.Vector2;
+	  	public oldOr:THREE.Vector2;
 
 		constructor(object:THREE.Object3D) {
 			this.enabled = false;

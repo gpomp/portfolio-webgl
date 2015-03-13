@@ -96,6 +96,10 @@ module webglExp {
 			this.id = s;
 		}
 
+		public getControl():THREE.MouseControls {
+			return this.controls;
+		}
+
 		public disableCameraAround(interactiveEl:HTMLElement) {
 			this.isCameraAround = false;
 
