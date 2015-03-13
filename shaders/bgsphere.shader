@@ -126,15 +126,37 @@
 
 	varying vec3 pos;
 	varying vec4 stagePos;
+	varying vec3 vNormal;
+
+	vec3 zAt(vec2 p) {
+		vec2 noise = vec2((p.x + scroll.x) / 200.0, (p.y + scroll.y)  / 200.0);
+		float z = cnoise(noise) * -500.0;
+
+		return vec3(p.x, p.y, z);
+		
+	}
 
 	void main() {
 		pos = position;
-		float diffX = abs(mousePos.x * width - pos.x);
-		float diffY = abs(mousePos.y * height - pos.y);
-		float squareDist = diffX * diffX + diffY * diffY;
+		// float diffX = abs(mousePos.x * width - pos.x);
+		// float diffY = abs(mousePos.y * height - pos.y);
+		// float squareDist = diffX * diffX + diffY * diffY;
 		vec2 noise = vec2((pos.x + scroll.x) / 200.0, (pos.y + scroll.y)  / 200.0);
-		pos.z = cnoise(noise) * -100.0;
-		pos.z += max(0.0, min(1.0, squareDist / 10000.0)) * -100.0;
+		pos.z = cnoise(noise) * -500.0;
+		// pos.z += max(0.0, min(1.0, squareDist / 10000.0)) * -100.0;
+
+		float small = 0.01;
+
+		vec2 n1 = vec2(pos.x + small, pos.y);
+		vec3 neigh1 = zAt(n1);
+
+		vec2 n2 = vec2(pos.x, pos.y + small);
+		vec3 neigh2 = zAt(n2);
+
+		vec3 tangeant = neigh1 - pos;
+		vec3 bitangeant = neigh2 - pos;
+		vNormal = normalMatrix * normalize(cross(tangeant, bitangeant));
+
 		stagePos = modelMatrix * vec4(pos,1.0);
 	  	gl_Position = projectionMatrix *
 	                modelViewMatrix *
@@ -143,7 +165,7 @@
 </vertex>
 
 <fragment>
-	#extension GL_OES_standard_derivatives : enable
+	//#extension GL_OES_standard_derivatives : enable
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -152,21 +174,28 @@
 	uniform float width;
 	uniform float height;
 	uniform vec2 mousePos;
+	uniform vec2 scroll;
 	uniform float alpha;
 
 	varying vec3 pos;
 	varying vec4 stagePos;
+	varying vec3 vNormal;
 
 	void main() {
 		vec2 p  = vec2((gl_FragCoord.x) / width, (gl_FragCoord.y) / height);
-		vec3 light = vec3(0.5, 0.2, 1.0);
-		vec3 normal  = normalize(cross(dFdx(stagePos.xyz), dFdy(stagePos.xyz)));
+		float y = floor((p.y + scroll.y / height) * 10.0) / 10.0;
+		float x = floor((p.x + scroll.x / width) * 10.0) / 10.0;
+
+		float line = 0.9 + floor(mod(y * 10.0, 2.0)) * 0.1;
+		float col = 0.9 + floor(mod(x * 10.0, 2.0)) * 0.1;
+
+		vec3 light = vec3(0.5, 0.4, 1.0);
 		light = normalize(light);
 		 float dProd = max(0.0,
-	                    dot(normal, light));
-		vec3 finalCol = vec3(0.3 * (1.0 - pos.z / -200.0));
+	                    dot(vNormal, light));
+		float finalCol = (1.0 - pos.z / -500.0);
 
-	  	gl_FragColor = vec4(finalCol * alpha, 1.0);
+	  	gl_FragColor = vec4(vec3(0.2 * dProd * alpha * line * col * finalCol), 1.0);
 	}
 </fragment>
 

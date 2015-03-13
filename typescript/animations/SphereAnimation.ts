@@ -379,8 +379,7 @@ module webglExp {
 		    var bgMat:THREE.ShaderMaterial = new THREE.ShaderMaterial({
 			    vertexShader:   bgShader.vertex,
 			    fragmentShader: bgShader.fragment,
-			    uniforms: this.uniforms,
-			    wireframe:true
+			    uniforms: this.uniforms
 		  	});
 
 		  	this.plane = new THREE.Mesh(planeGeom, bgMat);
@@ -1042,7 +1041,7 @@ module webglExp {
 			this.background.uniforms.time.value = this.frame;
 			if(!this.inTransition) {
 				this.background.scrollSpeed.y += (super.getControl().oldOr.x - super.getControl().orientation.x) * 20;
-				this.background.scrollSpeed.x += (super.getControl().oldOr.y - super.getControl().orientation.y) * 20;
+				this.background.scrollSpeed.x += (super.getControl().oldOr.y - super.getControl().orientation.y) * 10;
 			}
 			
 			this.sceneCtn.quaternion.copy(this.sphereCtn.quaternion);
