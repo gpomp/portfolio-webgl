@@ -130,7 +130,7 @@
 
 	vec3 zAt(vec2 p) {
 		vec2 noise = vec2((p.x + scroll.x) / 200.0, (p.y + scroll.y)  / 200.0);
-		float z = cnoise(noise) * -500.0;
+		float z = cnoise(noise) * -100.0;
 
 		return vec3(p.x, p.y, z);
 		
@@ -142,10 +142,10 @@
 		// float diffY = abs(mousePos.y * height - pos.y);
 		// float squareDist = diffX * diffX + diffY * diffY;
 		vec2 noise = vec2((pos.x + scroll.x) / 200.0, (pos.y + scroll.y)  / 200.0);
-		pos.z = cnoise(noise) * -500.0;
+		pos.z = cnoise(noise) * -100.0;
 		// pos.z += max(0.0, min(1.0, squareDist / 10000.0)) * -100.0;
 
-		float small = 0.01;
+		float small = 200.0;
 
 		vec2 n1 = vec2(pos.x + small, pos.y);
 		vec3 neigh1 = zAt(n1);
@@ -183,8 +183,8 @@
 
 	void main() {
 		vec2 p  = vec2((gl_FragCoord.x) / width, (gl_FragCoord.y) / height);
-		float y = floor((p.y + scroll.y / height) * 10.0) / 10.0;
-		float x = floor((p.x + scroll.x / width) * 10.0) / 10.0;
+		float y = floor(((pos.y + scroll.y) / height) * 10.0) / 10.0;
+		float x = floor(((pos.x + scroll.x) / width) * 10.0) / 10.0;
 
 		float line = 0.9 + floor(mod(y * 10.0, 2.0)) * 0.1;
 		float col = 0.9 + floor(mod(x * 10.0, 2.0)) * 0.1;
@@ -193,7 +193,7 @@
 		light = normalize(light);
 		 float dProd = max(0.0,
 	                    dot(vNormal, light));
-		float finalCol = (1.0 - pos.z / -500.0);
+		float finalCol = (1.0 - pos.z / -100.0);
 
 	  	gl_FragColor = vec4(vec3(0.2 * dProd * alpha * line * col * finalCol), 1.0);
 	}
