@@ -4,19 +4,6 @@
 	precision highp float;
 	#endif
 
-	uniform float total;
-	uniform vec4 square;
-	uniform vec3 camPosition;
-	uniform float amplitude;
-
-	attribute float corridor;
-	attribute float time;
-	attribute float displacement;
-	attribute float gap;
-
-	varying vec3 finalPos;
-	varying float sharedTime;
-
 	//
 	// GLSL textureless classic 2D noise "cnoise",
 	// with an RSL-style periodic variant "pnoise".
@@ -131,58 +118,89 @@
 	  return 2.3 * n_xy;
 	}
 
-	uniform float timePassed;
+	uniform float time;
+	uniform float width;
+	uniform float height;
+	uniform vec2 mousePos;
+	uniform vec2 scroll;
+
+	varying vec3 pos;
 	varying vec4 stagePos;
+	varying vec3 vNormal;
+
+	vec3 zAt(vec2 p) {
+		vec2 noise = vec2((p.x + scroll.x) / 200.0, (p.y + scroll.y)  / 200.0);
+		float z = cnoise(noise) * -100.0;
+
+		return vec3(p.x, p.y, z);
+		
+	}
 
 	void main() {
+		pos = position;
+		// float diffX = abs(mousePos.x * width - pos.x);
+		// float diffY = abs(mousePos.y * height - pos.y);
+		// float squareDist = diffX * diffX + diffY * diffY;
+		vec2 noise = vec2((pos.x + scroll.x) / 200.0, (pos.y + scroll.y)  / 200.0);
+		pos.z = cnoise(noise) * -100.0;
+		// pos.z += max(0.0, min(1.0, squareDist / 10000.0)) * -100.0;
 
-	  
-	    vec2 noise = vec2(position.x / 200.0, (camPosition.z * 0.3 + position.y) / 200.0);
-	    vec3 pos = position;
-	    pos.z = cnoise(noise) * 50.0 + displacement * sin(amplitude + gap);
-	    stagePos = modelMatrix * vec4(pos,1.0);
-	    finalPos = pos;
-	    sharedTime = time;
+		float small = 200.0;
 
+		vec2 n1 = vec2(pos.x + small, pos.y);
+		vec3 neigh1 = zAt(n1);
+
+		vec2 n2 = vec2(pos.x, pos.y + small);
+		vec3 neigh2 = zAt(n2);
+
+		vec3 tangeant = neigh1 - pos;
+		vec3 bitangeant = neigh2 - pos;
+		vNormal = normalize(cross(tangeant, bitangeant));
+
+		stagePos = modelMatrix * vec4(pos,1.0);
 	  	gl_Position = projectionMatrix *
 	                modelViewMatrix *
-	                vec4(finalPos,1.0);
+	                vec4(pos,1.0);
 	}
 </vertex>
 
 <fragment>
-	#extension GL_OES_standard_derivatives : enable
 	#ifdef GL_ES
 	precision highp float;
 	#endif
 
-	float M_PI = 3.1415926535897932384626433832795;
-
-	uniform vec4 square;
-	uniform vec3 camPosition;
-	uniform float timePassed;
+	uniform float time;
+	uniform float width;
+	uniform float height;
+	uniform vec2 mousePos;
+	uniform vec2 scroll;
 	uniform float alpha;
-	varying vec4 stagePos;
+	uniform float ratio;
 
-	varying vec3 finalPos;
-	varying float sharedTime;
+	varying vec3 pos;
+	varying vec4 stagePos;
+	varying vec3 vNormal;
 
 	void main() {
-		vec3 light = vec3(0.5, 1.0, 1.0);
-		vec3 normal  = normalize(cross(dFdx(stagePos.xyz), dFdy(stagePos.xyz)));
-		light = normalize(light);
-		float dProd = max(0.0,
-	                    dot(normal, light));
+		float y = floor(((pos.y + scroll.y) / height) * 10.0) / 10.0;
+		float x = floor(((pos.x + scroll.x) / width) * 10.0) / 10.0;
 
-		float l = 1500.0;	
-		float fog = min(1.0, max(0.0, 1.0 - distance(vec2(0.0), finalPos.xy) / (l * 0.5)));
-		float t1 = (timePassed + 1.0) * 0.5;
-		float ratio = 0.3;
-	  	gl_FragColor = vec4(vec3((	finalPos.x + l * 0.5) / l * ratio + t1 * ratio,
-	  								(finalPos.y + l * 0.5) / l * ratio + ratio * (1.0 - t1), 
-	  								ratio + finalPos.z / 60.0 * ratio) * dProd * fog, 
-	  								alpha);
+		float line = 0.9 + floor(mod(y * 10.0, 2.0)) * 0.1;
+		float col = 0.9 + floor(mod(x * 10.0, 2.0)) * 0.1;
+
+		vec3 light = vec3(0.5, 0.4, 1.0);
+		 float dProd = max(0.0,
+	                    dot(vNormal, light));
+		float finalCol = (1.0 - pos.z / -100.0);
+
+		float t1 = (cos(time * 0.1) + 1.0) * 0.5;
+		float l = 700.0;	
+		vec3 colorchange = 	vec3((	pos.x + l * 0.5) / l + t1,
+	  								(pos.y + l * 0.5) / l +(1.0 - t1), 
+	  								1.0 - pos.z / -100.0);
+
+	  	gl_FragColor = vec4(0.1 * vec3(dProd * alpha * line * col * finalCol), 1.0);
 	}
 </fragment>
-\
+
 </shader>

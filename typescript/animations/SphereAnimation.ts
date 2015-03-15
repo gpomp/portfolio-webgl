@@ -322,6 +322,8 @@ module webglExp {
 		public mesh:THREE.Object3D;
 		public uniforms;
 		public scrollSpeed:THREE.Vector2;
+		public light:THREE.DirectionalLight;
+		public direction:THREE.Vector2;
 
 
 		private nbPoints:number;
@@ -331,6 +333,12 @@ module webglExp {
 		private plane:THREE.Mesh;
 		private scroll:number;
 		private camera:THREE.PerspectiveCamera;
+
+		private floatingGeomList:THREE.Geometry[];
+		private floatingObjects:THREE.Mesh[];
+		private floatingMaterial:THREE.MeshPhongMaterial;
+
+
 
 		constructor(camera:THREE.PerspectiveCamera) {
 			this.camera = camera;
@@ -342,7 +350,6 @@ module webglExp {
     				type: 'f',
     				value: 0
   				},
-
   				
 		    	width: {
     				type: 'f',
@@ -367,15 +374,37 @@ module webglExp {
   				scroll: {
   					type: 'v2',
   					value:new THREE.Vector2()
+  				},
+
+  				fogRatio: {
+  					type: 'f',
+    				value: 0.8
+  				},
+
+  				colRatio: {
+  					type: 'f',
+    				value: 0.0
+  				},
+
+  				blackRatio: {
+  					type: 'f',
+    				value: 0.1
   				}
   				
 		    };
 
+		    this.direction = new THREE.Vector2(1, -1);
+
+		    this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		    this.light.position.set(0.5, 0.4, 1.0);
+
+		    var colFolder = webglExp.SphereAnimation.guiFolder.addFolder("color ratio");
+		    colFolder.add(this.uniforms.colRatio, "value", 0.0, 1.0);
 		   
 		    this.mesh = new THREE.Object3D();
-
-		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x + 300, objSize.y + 300, 40, 40);
-		     var bgShader = GLAnimation.SHADERLIST.bgsphere;
+		    this.mesh.rotation.x = -Math.PI / 5;
+		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, 40, 40);
+		    var bgShader = GLAnimation.SHADERLIST.bgsphere;
 		    var bgMat:THREE.ShaderMaterial = new THREE.ShaderMaterial({
 			    vertexShader:   bgShader.vertex,
 			    fragmentShader: bgShader.fragment,
@@ -389,15 +418,75 @@ module webglExp {
 		    this.actMousePos = new THREE.Vector2();
 		    this.scrollSpeed = new THREE.Vector2(0.5, 0.6);
 		    document.addEventListener("mousemove", this.mouseMove);
+
+		    this.floatingMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
+
+		    this.floatingObjects = [];
+		    this.floatingGeomList = [
+		    	new THREE.TetrahedronGeometry(20, 1),
+		    	new THREE.OctahedronGeometry(20, 1),
+		    	new THREE.DodecahedronGeometry(20, 1),
+		    	new THREE.SphereGeometry(20, 32, 32)
+		    ]
+		    var countGeom:number = 0;
+		    for (var i = 0; i < 5; ++i) {
+		    	this.createObject(countGeom);
+
+		    	countGeom = (countGeom < this.floatingGeomList.length - 1) ? countGeom + 1 : 0;
+
+		    }
 		}
 
 		getWidthHeight():THREE.Vector2 {
-			var vFOV = this.camera.fov * Math.PI / 180;        // convert vertical fov to radians
-			var height = 2 * Math.tan( vFOV / 2 ) * Math.abs(this.camera.position.z); // visible height
+			var vFOV = this.camera.fov * Math.PI / 180;
+			var height = 2 * Math.tan( vFOV / 2 ) * 700;
 
 			var aspect = Scene3D.WIDTH /  Scene3D.HEIGHT;
 			var width = height * aspect;
-			return new THREE.Vector2(width, height);
+			return new THREE.Vector2(width + width * .5, width + width * .5);
+		}
+
+		getSquaredDistance(obj:THREE.Mesh):number {
+			return obj.position.x * obj.position.x + obj.position.y * obj.position.y;
+		}
+
+		createObject(n:number) {
+			var geom:THREE.Geometry = this.floatingGeomList[n];
+			var mesh = new THREE.Mesh(geom, this.floatingMaterial);
+			this.mesh.add(mesh);
+			mesh.position.z = 170;
+			this.floatingObjects.push(mesh);
+			this.placeObject(mesh);
+		}
+
+		placeObject(obj:THREE.Mesh) {
+			var w:number = this.uniforms.width.value * .5;
+			switch(this.direction.x) {
+				case -1 :
+					obj.position.x = -w * .5 - Math.random() * w * .25;
+				break;
+
+				case 1 :
+					obj.position.x = w * .5 + Math.random() * w * .25;
+				break;
+
+				default:
+					obj.position.x = w * .5 + Math.random() * w * .25;
+			}
+			switch(this.direction.y) {
+				case -1 :
+					obj.position.y = -w * .5 - Math.random() * w * .25;
+				break;
+
+				case 1 :
+					obj.position.y = w * .5 + Math.random() * w * .25;
+				break;
+
+				default:
+					obj.position.y = -w * .5 - Math.random() * w * .25;
+			}
+
+			console.log(obj.position.x, obj.position.y);
 		}
 
 		mouseMove = (event:MouseEvent) => {
@@ -419,6 +508,15 @@ module webglExp {
 			this.uniforms.scroll.value.y += this.scrollSpeed.y;
 			this.scrollSpeed.x += (0.5 - this.scrollSpeed.x) * 0.1;
 			this.scrollSpeed.y += (0.6 - this.scrollSpeed.y) * 0.1;
+			var w:number = this.uniforms.width.value * .5;
+
+			for (var i = 0; i < this.floatingObjects.length; ++i) {
+				this.floatingObjects[i].position.x -= this.scrollSpeed.x;
+				this.floatingObjects[i].position.y -= this.scrollSpeed.y;
+				if(this.getSquaredDistance(this.floatingObjects[i]) > w * w) {
+					this.placeObject(this.floatingObjects[i]);
+				}
+			}
 		}
 	} 
 
@@ -427,6 +525,8 @@ module webglExp {
 		public static ON_OVER:string = "hs_over";
 		public static ON_OUT:string = "hs_out";
 		public static ON_CLICK:string = "hs_click";
+
+		public static guiFolder;
 
 		public static overID:number;
 
@@ -517,6 +617,8 @@ module webglExp {
 
 			var gui = super.getGui().get_gui();
 
+			var folder = webglExp.SphereAnimation.guiFolder = gui.addFolder('Sphere Animation');
+
 
 		    // Gamma settings make things look 'nicer' for some reason
 		    this._renderer.gammaInput = true;
@@ -533,6 +635,7 @@ module webglExp {
 		    this.composerBackground = new webglExp.EffectComposer(this._renderer, this.bgScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
 		    
 			this.bgScene.add( this.bgMesh );
+			this.bgScene.add( this.background.light );
 
 
 		    var renderTargetParams = {	minFilter: THREE.LinearFilter,
@@ -599,8 +702,6 @@ module webglExp {
 			fog.onChange(function(value) {
 				this.uniforms.fogDistance.value = value;
 			}.bind(this));
-
-			var folder = gui.addFolder('Sphere Animation');
 			folder.add(this.uniforms.alpha, 'value', 0.00, 1.00);
 
 			var psfolder = folder.addFolder('Point Size');
@@ -854,7 +955,7 @@ module webglExp {
 		}
 
 		skipIntro() {
-			super.getCamera().position.set(0, 0, 500);
+			// super.getCamera().position.set(0, 0, 500);
 			super.getCamera().lookAt(new THREE.Vector3());
 
 			this.startDone();
@@ -900,21 +1001,29 @@ module webglExp {
 
 			for (var j:number = 0; j < this.spots.length; ++j) {
 				this.spots[j].exit();
-				TweenLite.to(this.spots[j].uniforms.alpha, 2, { value: 0.0, delay: 1 + i * 0.5 });
+				TweenLite.to(this.spots[j].uniforms.alpha, 2, { value: 0.0, delay: 1 + j * 0.5 });
 			}
 
-
-			TweenLite.to(this.background.uniforms.alpha, 3, { value: 0, ease:Sine.easeIn });
+			
 			TweenLite.to(this.sphereCtn.rotation, 3, { y : 0, x: 0, z: 0, ease: Sine.easeInOut });
-			TweenLite.to(this.uniforms.radius, 5, { value : 0, ease: Strong.easeInOut, delay: 2, onComplete: this.exit });
+			// TweenLite.to(this.uniforms.radius, 5, { value : 0, ease: Strong.easeInOut, delay: 2 });
 			for (var i = 0; i < this.introThetra.length; ++i) {
-				TweenLite.to(this.introThetra[i], 1 + Math.random() * 2, { t : 0.0, ease:Expo.easeInOut, delay: i * 0.1 + Math.random() * .3 });
+				TweenLite.to(this.introThetra[i], 1 + Math.random() * 2, { t : 0.0, ease:Expo.easeInOut });
 			}
+
+			TweenLite.to(this.bgMesh.rotation, 3, { x: -Math.PI / 2, delay: 4, ease:Sine.easeOut });
+			TweenLite.to(this.bgMesh.position, 3, { x: 0, y: -450, delay: 4, z: super.getCamera().position.z - 700, ease:Sine.easeOut });
+			TweenLite.to(this.lookAt, 3, { 	x : 0, y: super.getCamera().position.y - 70, 
+											z: super.getCamera().position.z - 100, 
+											ease: Sine.easeInOut, 
+											delay: 4, onComplete: this.exit });
 		}
 
 		exit = () => {
 			var event:CustomEvent = super.getLeaveEvent();
 			event.detail.href = this.toHref;
+			console.log(this.background.uniforms.scroll.value.x, this.background.uniforms.scroll.value.y)
+			event.detail.scroll = this.background.uniforms.scroll.value;
 			document.dispatchEvent(event);
 		}
 
@@ -930,7 +1039,7 @@ module webglExp {
 			document.removeEventListener(webglExp.SphereAnimation.ON_OUT, this.mouseOut, false);
 			document.removeEventListener(webglExp.SphereAnimation.ON_CLICK, this.mouseClick, false);
 
-			this.blendPass.uniforms["tBackground"].value = null;
+			/*this.blendPass.uniforms["tBackground"].value = null;
 			this.blendPass.uniforms["tDiffuse1"].value = null;
 			this.blendPass.uniforms["tDiffuse2"].value = null;
 			this.blendPass.uniforms["tDiffuse3"].value = null;
@@ -942,7 +1051,7 @@ module webglExp {
 			this.blendComposer.setSize(1, 1);
 
 
-			this.render();
+			this.render();*/
 
 			for (var i = this.buttonScene.children.length - 1; i >= 0; i--) {
 			 	this.buttonScene.remove(this.buttonScene.children[i]);
@@ -1040,8 +1149,13 @@ module webglExp {
 			this.uniforms.amplitude.value = this.frame * 0.05;
 			this.background.uniforms.time.value = this.frame;
 			if(!this.inTransition) {
+
+				var xDir:number = this.background.scrollSpeed.x;
+				var yDir:number = this.background.scrollSpeed.y;
 				this.background.scrollSpeed.y += (super.getControl().oldOr.x - super.getControl().orientation.x) * 20;
 				this.background.scrollSpeed.x += (super.getControl().oldOr.y - super.getControl().orientation.y) * 10;
+				this.background.direction.set(	Math.sign(this.background.scrollSpeed.x - xDir), 
+												Math.sign(this.background.scrollSpeed.y - yDir));
 			}
 			
 			this.sceneCtn.quaternion.copy(this.sphereCtn.quaternion);
@@ -1062,13 +1176,13 @@ module webglExp {
 					//this.lookAt = this.camCurve.getPointAt(Math.max(0, this.curvPerc - 0.05));
 				}*/
 
-				super.getCamera().lookAt(this.lookAt);
 
 				/*this.currlookAt.x += (this.lookAt.x - this.currlookAt.x) * 0.01;
 				this.currlookAt.y += (this.lookAt.y - this.currlookAt.y) * 0.01;
 				this.currlookAt.z += (this.lookAt.z - this.currlookAt.z) * 0.01;
 				super.getCamera().lookAt(this.currlookAt);*/
 			}
+				super.getCamera().lookAt(this.lookAt);
 
 
 			this.composerBackground.getComposer().render();

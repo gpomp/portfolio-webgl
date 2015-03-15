@@ -130,7 +130,7 @@
 
 	vec3 zAt(vec2 p) {
 		vec2 noise = vec2((p.x + scroll.x) / 200.0, (p.y + scroll.y)  / 200.0);
-		float z = cnoise(noise) * -100.0;
+		float z = cnoise(noise) * (-100.0 - 40.0 * ((sin(time * 0.1) + 1.0) * 0.5));
 
 		return vec3(p.x, p.y, z);
 		
@@ -142,7 +142,7 @@
 		// float diffY = abs(mousePos.y * height - pos.y);
 		// float squareDist = diffX * diffX + diffY * diffY;
 		vec2 noise = vec2((pos.x + scroll.x) / 200.0, (pos.y + scroll.y)  / 200.0);
-		pos.z = cnoise(noise) * -100.0;
+		pos.z = cnoise(noise) * (-100.0 - 40.0 * ((sin(time * 0.1) + 1.0) * 0.5));
 		// pos.z += max(0.0, min(1.0, squareDist / 10000.0)) * -100.0;
 
 		float small = 200.0;
@@ -165,7 +165,6 @@
 </vertex>
 
 <fragment>
-	//#extension GL_OES_standard_derivatives : enable
 	#ifdef GL_ES
 	precision highp float;
 	#endif
@@ -176,26 +175,35 @@
 	uniform vec2 mousePos;
 	uniform vec2 scroll;
 	uniform float alpha;
+	uniform float fogRatio;
+	uniform float colRatio;
+	uniform float blackRatio;
 
 	varying vec3 pos;
 	varying vec4 stagePos;
 	varying vec3 vNormal;
 
 	void main() {
-		vec2 p  = vec2((gl_FragCoord.x) / width, (gl_FragCoord.y) / height);
 		float y = floor(((pos.y + scroll.y) / height) * 10.0) / 10.0;
 		float x = floor(((pos.x + scroll.x) / width) * 10.0) / 10.0;
 
 		float line = 0.9 + floor(mod(y * 10.0, 2.0)) * 0.1;
 		float col = 0.9 + floor(mod(x * 10.0, 2.0)) * 0.1;
 
+		float fog = 1.0 - max(0.0, min(1.0, distance(vec3(0, 0, pos.z), pos) / (width * fogRatio)));
+
 		vec3 light = vec3(0.5, 0.4, 1.0);
-		light = normalize(light);
 		 float dProd = max(0.0,
 	                    dot(vNormal, light));
-		float finalCol = (1.0 - pos.z / -100.0);
+		float finalCol = (1.0 - pos.z / -140.0);
 
-	  	gl_FragColor = vec4(vec3(0.2 * dProd * alpha * line * col * finalCol), 1.0);
+		float t1 = (cos(time * 0.1) + 1.0) * 0.5;
+		float l = width;
+		vec3 colorchange = 	vec3((1.0 - colRatio)) + 	vec3((	pos.x + l * 0.5) / l + t1,
+							  								(pos.y + l * 0.5) / l +(1.0 - t1), 
+							  								1.0 - pos.z / -100.0) * colRatio;
+
+	  	gl_FragColor = vec4(blackRatio * vec3(dProd * alpha * line * col * finalCol) * colorchange * fog, 1.0);
 	}
 </fragment>
 
