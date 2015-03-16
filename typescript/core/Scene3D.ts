@@ -106,6 +106,7 @@ module webglExp {
 			document.getElementById("projects-buttons").classList.remove("show");
 			this.gui.clear();
 			page(event.detail.href);
+			
 		}
 
 

@@ -3,7 +3,7 @@
 {% block content %}
 
 	<header id="home-intro">{{post.content}}</header>
-	
+	<div class="preload-font" style="font-family: 'Lato';">.</div>
 	<div id="sphere-buttons">
 		{% for project in posts %}
 			<a href="{% do action('make_link_relative', project.link) %}" class="hiddenButton"></a>

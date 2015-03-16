@@ -7,6 +7,7 @@
 /// <reference path="../helper/ThreeAddOns.ts" />
 /// <reference path="../helper/ThreeToDom.ts" />
 /// <reference path="../helper/polyfill.ts" />
+/// <reference path="../helper/Title.ts" />
 declare var page;
 
 module webglExp {
@@ -243,6 +244,8 @@ module webglExp {
 		private scrollV:number;
 		private dummy:number;
 
+		private title:webglExp.Title;
+
 		constructor(id:number, camera:THREE.PerspectiveCamera) {
 		    super();
 		    this.projectID = id;
@@ -261,6 +264,8 @@ module webglExp {
 		    geometry.computeFaceNormals();
 		    geometry.computeVertexNormals();
 		   	this.size = { width: 50, height: 50 };
+			// console.log(this.title.getObject());
+
 
 		    var shaders = GLAnimation.SHADERLIST.dotImage;
 
@@ -305,8 +310,16 @@ module webglExp {
 
 			this.projectHTML = <HTMLElement>document.getElementById("projects").querySelectorAll('.project').item(id);
 
+
+		   
 			
 			this.gallery = null;
+		}
+
+		createTitle() {
+
+		   	this.title = new webglExp.Title();
+			this.add(this.title.getObject());
 		}
 
 		resize() {
@@ -370,6 +383,7 @@ module webglExp {
 
 		leaveFront() {
 			this.inAnimation = true;
+			this.title.hide();
 			var longest:number = 0;
 			for (var i = 0; i < this.fracTween.length; ++i) {
 				var t:number = 0.1 + Math.random() * 0.1;
@@ -393,6 +407,8 @@ module webglExp {
 
 		cameraInFront() {
 			this.inAnimation = true;
+			this.placeTitle();
+			this.title.show();
 
 			var longest:number = 0;
 			for (var i = 0; i < this.fracTween.length; ++i) {
@@ -406,6 +422,15 @@ module webglExp {
 
 		}
 
+		placeTitle() {
+			this.title.setText(this.projectHTML.querySelectorAll("h1").item(0).textContent.toUpperCase());
+			var diffObj = this.position.z - this.camera.position.z;
+			var vFov:number = this.camera.fov * (Math.PI / 180);
+		   	this.title.getObject().position.z =  -(Scene3D.HEIGHT / (2 * Math.tan(vFov / 2) ) + diffObj);
+			this.title.getObject().position.y = -100;
+			this.title.getObject().rotation.x = this.camera.rotation.x;
+		}
+
 		endAnimation = () => {
 			this.inAnimation = false;
 		}
@@ -414,13 +439,17 @@ module webglExp {
 			this.attributes.displacement.needsUpdate = true;
 			this.attributes.frac.needsUpdate = true;
 
+			// this.title.getObject().lookAt(this.camera.position);
+
 			for (var i = 0; i < this.fracTween.length; ++i) {
 				this.attributes.frac.value[i] = this.fracTween[i].f;
 			}
 		}
 
 		renderGallery() {
-			this.gallery.render();
+			/*this.title.getObject().lookAt(this.camera.position);
+			this.title.rotation.copy(this.camera.rotation);*/
+			this.title.render();
 			
 		}
 
@@ -558,6 +587,11 @@ module webglExp {
   				blackRatio: {
   					type: 'f',
     				value: 0.1
+  				},
+
+  				wnoiseRatio: {
+  					type: 'f',
+    				value: 0.4
   				}
   				
 		    };
@@ -617,6 +651,7 @@ module webglExp {
 			TweenLite.to(this.uniforms.colRatio, 3, { value:1, delay:1.5, ease: Sine.easeOut });
 			TweenLite.to(this.uniforms.fogRatio, 3, { value:0.4, ease: Sine.easeOut });
 			TweenLite.to(this.uniforms.blackRatio, 5, { value:1.0, ease: Sine.easeOut });
+			TweenLite.to(this.uniforms.wnoiseRatio, 5, { value:0.5, ease: Sine.easeOut });
 
 			this.isStarted = false;
 
@@ -715,7 +750,7 @@ module webglExp {
 				var project:webglExp.Project = new webglExp.Project(i, super.getCamera());
 		  		this.objectScene.add(project); 
 		  		project.position.set(super.getCamera().position.x + -100 + Math.random() * 200, super.getCamera().position.y + -100 + Math.random() * 200, z);
-		  		
+		  		project.createTitle();
 
 		  		this.projectsList.push(project);
 

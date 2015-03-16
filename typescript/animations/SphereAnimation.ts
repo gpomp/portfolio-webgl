@@ -388,7 +388,12 @@ module webglExp {
 
   				blackRatio: {
   					type: 'f',
-    				value: 0.1
+    				value: 0.2
+  				},
+
+  				wnoiseRatio: {
+  					type: 'f',
+    				value: 0.4
   				}
   				
 		    };
@@ -485,8 +490,6 @@ module webglExp {
 				default:
 					obj.position.y = -w * .5 - Math.random() * w * .25;
 			}
-
-			console.log(obj.position.x, obj.position.y);
 		}
 
 		mouseMove = (event:MouseEvent) => {

@@ -8,6 +8,7 @@
 /// <reference path="core/GUI.ts" />
 /// <reference path="core/Scene3D.ts" />
 /// <reference path="helper/polyfill.ts" />
+/// <reference path="helper/Title.ts" />
 /// <reference path="helper/ThreeToDom.ts" />
 /// <reference path="helper/ThreeAddOns.ts" />
 /// <reference path="helper/ShaderLoader.ts" /> 
