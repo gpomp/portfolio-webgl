@@ -88,7 +88,7 @@ module webglExp {
 				TweenLite.to(el, t, { rotationX: "0deg", delay: i * t, ease: Back.easeOut });
 				TweenLite.to(el, .1, { opacity: 1, delay: i * t, ease: Back.easeOut });
 			}
-
+			(<HTMLElement>this.ctnEl.querySelectorAll("div.shadow").item(0)).classList.add("show");
 			return this.bg.length * t;
 		}
 
@@ -96,6 +96,7 @@ module webglExp {
 
 			this.bg = this.ctnEl.querySelectorAll("div.bg > div");
 			var count:number = 0;
+			(<HTMLElement>this.ctnEl.querySelectorAll("div.shadow").item(0)).classList.remove("show");
 
 			for (var i = this.bg.length - 1; i > -1; --i) {
 				var el:HTMLElement = <HTMLElement>this.bg[i];

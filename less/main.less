@@ -414,6 +414,34 @@ canvas {
 						}
 					}
 				}
+
+				div.shadow {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					z-index: 2;
+					.opacity(0);
+					.box-shadow(inset 0px 375px 165px 0 rgba(0, 0, 0, 0.5));
+					.transition(opacity 0.3s ease-out);
+
+					&.show {
+						.transition(opacity 0.3s ease-out 0.5s);
+						.opacity(1);
+					}
+				}
+
+				&:nth-child(even) {
+					div.shadow {
+
+						.box-shadow( inset 0px -375px 165px 0 rgba(0, 0, 0, 0.5));
+					}
+				}
+
+				img.main {
+					display: none;
+				}
 			}
 
 			
@@ -434,6 +462,7 @@ canvas {
 			.transform(perspective(1000px) rotateX(-5deg));
 			color: black;
 			margin-top: 300px;
+			.box-shadow( inset 0px -100px 100px 0 rgba(0, 0, 0, 0.5));
 
 			h1 {
 				font-size: 500%;
