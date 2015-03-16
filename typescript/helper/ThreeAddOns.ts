@@ -93,9 +93,9 @@ module THREE {
 
 			"varying vec2 vUv;",
 
-			"vec3 textOnTop(vec4 c1, vec4 c2) {",
+			"vec4 textOnTop(vec4 c1, vec4 c2) {",
 				"float cPresent = ceil(c2.r);",
-				"return vec3(max((1.0 - cPresent) * c1.r, cPresent * c2.r), max((1.0 - cPresent) * c1.g, cPresent * c2.g), max((1.0 - cPresent) * c1.b, cPresent * c2.b));",
+				"return vec4(max((1.0 - cPresent) * c1.r, cPresent * c2.r), max((1.0 - cPresent) * c1.g, cPresent * c2.g), max((1.0 - cPresent) * c1.b, cPresent * c2.b), max((1.0 - cPresent) * c1.a, cPresent * c2.a));",
 			"}",
 
 			"void main() {",
@@ -104,12 +104,8 @@ module THREE {
 				"vec4 texel1 = texture2D( tDiffuse1, vUv );",
 				"vec4 texel2 = texture2D( tDiffuse2, vUv );",
 				"vec4 texel3 = texture2D( tDiffuse3, vUv );",
-				"vec4 cbg = vec4(textOnTop(texel0, texel1), 1.0);",
-				"vec4 c1 = cbg + texel2;",
-				"vec4 c = texel3;",
-				"float cPresent = ceil(c.r);",
-				"gl_FragColor = vec4(textOnTop(c1, c), 1.0);",
-
+				"vec4 cbg = textOnTop(texel0, texel1);",
+				"gl_FragColor = vec4(cbg.rgb + texel2.rgb + texel3.rgb, 1.0);",
 			"}"
 
 		].join("\n");

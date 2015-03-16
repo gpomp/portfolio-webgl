@@ -85,13 +85,39 @@
 	</div>
 
 	<div id="intro">
-		<div class="bg"></div>
+		<div class="bg">
+			<div class="bg1"></div>
+			<div class="bg2"></div>
+		</div>
 		<div class="table">
 			<div class="table-cell">
-				<div class="container">{{post.content}}</div>
+				<div class="container">
+					{{post.content}}
+					<div class="btn-ctn">
+						<a href="#" class="mainButton invert hide-intro">
+							<div class="container">
+						        <div class="bg1"></div>
+						        <div class="bg2"></div>
+						        <div class="container-text">
+						          <div class="text">Continue</div>
+						        </div>
+						    </div>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
+
+	<a href="#" class="mainButton showIntro">
+		<div class="container">
+	        <div class="bg1"></div>
+	        <div class="bg2"></div>
+	        <div class="container-text">
+	          <div class="text">About me</div>
+	        </div>
+	    </div>
+	</a>
 
 	<script data-src="{{theme.path}}/js/shaders.xml" data-type="all-shaders"></script>
 

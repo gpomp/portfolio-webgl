@@ -39,7 +39,7 @@ module webglExp {
 		private bg:NodeList;
 		private reveal:number;
 
-		private toLoad:HTMLElement;
+		private toLoad:HTMLImageElement;
 
 		constructor(url:string, ctn:Node, callback:Function, id:number, reveal:number = 0) {
 			this.reveal = reveal;
@@ -56,7 +56,6 @@ module webglExp {
 			this.imageWidth = this.toLoad.clientWidth;
 			this.imageHeight = this.toLoad.clientHeight;
 			var h = this.ctn.offsetWidth / this.toLoad.width * this.toLoad.height ;			
-
 			for (var i = 0; i < this.ctnEl.querySelectorAll("img").length; ++i) {
 				var img:HTMLElement = <HTMLElement>this.ctnEl.querySelectorAll("img").item(i);
 				img.setAttribute("src", img.getAttribute("data-src"));
@@ -261,7 +260,7 @@ module webglExp {
 
 		    this.createButton();
 
-		    var geometry:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(1, 2);
+		    var geometry:THREE.OctahedronGeometry = new THREE.OctahedronGeometry(1, 2);
 		    geometry.computeFaceNormals();
 		    geometry.computeVertexNormals();
 		   	this.size = { width: 50, height: 50 };
@@ -387,8 +386,8 @@ module webglExp {
 			this.title.hide();
 			var longest:number = 0;
 			for (var i = 0; i < this.fracTween.length; ++i) {
-				var t:number = 0.1 + Math.random() * 0.1;
-				var d:number = Math.random() * 0.03;
+				var t:number = .1 + Math.random() * 0.01;
+				var d:number = 1 + Math.random() * 0.003;
 				TweenLite.to(this.fracTween[i], t, { f : 0, delay: d });
 				longest = Math.max(longest, t + d);
 			}
@@ -413,8 +412,8 @@ module webglExp {
 
 			var longest:number = 0;
 			for (var i = 0; i < this.fracTween.length; ++i) {
-				var t:number = 0.1 + Math.random() * 0.1;
-				var d:number = i * 0.03;
+				var t:number = 0.1 + Math.random() * 0.07;
+				var d:number = i * 0.01;
 				TweenLite.to(this.fracTween[i], t, { f : 1, delay: d });
 				longest = Math.max(longest, t + d);
 			}

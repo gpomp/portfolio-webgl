@@ -9,6 +9,7 @@ class Site {
 	public static activeDevice:string;
  
 	private mainScene;
+	private aboutButton:HTMLElement;
 
 	constructor() {
 		var detect:any = Detector;
@@ -23,6 +24,14 @@ class Site {
 		}
 
 		(<HTMLElement>document.querySelectorAll("#intro .hide-intro").item(0)).addEventListener('click', this.hideIntro);
+
+		this.aboutButton = <HTMLElement>document.querySelectorAll(".showIntro.mainButton").item(0);
+		this.aboutButton.addEventListener("click", this.showAbout);
+	}
+
+	showAbout = (event) => {
+		event.preventDefault();
+		(<HTMLElement>document.querySelectorAll("#intro").item(0)).classList.add("show");
 	}
 
 	configNonWebgl() {

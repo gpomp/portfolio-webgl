@@ -74,10 +74,10 @@ module webglExp {
 			this.mesh = new THREE.Mesh(geom, mat);
 		}
 
-		public setText(str:string) {
+		public setText(str:string, size:number = 60) {
 
 			this.ctx.fillStyle = "white";
-			this.ctx.font = "60pt 'Lato'";
+			this.ctx.font = size + "pt 'Lato'";
 			var tSize:number = Math.max(this.ctx.measureText(str).width, 100);
 			this.ctx.fillText(str, (this.canvas.width - tSize) * 0.5, 80);
 			this.texture.needsUpdate = true;

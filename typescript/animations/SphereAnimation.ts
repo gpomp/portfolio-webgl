@@ -5,6 +5,7 @@
 /// <reference path="../core/Scene3D.ts" />
 /// <reference path="../helper/ThreeToDom.ts" />
 /// <reference path="../helper/ThreeAddOns.ts" />
+/// <reference path="../helper/Title.ts" />
 module webglExp {
 
 	export class HotSpot {
@@ -74,11 +75,12 @@ module webglExp {
 				    transparent:true
 			  	});
 			this.geomSize = 5;
-			var geom:THREE.SphereGeometry = new THREE.SphereGeometry(this.geomSize, 5, 5);
+			var geom:THREE.CylinderGeometry = new THREE.CylinderGeometry(0, this.geomSize, 10, 10);
+			geom.applyMatrix( new THREE.Matrix4().makeRotationFromEuler( new THREE.Euler( Math.PI / 2, Math.PI, 0, 'XYZ' ) ) );
 			this.overPlane = new THREE.Mesh(geom, mat);
 			var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + this.geomSize);
 			this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
-
+			// this.overPlane.up = new THREE.Vector3(0,0,-1);
 			this.domEl = <HTMLElement>document.querySelectorAll("#sphere-buttons .hiddenButton").item(this.id);
 			this.href = this.domEl.getAttribute("href");
 			
@@ -112,6 +114,8 @@ module webglExp {
 
 			this.overEl.classList.add("over");
 
+			TweenLite.to(this.overPlane.scale, .5, { x: 1.3, y: 1.3, z: 1.3 });
+
 		}
 
 		out = (event) => {
@@ -119,6 +123,7 @@ module webglExp {
 			document.dispatchEvent(this.outEvent);
 
 			this.overEl.classList.remove("over");
+			TweenLite.to(this.overPlane.scale, .5, { x: 1, y: 1, z: 1 });
 		}
 
 		randPoint(vRad:number):THREE.Vector2 {
@@ -177,10 +182,13 @@ module webglExp {
 		render() {
 			this.three2Dom.updatePosition();
 
+
 			if(this.isExiting) {
 				var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + this.geomSize);
 				this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
 			}
+
+			this.overPlane.lookAt(new THREE.Vector3(0));
 		}
 
 		clear() {
@@ -424,14 +432,14 @@ module webglExp {
 		    this.scrollSpeed = new THREE.Vector2(0.5, 0.6);
 		    document.addEventListener("mousemove", this.mouseMove);
 
-		    this.floatingMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
+		    this.floatingMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
 
 		    this.floatingObjects = [];
 		    this.floatingGeomList = [
-		    	new THREE.TetrahedronGeometry(20, 1),
-		    	new THREE.OctahedronGeometry(20, 1),
-		    	new THREE.DodecahedronGeometry(20, 1),
-		    	new THREE.SphereGeometry(20, 32, 32)
+		    	new THREE.TetrahedronGeometry(5, 2),
+		    	new THREE.OctahedronGeometry(5, 2),
+		    	new THREE.DodecahedronGeometry(5, 2),
+		    	new THREE.SphereGeometry(5, 32, 32)
 		    ]
 		    var countGeom:number = 0;
 		    for (var i = 0; i < 5; ++i) {
@@ -462,6 +470,28 @@ module webglExp {
 			mesh.position.z = 170;
 			this.floatingObjects.push(mesh);
 			this.placeObject(mesh);
+			this.launchObject(mesh.position, mesh.rotation);
+
+		}
+
+		launchObject = (pos, rot) => {
+			var d:number = 1 + Math.random() * 7;
+			var t:number = 15 + Math.random() * 15;
+			var size = this.getWidthHeight();
+			var wDir:number = (Math.random() <= .5) ? -1 : 1;
+			var hDir:number = (Math.random() <= .5) ? -1 : 1;
+			pos.x = size.x * 0.5 * wDir;
+			pos.y = size.y * 0.5 * hDir;
+			var bPoints = [	
+							{x : 0, y : hDir * size.y * 0.5 * (0.2 + Math.random() * 0.10)},
+							{x : wDir * size.x * 0.5 * (0.2 + Math.random() * 0.10), y : 0},
+							{x: -1 * wDir * size.x * 0.5, y: -1 * hDir * size.y * 0.5}
+						];
+
+			TweenLite.to(rot, t, { z: Math.random() * Math.PI * 50 });
+			TweenLite.to(pos, t, { 	type:"soft", bezier: {values: bPoints, autoRotate:true}, 
+									onCompleteParams:[pos, rot], 
+									onComplete: this.launchObject, ease:Sine.easeInOut  })
 		}
 
 		placeObject(obj:THREE.Mesh) {
@@ -513,15 +543,42 @@ module webglExp {
 			this.scrollSpeed.y += (0.6 - this.scrollSpeed.y) * 0.1;
 			var w:number = this.uniforms.width.value * .5;
 
-			for (var i = 0; i < this.floatingObjects.length; ++i) {
+			/*for (var i = 0; i < this.floatingObjects.length; ++i) {
 				this.floatingObjects[i].position.x -= this.scrollSpeed.x;
 				this.floatingObjects[i].position.y -= this.scrollSpeed.y;
 				if(this.getSquaredDistance(this.floatingObjects[i]) > w * w) {
 					this.placeObject(this.floatingObjects[i]);
 				}
-			}
+			}*/
 		}
 	} 
+
+	export class Intro {
+
+		public ctn:THREE.Object3D;
+
+		private bgIntro:THREE.Mesh;
+		private camera:THREE.PerspectiveCamera;
+
+		private htmlCtn:HTMLElement;
+
+		constructor(htmlCtn:HTMLElement, camera:THREE.PerspectiveCamera) {
+			this.htmlCtn = htmlCtn;
+			this.camera = camera;
+			this.ctn = new THREE.Object3D();
+
+			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(Scene3D.WIDTH * 2, Scene3D.HEIGHT * 2);
+			var mat:THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({color: 0xFFFFFF, transparent: true, opacity:0.5})
+			this.bgIntro = new THREE.Mesh(geom, mat);
+			var vFov:number = this.camera.fov * (Math.PI / 180);
+		   	this.bgIntro.position.z =  -(Scene3D.HEIGHT / (2 * Math.tan(vFov / 2) ));
+		   	// this.ctn.add(this.bgIntro);
+		}
+
+		show() {
+
+		}
+ 	}
 
 	export class SphereAnimation extends webglExp.GLAnimation {
 
@@ -597,6 +654,7 @@ module webglExp {
 		private dummyAnim:number;
 
 		private background:webglExp.SphereBackground;
+		private intro:webglExp.Intro;
 
 		constructor(scene:THREE.Scene, camera:THREE.PerspectiveCamera, renderer:THREE.WebGLRenderer) {
 
@@ -835,6 +893,14 @@ module webglExp {
 			this.getCamera().lookAt(this.superMesh.position);
 
 			
+			this.frame = 0;
+			this.bloomStrength = 12;
+
+			this.inTransition = true;
+			this.lookAt = new THREE.Vector3();
+
+			this.inStartTransition = true;
+			this.startCounter = 0;
 			this.start();
 		}
 
@@ -900,9 +966,6 @@ module webglExp {
 		}
 
 		start() {
-			this.frame = 0;
-			// this.uniforms.radius.value = 150;
-			this.bloomStrength = 12;
 
 			
 
@@ -914,12 +977,6 @@ module webglExp {
 
 			/*this.skipIntro();
 			return;*/
-
-			this.inTransition = true;
-			this.lookAt = new THREE.Vector3();
-
-			this.inStartTransition = true;
-			this.startCounter = 0;
 			
 			super.getCamera().position.z = 0;
 			super.getCamera().position.x = this.uniforms.radius.value + 50;
@@ -969,7 +1026,7 @@ module webglExp {
 			this.inTransition = false;
 			var intro:HTMLElement = (<HTMLElement>document.getElementById("intro"));
 			var containerIntro:HTMLElement = (<HTMLElement>document.querySelectorAll("#intro .container").item(0));
-			// intro.classList.add("show");
+			(<HTMLElement>document.querySelectorAll("#intro").item(0)).classList.add("show");
 		}
 
 		getPointOnSphere(lat:number, lng:number):THREE.Vector3 {
@@ -1096,6 +1153,7 @@ module webglExp {
 		}
 
 		render() {
+
 			for(var j:number = 0; j < this.spots.length; j++) {
 				this.spots[j].render();
 			}
@@ -1247,7 +1305,8 @@ module webglExp {
 		}
 
 		createButtonPasses() {
-			var renderPass = new THREE.RenderPass(this.buttonScene, this.getCamera());
+			var renderPass = new THREE.RenderPass(this.buttonScene, this.getCamera(), null, new THREE.Color(0, 0, 0), 0);
+			renderPass.clear = false;
 			this.composerButton.addPass(renderPass);
 		}
 	}

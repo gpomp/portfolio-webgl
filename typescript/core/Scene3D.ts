@@ -100,7 +100,6 @@ module webglExp {
 		leaveAnimation = (event:CustomEvent) => {
 			this.currentAnim.clear();
 			this.currentAnim = null;
-			this.renderer.clear();
 			this.scroll = event.detail.scroll;
 			document.getElementById("projects").classList.remove("show");
 			document.getElementById("projects-buttons").classList.remove("show");
