@@ -89,8 +89,6 @@ module webglExp {
 				}
 
 				this.currentAnim.render();
-			} else {
-				this.renderer.render(this.scene, this.camera);
 			}
 			
 			this.stats.end();

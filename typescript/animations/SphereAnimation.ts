@@ -346,11 +346,14 @@ module webglExp {
 		private floatingObjects:THREE.Mesh[];
 		private floatingMaterial:THREE.MeshPhongMaterial;
 
+		private bgMat:THREE.ShaderMaterial;
+		private redoTimeout:number;
+
 
 
 		constructor(camera:THREE.PerspectiveCamera) {
 			this.camera = camera;
-
+			this.redoTimeout = -1;
 			var objSize:THREE.Vector2 = this.getWidthHeight();
 
 			this.uniforms = {
@@ -417,14 +420,15 @@ module webglExp {
 		    this.mesh = new THREE.Object3D();
 		    this.mesh.rotation.x = -Math.PI / 5;
 		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, 40, 40);
+
 		    var bgShader = GLAnimation.SHADERLIST.bgsphere;
-		    var bgMat:THREE.ShaderMaterial = new THREE.ShaderMaterial({
+		    this.bgMat = new THREE.ShaderMaterial({
 			    vertexShader:   bgShader.vertex,
 			    fragmentShader: bgShader.fragment,
 			    uniforms: this.uniforms
 		  	});
 
-		  	this.plane = new THREE.Mesh(planeGeom, bgMat);
+		  	this.plane = new THREE.Mesh(planeGeom, this.bgMat);
 		  	this.mesh.add(this.plane);
 
 		    this.mousePos = new THREE.Vector2();
@@ -469,7 +473,6 @@ module webglExp {
 			this.mesh.add(mesh);
 			mesh.position.z = 170;
 			this.floatingObjects.push(mesh);
-			this.placeObject(mesh);
 			this.launchObject(mesh.position, mesh.rotation);
 
 		}
@@ -494,43 +497,24 @@ module webglExp {
 									onComplete: this.launchObject, ease:Sine.easeInOut  })
 		}
 
-		placeObject(obj:THREE.Mesh) {
-			var w:number = this.uniforms.width.value * .5;
-			switch(this.direction.x) {
-				case -1 :
-					obj.position.x = -w * .5 - Math.random() * w * .25;
-				break;
-
-				case 1 :
-					obj.position.x = w * .5 + Math.random() * w * .25;
-				break;
-
-				default:
-					obj.position.x = w * .5 + Math.random() * w * .25;
-			}
-			switch(this.direction.y) {
-				case -1 :
-					obj.position.y = -w * .5 - Math.random() * w * .25;
-				break;
-
-				case 1 :
-					obj.position.y = w * .5 + Math.random() * w * .25;
-				break;
-
-				default:
-					obj.position.y = -w * .5 - Math.random() * w * .25;
-			}
-		}
-
 		mouseMove = (event:MouseEvent) => {
 			this.mousePos.x = (event.clientX - Scene3D.WIDTH * .5) / Scene3D.WIDTH;
 			this.mousePos.y = -(event.clientY - Scene3D.HEIGHT * .5) / Scene3D.HEIGHT;
 		}
 
 		resize(w:number, h:number) {
+			this.redoTimeout = window.setTimeout(function() { this.redoMesh(w, h); }.bind(this), 100);
+		}
+
+		redoMesh(w:number, h:number) {
 			var objSize:THREE.Vector2 = this.getWidthHeight();
 			this.uniforms.width = objSize.x;
 			this.uniforms.height = objSize.y;
+			window.clearTimeout(this.redoTimeout);
+			this.mesh.remove(this.plane);
+			var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, 40, 40);
+			this.plane = new THREE.Mesh(planeGeom, this.bgMat);
+			this.mesh.add(this.plane);
 		}
 
 		render() {
@@ -542,14 +526,6 @@ module webglExp {
 			this.scrollSpeed.x += (0.5 - this.scrollSpeed.x) * 0.1;
 			this.scrollSpeed.y += (0.6 - this.scrollSpeed.y) * 0.1;
 			var w:number = this.uniforms.width.value * .5;
-
-			/*for (var i = 0; i < this.floatingObjects.length; ++i) {
-				this.floatingObjects[i].position.x -= this.scrollSpeed.x;
-				this.floatingObjects[i].position.y -= this.scrollSpeed.y;
-				if(this.getSquaredDistance(this.floatingObjects[i]) > w * w) {
-					this.placeObject(this.floatingObjects[i]);
-				}
-			}*/
 		}
 	} 
 
@@ -1098,20 +1074,6 @@ module webglExp {
 			document.removeEventListener(webglExp.SphereAnimation.ON_OVER, this.mouseOver, false);
 			document.removeEventListener(webglExp.SphereAnimation.ON_OUT, this.mouseOut, false);
 			document.removeEventListener(webglExp.SphereAnimation.ON_CLICK, this.mouseClick, false);
-
-			/*this.blendPass.uniforms["tBackground"].value = null;
-			this.blendPass.uniforms["tDiffuse1"].value = null;
-			this.blendPass.uniforms["tDiffuse2"].value = null;
-			this.blendPass.uniforms["tDiffuse3"].value = null;
-
-			this.composer.getComposer().setSize(1, 1);
-			this.composerButton.getComposer().setSize(1, 1);
-			this.composerBackground.getComposer().setSize(1, 1);
-			this.composerBloom.getComposer().setSize(1, 1);
-			this.blendComposer.setSize(1, 1);
-
-
-			this.render();*/
 
 			for (var i = this.buttonScene.children.length - 1; i >= 0; i--) {
 			 	this.buttonScene.remove(this.buttonScene.children[i]);

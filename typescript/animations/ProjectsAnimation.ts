@@ -466,6 +466,7 @@ module webglExp {
 		private uniforms;
 
 		private floor:webglExp.Floor;
+		private shaderMaterial:THREE.ShaderMaterial;
 
 		private particleList:THREE.Vector3[];
 		
@@ -530,7 +531,6 @@ module webglExp {
 			this.objectScene = new THREE.Scene();
 
 			this._renderer = super.getRenderer();
-			this._renderer.autoClear = false;
 			this._renderer.gammaInput = true;
 		    this._renderer.gammaOutput = true;
 		    this._renderer.autoClear = true;
@@ -586,7 +586,7 @@ module webglExp {
 
   				blackRatio: {
   					type: 'f',
-    				value: 0.1
+    				value: 0.2
   				},
 
   				wnoiseRatio: {
@@ -604,20 +604,20 @@ module webglExp {
 			super.getCamera().position.x = startScroll.x;
 			super.getCamera().position.z = -startScroll.y;
 
-			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, 50, 50);
+			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, 40, 40);
 
 			this.frame = 0;
 			this.particleList = [];
 			var shaders = GLAnimation.SHADERLIST.bgsphere;
 
-			var shaderMaterial:THREE.ShaderMaterial =
+			this.shaderMaterial =
 		  	new THREE.ShaderMaterial({
 			    vertexShader:   shaders.vertex,
 			    fragmentShader: shaders.fragment,
 			    uniforms: this.uniforms
 		  	});
 
-		  	this.floor = new webglExp.Floor(floorGeom, shaderMaterial);
+		  	this.floor = new webglExp.Floor(floorGeom, this.shaderMaterial);
 
 		  	this.floorCtn = new THREE.Object3D();
 		  	this.floor.rotation.x = -Math.PI / 2;
@@ -649,9 +649,9 @@ module webglExp {
 		  	this.createPostEffects();
 
 			TweenLite.to(this.uniforms.colRatio, 3, { value:1, delay:1.5, ease: Sine.easeOut });
-			TweenLite.to(this.uniforms.fogRatio, 3, { value:0.4, ease: Sine.easeOut });
-			TweenLite.to(this.uniforms.blackRatio, 5, { value:1.0, ease: Sine.easeOut });
-			TweenLite.to(this.uniforms.wnoiseRatio, 5, { value:0.5, ease: Sine.easeOut });
+			TweenLite.to(this.uniforms.fogRatio, 3, { value:0.4, delay:0.5, ease: Sine.easeOut });
+			TweenLite.to(this.uniforms.blackRatio, 5, { value:1.0, delay:0.5, ease: Sine.easeOut });
+			TweenLite.to(this.uniforms.wnoiseRatio, 5, { value:0.5, delay:0.5, ease: Sine.easeOut });
 
 			this.isStarted = false;
 
@@ -668,6 +668,18 @@ module webglExp {
 			(<HTMLElement>document.querySelectorAll("#next-prev a.right").item(0)).addEventListener("click", this.nextProject);
 
 			(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).addEventListener('click', this.toggleMenu);
+		}
+
+		setGridSize() {
+			var s:THREE.Vector2 = this.getWidthHeight();
+			this.uniforms.width.value = s.x;
+			this.uniforms.height.value = s.y;
+			this.floorCtn.remove(this.floor);
+			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(s.x, s.y, 40, 40);
+			this.floor = new webglExp.Floor(floorGeom, this.shaderMaterial);
+			this.floorCtn.add(this.floor);
+			this.floor.rotation.x = -Math.PI / 2;
+
 		}
 
 		getWidthHeight():THREE.Vector2 {
@@ -909,14 +921,6 @@ module webglExp {
 			this.projectsMove(<HTMLElement>this.project.projectHTML);
 		}
 
-		setGridSize() {
-			var s:THREE.Vector2 = this.getWidthHeight();
-			this.floor.scale.x = s.x;
-			this.floor.scale.y = s.y;
-			this.uniforms.width.value = s.x;
-			this.uniforms.height.value = s.y;
-		}
-
 		render() {
 			this.frame += 0.1;
 
@@ -979,6 +983,9 @@ module webglExp {
 			if(this.project !== null && this.project.galleryReady) {
 				this.project.resize();
 			}
+
+			this.setGridSize();
+
 			super.resize();
 		}
 
