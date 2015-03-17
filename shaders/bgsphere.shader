@@ -130,7 +130,7 @@
 
 	vec3 zAt(vec2 p) {
 		vec2 noise = vec2((p.x + scroll.x) / 200.0, (p.y + scroll.y)  / 200.0);
-		float z = cnoise(noise) * (-100.0 - 10.0 * ((sin(time * 0.1) + 1.0) * 0.5));
+		float z = cnoise(noise) * (-100.0 - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5));
 
 		return vec3(p.x, p.y, z);
 		
@@ -142,7 +142,7 @@
 		// float diffY = abs(mousePos.y * height - pos.y);
 		// float squareDist = diffX * diffX + diffY * diffY;
 		vec2 noise = vec2((pos.x + scroll.x) / 200.0, (pos.y + scroll.y)  / 200.0);
-		pos.z = cnoise(noise) * (-100.0 - 10.0 * ((sin(time * 0.1) + 1.0) * 0.5));
+		pos.z = cnoise(noise) * (-100.0 - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5));
 		// pos.z += max(0.0, min(1.0, squareDist / 10000.0)) * -100.0;
 
 		float small = 700.0;
