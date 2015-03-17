@@ -11,7 +11,15 @@ module webglExp {
 		constructor() {
 			this._gui = new dat.GUI();
 			webglExp.Gui.gui = this;
+			document.addEventListener("keyup", this.keyup);
+		}
 
+		private keyup(event) {
+			if(event.which === 68) {
+				(<HTMLElement>document.querySelectorAll("div.dg.main").item(0)).classList.toggle("show");
+				(<HTMLElement>document.querySelectorAll("#stats").item(0)).classList.toggle("show");
+
+			}
 		}
 
 		public clear() {
