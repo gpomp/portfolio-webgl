@@ -675,7 +675,7 @@ module webglExp {
 			(<HTMLElement>document.querySelectorAll("#next-prev a.left").item(0)).addEventListener("click", this.prevProject);
 			(<HTMLElement>document.querySelectorAll("#next-prev a.right").item(0)).addEventListener("click", this.nextProject);
 
-			(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).addEventListener('click', this.toggleMenu);
+			(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).addEventListener('click', this.clickToggleMenu);
 		}
 
 		setGridSize() {
@@ -792,6 +792,7 @@ module webglExp {
 			if(this.isBackToSphere) return;
 			this.isBackToSphere = true;
 			this.closeProject();
+			this.toggleMenu();
 		}
 
 		backtoSphere() {
@@ -819,6 +820,7 @@ module webglExp {
 		}
 
 		openProject() {
+			this.toggleMenu();
 			if(this.inProject) this.closeProject();
 			else this.showProject();
 		}
@@ -1017,7 +1019,7 @@ module webglExp {
 			document.getElementById("projects").removeEventListener("scroll", this.projectScroll);
 			(<HTMLElement>document.querySelectorAll("#next-prev a.left").item(0)).removeEventListener("click", this.prevProject);
 			(<HTMLElement>document.querySelectorAll("#next-prev a.right").item(0)).removeEventListener("click", this.nextProject);
-			(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).removeEventListener('click', this.toggleMenu);
+			(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).removeEventListener('click', this.clickToggleMenu);
 			(<HTMLElement>document.querySelectorAll("#projects-buttons a.sphere").item(0)).removeEventListener('click', this.clickBackToSphere, false);
 
 			this.blendPass.uniforms["tBackground"].value = null;

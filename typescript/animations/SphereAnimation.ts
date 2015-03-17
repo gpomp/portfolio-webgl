@@ -1078,6 +1078,8 @@ module webglExp {
 				this.spots[i].clear();
 			}
 
+			super.disableCameraAround(document.getElementById("sphere-buttons"));
+
 			super.clear();
 		}
 

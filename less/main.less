@@ -73,7 +73,7 @@ canvas {
 		position: relative;
 		overflow: hidden;
 		.transition(all 0.25s ease-out 0.2s); 
-		
+		padding: 0;
 		border:0px solid black;
 		.bg1, .bg2 {
 			position: absolute;
@@ -255,33 +255,42 @@ canvas {
 	z-index: 7;
 	display: none;
 	padding: 10px;
-	background: #444;
 	position: absolute;
-	bottom: 0;
+	top: 0;
 	min-width: 0;
 	left: 0;
-	font-size: 200%;
 	color: white;
 	text-decoration: none;
 	text-align: center;
 	.transition(all 0.3s ease-out);
-	&:before {
-		content: '>';
+	.container-text {
+		.text {
+			&:before {
+				content: '>';
+			}
+		}
 	}
 
 	&.open {
-		background: #222;
 		min-width: 200px;
 		.transition(all 0.3s ease-out);
 		border-right: 5px solid #FFF;
-
-		&:before {
-			content: '<';
+		.container-text {
+			.text {
+				&:before {
+					content: '<';
+				}
+			}
 		}
+		
 	}
 
 	@media @t {
 		display: block;
+
+		body.sphere & {
+			display: none;
+		}
 	}
 }
 
@@ -307,17 +316,20 @@ canvas {
 	}
 
 	@media @t {
-		top: 0;
-		background: black;
-		height: 100%;
-		.translate(-200px 0);
-		.transition(transform 0.2s ease-out);
-		border-right: 5px solid #FFF;
-
-		&.open {
-			.translate(0 0);
+		html.webgl &, & {
+			top: 0;
+			background: #999;
+			height: 100%;
+			.transform(perspective(0) rotateY(0deg) translate(-200px, 0));
 			.transition(transform 0.2s ease-out);
+			border-right: 5px solid #FFF;
+
+			&.open {
+				.transform(perspective(0) rotateY(0deg) translate(0, 0));
+				.transition(transform 0.2s ease-out);
+			}
 		}
+		
 	}
 
 	a {
@@ -767,6 +779,12 @@ canvas {
 		overflow: hidden;
 		max-height: 0;
 		.transition(max-height 0.3s ease-out);
+
+		@media @t {
+			width: 100%;
+			max-width: 100%;
+			padding: 0 25px;
+		}
 
 		h1 {
 			font-weight: 900;
