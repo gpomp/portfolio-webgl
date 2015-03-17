@@ -700,13 +700,13 @@ module webglExp {
 
 		prevProject = (event:MouseEvent) => {
 			event.preventDefault();
-			var index:number = this.projectToGo <= 0 ? this.buttonList.length - 1 : this.projectToGo - 1;
+			var index:number = this.projectToGo <= 0 ? this.buttonList.length - 2 : this.projectToGo - 1;
 			this.launchProject(index);
 		}
 
 		nextProject = (event:MouseEvent) => {
 			event.preventDefault();
-			var index:number = this.projectToGo >= this.buttonList.length - 1 ? 0 : this.projectToGo + 1;
+			var index:number = this.projectToGo >= this.buttonList.length - 2 ? 0 : this.projectToGo + 1;
 			this.launchProject(index);
 		}
 
