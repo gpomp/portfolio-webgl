@@ -17,6 +17,9 @@ module webglExp {
 	}
 
 	export class Floor extends THREE.Mesh {
+
+		public static vNumber:number = 50;
+
 		constructor(geometry:THREE.PlaneBufferGeometry, material:THREE.ShaderMaterial) {
 		    super(geometry, material);
 		}
@@ -476,7 +479,6 @@ module webglExp {
 		private blendComposer;
 		private blendPass;
 
-		private copyPass;
 		private renderPass;
 		private effectBloom;
 		private effectBlurH;
@@ -593,6 +595,11 @@ module webglExp {
   				wnoiseRatio: {
   					type: 'f',
     				value: 0.4
+  				},
+
+  				small: {
+  					type: 'f',
+  					value: 700.0
   				}
   				
 		    };
@@ -605,7 +612,7 @@ module webglExp {
 			super.getCamera().position.x = startScroll.x;
 			super.getCamera().position.z = -startScroll.y;
 
-			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, 40, 40);
+			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.Floor.vNumber, webglExp.Floor.vNumber);
 
 			this.frame = 0;
 			this.particleList = [];
@@ -676,7 +683,7 @@ module webglExp {
 			this.uniforms.width.value = s.x;
 			this.uniforms.height.value = s.y;
 			this.floorCtn.remove(this.floor);
-			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(s.x, s.y, 40, 40);
+			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(s.x, s.y, webglExp.Floor.vNumber, webglExp.Floor.vNumber);
 			this.floor = new webglExp.Floor(floorGeom, this.shaderMaterial);
 			this.floorCtn.add(this.floor);
 			this.floor.rotation.x = -Math.PI / 2;
@@ -692,11 +699,16 @@ module webglExp {
 			return new THREE.Vector2(width + width * .5, width + width * .5);
 		}
 
-		toggleMenu = (event:MouseEvent) => {
+		clickToggleMenu = (event:MouseEvent) => {
 			event.preventDefault();
+			this.toggleMenu();
+		}
+
+		toggleMenu() {
 			(<HTMLElement>document.querySelectorAll("#projects-buttons").item(0)).classList.toggle("open");
 			(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).classList.toggle("open");
 		}
+
 
 		prevProject = (event:MouseEvent) => {
 			event.preventDefault();

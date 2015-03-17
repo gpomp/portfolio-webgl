@@ -11,7 +11,10 @@ class Site {
 	private mainScene;
 	private aboutButton:HTMLElement;
 
+	private siteReady:boolean;
+
 	constructor() {
+		this.siteReady = false;
 		var detect:any = Detector;
 		if (detect.webgl) {
 			new webglExp.Gui(); 
@@ -71,6 +74,7 @@ class Site {
 	shaderLoaded = () => {
 		this.buildRoutes();
 		page({hashbang:true});
+		this.siteReady = true;
 	}
 
 	buildRoutes() {
@@ -80,7 +84,10 @@ class Site {
 
 	resize = (event) => {
 		this.deviceType();
-		this.mainScene.resize();
+		if(this.siteReady) {
+			this.mainScene.resize();
+		}
+		
 	}
 
 	deviceType() {

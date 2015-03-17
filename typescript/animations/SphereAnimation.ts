@@ -327,6 +327,9 @@ module webglExp {
 	}
 
 	export class SphereBackground {
+
+		public static vNumber:number = 100;
+
 		public mesh:THREE.Object3D;
 		public uniforms;
 		public scrollSpeed:THREE.Vector2;
@@ -405,6 +408,11 @@ module webglExp {
   				wnoiseRatio: {
   					type: 'f',
     				value: 0.4
+  				},
+
+  				small: {
+  					type: 'f',
+  					value: 250.0
   				}
   				
 		    };
@@ -416,10 +424,14 @@ module webglExp {
 
 		    var colFolder = webglExp.SphereAnimation.guiFolder.addFolder("color ratio");
 		    colFolder.add(this.uniforms.colRatio, "value", 0.0, 1.0);
+
+		    var smallFolder = webglExp.SphereAnimation.guiFolder.addFolder("small normal ratio");
+		    smallFolder.add(this.uniforms.small, "value", 0, 1000);
 		   
 		    this.mesh = new THREE.Object3D();
 		    this.mesh.rotation.x = -Math.PI / 5;
-		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, 40, 40);
+		    console.log(webglExp.SphereBackground.vNumber);
+		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.SphereBackground.vNumber, webglExp.SphereBackground.vNumber);
 
 		    var bgShader = GLAnimation.SHADERLIST.bgsphere;
 		    this.bgMat = new THREE.ShaderMaterial({
@@ -512,7 +524,7 @@ module webglExp {
 			this.uniforms.height = objSize.y;
 			window.clearTimeout(this.redoTimeout);
 			this.mesh.remove(this.plane);
-			var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, 40, 40);
+			var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.SphereBackground.vNumber, webglExp.SphereBackground.vNumber);
 			this.plane = new THREE.Mesh(planeGeom, this.bgMat);
 			this.mesh.add(this.plane);
 		}
@@ -528,33 +540,6 @@ module webglExp {
 			var w:number = this.uniforms.width.value * .5;
 		}
 	} 
-
-	export class Intro {
-
-		public ctn:THREE.Object3D;
-
-		private bgIntro:THREE.Mesh;
-		private camera:THREE.PerspectiveCamera;
-
-		private htmlCtn:HTMLElement;
-
-		constructor(htmlCtn:HTMLElement, camera:THREE.PerspectiveCamera) {
-			this.htmlCtn = htmlCtn;
-			this.camera = camera;
-			this.ctn = new THREE.Object3D();
-
-			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(Scene3D.WIDTH * 2, Scene3D.HEIGHT * 2);
-			var mat:THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({color: 0xFFFFFF, transparent: true, opacity:0.5})
-			this.bgIntro = new THREE.Mesh(geom, mat);
-			var vFov:number = this.camera.fov * (Math.PI / 180);
-		   	this.bgIntro.position.z =  -(Scene3D.HEIGHT / (2 * Math.tan(vFov / 2) ));
-		   	// this.ctn.add(this.bgIntro);
-		}
-
-		show() {
-
-		}
- 	}
 
 	export class SphereAnimation extends webglExp.GLAnimation {
 
@@ -630,7 +615,6 @@ module webglExp {
 		private dummyAnim:number;
 
 		private background:webglExp.SphereBackground;
-		private intro:webglExp.Intro;
 
 		constructor(scene:THREE.Scene, camera:THREE.PerspectiveCamera, renderer:THREE.WebGLRenderer) {
 

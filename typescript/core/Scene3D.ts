@@ -26,7 +26,12 @@ module webglExp {
 		private shaderLoadedCB:Function;
 		private scroll:THREE.Vector2;
 
+		private body:HTMLElement;
+
 		constructor(shaderLoadedCB:Function) {
+
+			this.body = <HTMLElement>document.querySelectorAll("body").item(0);
+
 			this.shaderLoadedCB = shaderLoadedCB;
 			var allElements:NodeList = document.getElementsByTagName("script");
 			var src:string = "";
@@ -108,12 +113,17 @@ module webglExp {
 
 
 		goToSphere = (ctx) => {
-			console.log("go to sphere");
+			this.body.classList.remove("sphere");
+			this.body.classList.remove("projects");
+			this.body.classList.add("sphere");
 			this.currentAnim = new webglExp.SphereAnimation(this.scene, this.camera, this.renderer);
 		}
 
 		launchProject = (ctx) => {
-
+			
+			this.body.classList.remove("sphere");
+			this.body.classList.remove("projects");
+			this.body.classList.add("projects");
 			var pList:NodeList = document.querySelectorAll("#projects .project");
 			
 			var startProject:HTMLElement = <HTMLElement>document.querySelectorAll("#projects .project." + ctx.params.projectName).item(0);

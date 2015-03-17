@@ -121,6 +121,7 @@
 	uniform float time;
 	uniform float width;
 	uniform float height;
+	uniform float small;
 	uniform vec2 mousePos;
 	uniform vec2 scroll;
 
@@ -130,7 +131,8 @@
 
 	vec3 zAt(vec2 p) {
 		vec2 noise = vec2((p.x + scroll.x) / 200.0, (p.y + scroll.y)  / 200.0);
-		float z = cnoise(noise) * (-100.0 - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5));
+		// - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5)
+		float z = cnoise(noise) * (-130.0);
 
 		return vec3(p.x, p.y, z);
 		
@@ -138,19 +140,15 @@
 
 	void main() {
 		pos = position;
-		// float diffX = abs(mousePos.x * width - pos.x);
-		// float diffY = abs(mousePos.y * height - pos.y);
-		// float squareDist = diffX * diffX + diffY * diffY;
 		vec2 noise = vec2((pos.x + scroll.x) / 200.0, (pos.y + scroll.y)  / 200.0);
-		pos.z = cnoise(noise) * (-100.0 - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5));
-		// pos.z += max(0.0, min(1.0, squareDist / 10000.0)) * -100.0;
+		//  - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5)
+		pos.z = cnoise(noise) * (-130.0);
 
-		float small = 700.0;
 
-		vec2 n1 = vec2(pos.x + small, pos.y);
+		vec2 n1 = vec2(pos.x + scroll.x + small, pos.y + scroll.y);
 		vec3 neigh1 = zAt(n1);
 
-		vec2 n2 = vec2(pos.x, pos.y + small);
+		vec2 n2 = vec2(pos.x + scroll.x, pos.y + scroll.y + small);
 		vec3 neigh2 = zAt(n2);
 
 		vec3 tangeant = neigh1 - pos;
@@ -299,29 +297,36 @@
 	varying vec3 vNormal;
 
 	void main() {
-		float y = floor(((pos.y + scroll.y) / height) * 10.0) / 10.0;
-		float x = floor(((pos.x + scroll.x) / width) * 10.0) / 10.0;
+		float y = (pos.y + scroll.y) / (height + scroll.y) + 0.5;
+		float x = (pos.x + scroll.x);
 
 		vec2 noise = vec2((pos.x + scroll.x + time * 20.0) / 350.0, (pos.y + scroll.y + time * 30.0)  / 350.0);
-		float wnoise = (1.0 - wnoiseRatio) + cnoise(noise) * wnoiseRatio;
+		float pnoise = cnoise(noise);
+		float wnoise = (1.0 - wnoiseRatio) + pnoise * wnoiseRatio;
 
-		float line = 0.9 + floor(mod(y * 10.0, 2.0)) * 0.1;
-		float col = 0.9 + floor(mod(x * 10.0, 2.0)) * 0.1;
+
+		float lnoise = 0.2 + 0.4 * min(1.0, cnoise(vec2((pos.x + scroll.x) / 50.0, 1.0)) * 100.0);
+		float line = floor(lnoise * 10.0) / 10.0;
+		float sinTime = (sin(y) + 1.0) * 0.5;
+		// (gl_FragCoord.y / height)
+		float linewidth = 0.001 + noise.y * 0.1;
+
+		float col = 0.1 + floor(max(0.0, min(1.0, abs((x) - (line))))) * 0.9;
 
 		float fog = 1.0 - max(0.0, min(1.0, distance(vec3(0, 0, pos.z), pos) / (width * fogRatio)));
 
-		vec3 light = vec3(0.5, 0.4, 1.0);
+		vec3 light = vec3(0.2, 0.2, 0.2);
 		 float dProd = max(0.0,
 	                    dot(vNormal, light));
-		float finalCol = floor((1.0 - pos.z / -140.0) * 10.0) / 10.0;
+		float finalCol = (1.0 - pos.z / -130.0);
 
 		float t1 = (cos(time * 0.1) + 1.0) * 0.5;
 		float l = width;
 		vec3 colorchange = 	vec3((1.0 - colRatio)) + 	vec3((	pos.x + l * 0.5) / l + t1,
 							  								(pos.y + l * 0.5) / l +(1.0 - t1), 
 							  								1.0 - pos.z / -100.0) * colRatio;
-
-	  	gl_FragColor = vec4(blackRatio * vec3(dProd * alpha * line * col * finalCol) * colorchange * fog * wnoise, 1.0);
+		// vec4(blackRatio * vec3(dProd * alpha * col) * colorchange * fog * wnoise, 1.0)
+	  	gl_FragColor = vec4(vec3(dProd * lnoise * fog * wnoise) * colorchange, 1.0);
 	}
 </fragment>
 
