@@ -360,7 +360,7 @@ module webglExp {
 		getRandomPointAround(signX:number, signY:number):THREE.Vector3 {
 			var v:THREE.Vector3 = new THREE.Vector3();
 			v.z = this.position.z;
-			v.y = this.position.y + signY * 300;
+			v.y = this.position.y + signY * 150;
 
 			v.x = this.position.x + signX * (this.size.width * 3);
 
@@ -395,6 +395,7 @@ module webglExp {
 			TweenLite.to(this, longest, { dummy: 1,  onComplete: this.endAnimation });
 
 			this.gallery.hide();
+	
 			(<HTMLElement>this.projectHTML.querySelectorAll(".text").item(0)).classList.remove("show");
 
 			TweenLite.to(document.getElementById("projects"), 1.4, { scrollTop: 0, onComplete:this.hideProject })
