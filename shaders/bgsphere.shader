@@ -132,23 +132,25 @@
 	vec3 zAt(vec2 p) {
 		vec2 noise = vec2((p.x + scroll.x) / 200.0, (p.y + scroll.y)  / 200.0);
 		// - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5)
-		float z = cnoise(noise) * (-130.0);
+		float z = cnoise(noise) * (-80.0 - 30.0 * sin(time * 0.4 + p.x / width * 20.0 + p.y / height * 20.0));
 
 		return vec3(p.x, p.y, z);
 		
 	}
 
+	varying vec2 vUv;
+
 	void main() {
 		pos = position;
+		vUv = uv;
 		vec2 noise = vec2((pos.x + scroll.x) / 200.0, (pos.y + scroll.y)  / 200.0);
-		//  - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5)
-		pos.z = cnoise(noise) * (-130.0);
+		// 
+		pos.z = cnoise(noise) * (-80.0 - 30.0 * sin(time * 0.4 + pos.x / width * 20.0 + pos.y / height * 20.0));
 
-
-		vec2 n1 = vec2(pos.x + scroll.x + small, pos.y + scroll.y);
+		vec2 n1 = vec2(pos.x + small, pos.y);
 		vec3 neigh1 = zAt(n1);
 
-		vec2 n2 = vec2(pos.x + scroll.x, pos.y + scroll.y + small);
+		vec2 n2 = vec2(pos.x, pos.y + small);
 		vec3 neigh2 = zAt(n2);
 
 		vec3 tangeant = neigh1 - pos;
@@ -292,6 +294,10 @@
 	uniform float blackRatio;
 	uniform float wnoiseRatio;
 
+	uniform sampler2D thetraRT;
+
+	varying vec2 vUv;
+
 	varying vec3 pos;
 	varying vec4 stagePos;
 	varying vec3 vNormal;
@@ -302,31 +308,33 @@
 
 		vec2 noise = vec2((pos.x + scroll.x + time * 20.0) / 350.0, (pos.y + scroll.y + time * 30.0)  / 350.0);
 		float pnoise = cnoise(noise);
-		float wnoise = (1.0 - wnoiseRatio) + pnoise * wnoiseRatio;
-
-
-		float lnoise = 0.2 + 0.4 * min(1.0, cnoise(vec2((pos.x + scroll.x) / 50.0, 1.0)) * 100.0);
-		float line = floor(lnoise * 10.0) / 10.0;
-		float sinTime = (sin(y) + 1.0) * 0.5;
-		// (gl_FragCoord.y / height)
-		float linewidth = 0.001 + noise.y * 0.1;
-
-		float col = 0.1 + floor(max(0.0, min(1.0, abs((x) - (line))))) * 0.9;
-
+		float wnoise = ((1.0 - wnoiseRatio) + pnoise * wnoiseRatio);
+ 	
+		float noiseLevel = 50.0;
+		float lnoise = max(0.0, min(1.0, cnoise(vec2(abs(pos.x + 10.0 * (cos(time * 0.2) + 1.0) * 0.5 + scroll.x) / noiseLevel, 1.0))));
+		float line = 0.4 + max(0.0, min(1.0, ceil(lnoise))) * 0.2;
+		
 		float fog = 1.0 - max(0.0, min(1.0, distance(vec3(0, 0, pos.z), pos) / (width * fogRatio)));
 
 		vec3 light = vec3(0.2, 0.2, 0.2);
 		 float dProd = max(0.0,
 	                    dot(vNormal, light));
-		float finalCol = (1.0 - pos.z / -130.0);
+		float finalCol = (1.0 - pos.z / -120.0);
 
 		float t1 = (cos(time * 0.1) + 1.0) * 0.5;
 		float l = width;
 		vec3 colorchange = 	vec3((1.0 - colRatio)) + 	vec3((	pos.x + l * 0.5) / l + t1,
 							  								(pos.y + l * 0.5) / l +(1.0 - t1), 
 							  								1.0 - pos.z / -100.0) * colRatio;
-		// vec4(blackRatio * vec3(dProd * alpha * col) * colorchange * fog * wnoise, 1.0)
-	  	gl_FragColor = vec4(vec3(dProd * lnoise * fog * wnoise) * colorchange, 1.0);
+
+		vec2 offsetShadow = vec2(.55,.55);
+		vec2 fromCenter = vUv - offsetShadow;
+		vec4 thetra = texture2D(thetraRT, offsetShadow + fromCenter * 2.0) * 0.1;
+
+		float thetraColor = thetra.a;
+		vec3 thetraFinal = vec3(max(0.0, min(1.0, ceil(thetraColor))) * 0.02);
+		
+	  	gl_FragColor = vec4(vec3(line * dProd * finalCol * fog * wnoise * alpha) * colorchange - thetraFinal, 1.0);
 	}
 </fragment>
 

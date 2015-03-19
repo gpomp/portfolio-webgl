@@ -21,7 +21,7 @@
 	                vec4(normal,1.0);
 	   	vec3 newPosition =
     		position * appear + normal *
-    		vec3(displacement * sin(amplitude + gap)) * appear;
+    		vec3(displacement * sin(0.4 * amplitude + gap)) * appear;
 
 
     	pos = modelViewMatrix *
@@ -29,7 +29,7 @@
 
 	    vec3 normTo = normalize(pointsTo);
 	    float dist = (1.0 - max(0.0, min(1.0, distance(normTo, newPosition)))) * pointAmplitude;
-	    newPosition = newPosition + normTo * dist * 1.6;
+	    newPosition = newPosition + normTo * dist * 1.0;
 
 
 	  	gl_Position = projectionMatrix *
@@ -55,7 +55,7 @@
 		 float dProd = max(0.0,
 	                    dot(normalize(normal), light));
 
-	  	gl_FragColor = vec4(vec3(dProd * 0.5), 1.0);
+	  	gl_FragColor = vec4(dProd * 0.55);
 	}
 </fragment>
 

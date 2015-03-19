@@ -18,7 +18,7 @@ module webglExp {
 
 	export class Floor extends THREE.Mesh {
 
-		public static vNumber:number = 50;
+		public static vNumber:number = 100;
 
 		constructor(geometry:THREE.PlaneBufferGeometry, material:THREE.ShaderMaterial) {
 		    super(geometry, material);
@@ -579,7 +579,7 @@ module webglExp {
 
   				fogRatio: {
   					type: 'f',
-    				value: 0.6
+    				value: 0.8
   				},
 
   				colRatio: {
@@ -599,7 +599,12 @@ module webglExp {
 
   				small: {
   					type: 'f',
-  					value: 700.0
+  					value: 250.0
+  				},
+
+  				thetraRT: {
+  					type: 't',
+  					value: THREE.ImageUtils.generateDataTexture(4, 4, new THREE.Color(0x000000))
   				}
   				
 		    };
@@ -656,10 +661,9 @@ module webglExp {
 
 		  	this.createPostEffects();
 
-			TweenLite.to(this.uniforms.colRatio, 3, { value:1, delay:1.5, ease: Sine.easeOut });
-			TweenLite.to(this.uniforms.fogRatio, 3, { value:0.4, delay:0.5, ease: Sine.easeOut });
+			/*TweenLite.to(this.uniforms.colRatio, 3, { value:1, delay:1.5, ease: Sine.easeOut });
 			TweenLite.to(this.uniforms.blackRatio, 5, { value:1.0, delay:0.5, ease: Sine.easeOut });
-			TweenLite.to(this.uniforms.wnoiseRatio, 5, { value:0.5, delay:0.5, ease: Sine.easeOut });
+			TweenLite.to(this.uniforms.wnoiseRatio, 5, { value:0.5, delay:0.5, ease: Sine.easeOut });*/
 
 			this.isStarted = false;
 
@@ -740,7 +744,14 @@ module webglExp {
 
 		    this.composer = new webglExp.EffectComposer(this._renderer, super.getScene(), super.getCamera(), Scene3D.WIDTH, Scene3D.HEIGHT);
 		    this.composerObjects = new webglExp.EffectComposer(this._renderer, this.objectScene, super.getCamera(), Scene3D.WIDTH, Scene3D.HEIGHT);
-			this.blendComposer = new THREE.EffectComposer(this._renderer);
+			
+			var renderTargetParams = {	minFilter: THREE.LinearFilter,
+        								magFilter: THREE.LinearFilter, 
+        								format: THREE.RGBAFormat,
+        								stencilBuffer: true };
+			var rt:THREE.WebGLRenderTarget = new THREE.WebGLRenderTarget(Scene3D.WIDTH, Scene3D.HEIGHT, renderTargetParams);
+
+			this.blendComposer = new THREE.EffectComposer(this._renderer, rt);
 			this.blurh = 2;
 			THREE.BloomPass.blurX = new THREE.Vector2( this.blurh / (Scene3D.WIDTH * 2), 0.0 );
 			THREE.BloomPass.blurY = new THREE.Vector2( 0.0, this.blurh / (Scene3D.HEIGHT * 2) );
@@ -758,7 +769,7 @@ module webglExp {
 			// this.composer.addPass(this.effectBloom);
 
 			this.blendPass = new THREE.ShaderPass( <any>THREE.BlendShader );
-			this.blendPass.uniforms["tBackground"].value = this.composer.getComposer().renderTarget2;
+			this.blendPass.uniforms["tDiffuse2"].value = this.composer.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse3"].value = this.composerObjects.getComposer().renderTarget2;
 			this.blendPass.renderToScreen = true;
 
@@ -992,7 +1003,7 @@ module webglExp {
 			this.blendComposer.setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
 
 			
-			this.blendPass.uniforms["tBackground"].value = this.composer.getComposer().renderTarget2;
+			this.blendPass.uniforms["tDiffuse2"].value = this.composer.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse3"].value = this.composerObjects.getComposer().renderTarget2;
 
 			if(this.project !== null && this.project.galleryReady) {

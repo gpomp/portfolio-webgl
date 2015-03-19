@@ -246,7 +246,8 @@ module webglExp {
 			this.rad = 0;
 			this.outFrac = 0;
 			
-			this.start = this.pos = this.dest = this.randSpot().randPoint(5);
+			// this.start = this.pos = this.dest = this.randSpot().randPoint(5);
+			this.start = this.pos = this.dest = this.getRandomPos();
 			this.reset();
 			this.distFrac = Math.random();
 
@@ -256,15 +257,22 @@ module webglExp {
 			
 		}
 
+		getRandomPos():THREE.Vector2 {
+
+			return new THREE.Vector2(Math.random() * (Math.PI * 2), Math.random() * Math.PI);
+		}
+
 		reset = () => {
 			this.startSpot = (SphereAnimation.overID !== -1) ? this.randSpot(SphereAnimation.overID) : this.randSpot();
-			this.start = this.startSpot.pos;
+			// this.start = this.startSpot.pos;
+			this.start = this.getRandomPos();
 
 			this.speed = 0.005 + Math.random() * 0.003;
 			this.distFrac = 0;
 			this.currSpot = this.randSpot(this.startSpot.id, true);
 			this.spotRad = Math.random() * this.currSpot.rad;
-			this.dest = this.currSpot.randPoint(this.spotRad);
+			this.dest = this.getRandomPos();
+			this.dest = (SphereAnimation.overID !== -1) ? this.currSpot.randPoint(this.spotRad) : this.getRandomPos();
 
 		    var lat1:number = this.start.x;
 		    var lng1:number = this.start.y;
@@ -354,7 +362,7 @@ module webglExp {
 
 
 
-		constructor(camera:THREE.PerspectiveCamera) {
+		constructor(camera:THREE.PerspectiveCamera, thetraRT, buttonsRT) {
 			this.camera = camera;
 			this.redoTimeout = -1;
 			var objSize:THREE.Vector2 = this.getWidthHeight();
@@ -413,6 +421,11 @@ module webglExp {
   				small: {
   					type: 'f',
   					value: 250.0
+  				},
+
+  				thetraRT: {
+  					type: 't',
+  					value: thetraRT
   				}
   				
 		    };
@@ -420,7 +433,7 @@ module webglExp {
 		    this.direction = new THREE.Vector2(1, -1);
 
 		    this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
-		    this.light.position.set(0.5, 0.4, 1.0);
+		    this.light.position.set(0.2, 0.2, 0.2);
 
 		    var colFolder = webglExp.SphereAnimation.guiFolder.addFolder("color ratio");
 		    colFolder.add(this.uniforms.colRatio, "value", 0.0, 1.0);
@@ -430,7 +443,6 @@ module webglExp {
 		   
 		    this.mesh = new THREE.Object3D();
 		    this.mesh.rotation.x = -Math.PI / 5;
-		    console.log(webglExp.SphereBackground.vNumber);
 		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.SphereBackground.vNumber, webglExp.SphereBackground.vNumber);
 
 		    var bgShader = GLAnimation.SHADERLIST.bgsphere;
@@ -651,7 +663,7 @@ module webglExp {
 
 			super.getCamera().position.z = -500;
 
-			this.background = new webglExp.SphereBackground(camera);
+			this.background = new webglExp.SphereBackground(camera, this.composer.getComposer().renderTarget2 , this.composerButton.getComposer().renderTarget2);
 			this.bgMesh = this.background.mesh;
 		    this.composerBackground = new webglExp.EffectComposer(this._renderer, this.bgScene, camera, Scene3D.WIDTH, Scene3D.HEIGHT);
 		    
@@ -667,7 +679,7 @@ module webglExp {
 			var rt:THREE.WebGLRenderTarget = new THREE.WebGLRenderTarget(Scene3D.WIDTH, Scene3D.HEIGHT, renderTargetParams);
 
 
-		    this.blendComposer = new THREE.EffectComposer(this._renderer);
+		    this.blendComposer = new THREE.EffectComposer(this._renderer, rt);
 		    
 		    this.composer.folder = gui.addFolder("Effect Composer");
 
@@ -783,37 +795,47 @@ module webglExp {
 			document.addEventListener(webglExp.SphereAnimation.ON_OUT, this.mouseOut, false);
 			document.addEventListener(webglExp.SphereAnimation.ON_CLICK, this.mouseClick, false);
 
+			var aspect:number = Scene3D.WIDTH / Scene3D.HEIGHT;
+
 			for(var i:number = 0; i < nbSpot; i++) {
 				var phi = Math.acos(-1 + ( 2 * i ) / (nbSpot));
 
 				var theta = Math.sqrt((nbSpot) * Math.PI) * phi;
 				var spot:webglExp.HotSpot = new webglExp.HotSpot(theta, phi, i);
 				spot.sphereRad = this.uniforms.radius.value;
+
+				
+
 				this.spots.push(spot);
 
 				var projectName:string = (<HTMLElement>document.querySelectorAll(".project-slug").item(i)).getAttribute("name");
 
 				var button:THREE.Mesh = spot.createPlane(super.getCamera(), projectName);
+
+				spot.overPlane.scale.y = spot.overPlane.scale.x = 30;	
+
 				this.buttonCtn.add(button);
 				button.lookAt(new THREE.Vector3());
 			}
 
 			webglExp.Particle.addedSpeed = 0.0;
 
-			for(var i:number = 0; i < 10000; i++) {
+
+
+			this.buildThetra();
+
+			for(var i:number = 0; i < 5000; i++) {
 				var p:webglExp.Particle = new webglExp.Particle(this.spots);
 				this.attributes.start.value.push(p.start);
 				this.attributes.dest.value.push(p.dest);
 				this.attributes.distFrac.value.push(p.distFrac);
 				this.attributes.distance.value.push(p.distance);
-				this.attributes.displacement.value.push(4 + Math.random() * 4);
+				this.attributes.displacement.value.push(10 + Math.random() * 20);
 				this.attributes.gap.value.push(i * 0.5);
 				this.attributes.outFrac.value.push(1);
 				this.particleList.push(p);
 				superGeom.vertices.push(p);
 			}
-
-			this.buildThetra();
 
 			// this.sphere = 
 
@@ -914,8 +936,7 @@ module webglExp {
 			    fragmentShader: shaderT.fragment,
 			    uniforms: this.tetraUniforms,
 			    attributes: this.tetraAttr,
-			    side: THREE.DoubleSide,
-			    transparent:true
+			    side: THREE.DoubleSide
 		  	});
 
 		  	this.tetraUniforms.pointsTo.value = new THREE.Vector3(1, 1, 1);
@@ -949,14 +970,14 @@ module webglExp {
 
 			TweenLite.to(this.background.uniforms.alpha, 3, { value: 1, ease:Sine.easeOut });
 			
-			TweenLite.to(this.uniforms.radius, 5, { value : 150, ease: Strong.easeInOut, delay: 2 });
+			TweenLite.to(this.uniforms.radius, 5, { value : 130, ease: Strong.easeInOut, delay: 2 });
 			maxTime = Math.max(maxTime, 7);
 
 			super.getCamera().position.set(0, 0, 500);
 
 			for (var i = 0; i < this.introThetra.length; ++i) {
-				var t:number = 1 + Math.random() * 2;
-				var d:number = (i * 0.01 + Math.random() * .01) + 5;
+				var t:number = 1 + Math.random() * 0.3;
+				var d:number = (i * 0.001 + Math.random() * .01) + 5;
 				TweenLite.to(this.introThetra[i], t, { t : 1.0, ease:Expo.easeInOut, delay: d });
 				maxTime = Math.max(maxTime, d + t);
 			}
@@ -1143,7 +1164,7 @@ module webglExp {
 				this.startCounter += 500;
 				this.outCounter += 500;
 
-				var mSphereScale:number = this.uniforms.radius.value / 3;
+				var mSphereScale:number = this.uniforms.radius.value - 80;
 
 				this.middleSphere.scale.set(mSphereScale, mSphereScale, mSphereScale);
 
@@ -1209,9 +1230,9 @@ module webglExp {
 		createBloomPasses() {
 			var renderPass = new THREE.RenderPass(this.bloomScene, this.getCamera(), null, new THREE.Color(0, 0, 0), 0);
 			renderPass.clear = false;
-			this.bloomStrength = 14;
+			this.bloomStrength = 7;
 			this.effectBloom = new THREE.BloomPass(this.bloomStrength, 20, 8.0, 512, true);
-			this.blurh = 10.26;
+			this.blurh = 6;
 
 			THREE.BloomPass.blurX = new THREE.Vector2( this.blurh / (Scene3D.WIDTH * 2), 0.0 );
 			THREE.BloomPass.blurY = new THREE.Vector2( 0.0, this.blurh / (Scene3D.HEIGHT * 2) );
@@ -1236,10 +1257,21 @@ module webglExp {
 			this.blendPass.uniforms["tDiffuse3"].value = this.composerButton.getComposer().renderTarget2;
 			this.blendPass.renderToScreen = true;
 
+			/*var copyPass = new THREE.ShaderPass(<any>THREE.CopyShader);
+			copyPass.renderToScreen = true;*/
+
+
+			var renderPass2 = new THREE.RenderPass(this.buttonScene, this.getCamera(), null, new THREE.Color(0, 0, 0), 0);
+			
+
+			this.composerButton.getComposer().renderTarget1.stencilBuffer = true;
+			this.composerButton.getComposer().renderTarget2.stencilBuffer = true;
 
 			this.composerBloom.addPass(renderPass);
 			this.composerBloom.addPass(this.effectBloom);
+
 			this.blendComposer.addPass(this.blendPass);
+			// this.blendComposer.addPass(copyPassBt);
 		}
 
 		createBGPass() {
@@ -1254,7 +1286,6 @@ module webglExp {
 
 		createButtonPasses() {
 			var renderPass = new THREE.RenderPass(this.buttonScene, this.getCamera(), null, new THREE.Color(0, 0, 0), 0);
-			renderPass.clear = false;
 			this.composerButton.addPass(renderPass);
 		}
 	}

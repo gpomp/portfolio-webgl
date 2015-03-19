@@ -93,9 +93,8 @@ module THREE {
 
 			"varying vec2 vUv;",
 
-			"vec4 textOnTop(vec4 c1, vec4 c2) {",
-				"float cPresent = ceil(c2.r);",
-				"return vec4(max((1.0 - cPresent) * c1.r, cPresent * c2.r), max((1.0 - cPresent) * c1.g, cPresent * c2.g), max((1.0 - cPresent) * c1.b, cPresent * c2.b), max((1.0 - cPresent) * c1.a, cPresent * c2.a));",
+			"vec4 textOnTop(vec4 sceneColor, vec4 addColor) {",
+				"return mix(sceneColor, addColor, addColor.a);",
 			"}",
 
 			"void main() {",
@@ -105,7 +104,44 @@ module THREE {
 				"vec4 texel2 = texture2D( tDiffuse2, vUv );",
 				"vec4 texel3 = texture2D( tDiffuse3, vUv );",
 				"vec4 cbg = textOnTop(texel0, texel1);",
-				"gl_FragColor = vec4(cbg.rgb + texel2.rgb + texel3.rgb, 1.0);",
+				"vec4 cbg1 = cbg + texel2;",
+				"vec4 cbg2 = textOnTop(cbg1, texel3);",
+				"gl_FragColor = vec4(cbg2);",
+			"}"
+
+		].join("\n");
+	}
+
+	export class CopyOneShader {
+		static uniforms = {
+
+			"tBackground": 	{ type: "t", value: null }
+
+		};
+
+		static vertexShader = [
+
+			"varying vec2 vUv;",
+
+			"void main() {",
+
+				"vUv = uv;",
+				"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+
+			"}"
+
+		].join("\n");
+
+		static fragmentShader = [
+
+			"uniform sampler2D tBackground;",
+
+			"varying vec2 vUv;",
+
+			"void main() {",
+
+				"vec4 texel0 = texture2D( tBackground, vUv );",
+				"gl_FragColor = vec4(vec3(texel0.rgb), 0.0);",
 			"}"
 
 		].join("\n");

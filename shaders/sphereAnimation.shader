@@ -44,7 +44,7 @@
 	    float y =	a * cos(lat1) * sin(lng1) 	+ b * cos(lat2) * sin(lng2);
 	    float z =	a * sin(lat1) 				+ b * sin(lat2);
 
-	    float finalRadius = radius * outFrac + displacement * sin(amplitude + gap);
+	    float finalRadius = radius * outFrac +  displacement * sin(0.02 * amplitude + gap);
 
 	    vec3 pos = vec3(finalRadius * x, finalRadius * y +  500.0 * (1.0 - outFrac), finalRadius * z +  100.0 * (1.0 - outFrac));
 	    SphereRadius = finalRadius;
@@ -80,7 +80,8 @@
 		float halfRad = SphereRadius / 2.0;
 		float distance = distance(camPos, stagePos.xyz); 
 		float fog = 1.0 - min(1.0, max(0.0, distance / fogDistance));
-		vec3 normPos = vec3((halfRad + stagePos.x) / SphereRadius, (halfRad + stagePos.y) / SphereRadius, (halfRad + stagePos.z) / SphereRadius);
+		// vec3 normPos = vec3((halfRad + stagePos.x) / SphereRadius, (halfRad + stagePos.y) / SphereRadius, (halfRad + stagePos.z) / SphereRadius);
+	  	vec3 normPos = (vec3(halfRad) + stagePos.xyz) / SphereRadius;
 	  	gl_FragColor = vec4(fog * normPos * (0.1 + distNow / 0.5), alpha);
 	}
 </fragment>

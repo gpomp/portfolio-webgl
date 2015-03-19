@@ -38,6 +38,9 @@ module webglExp {
 
 		getObjBoundingBox():THREE.Box3 {
             this.obj.geometry.computeBoundingBox();
+            var bbox = this.obj.geometry.boundingBox;
+            bbox.min.multiply(this.obj.scale);
+            bbox.max.multiply(this.obj.scale);
             return this.obj.geometry.boundingBox;
 		}
 
