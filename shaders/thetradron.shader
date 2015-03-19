@@ -55,7 +55,7 @@
 		 float dProd = max(0.0,
 	                    dot(normalize(normal), light));
 
-	  	gl_FragColor = vec4(dProd * 0.55);
+	  	gl_FragColor = vec4(vec3(dProd * 0.55), 1.0);
 	}
 </fragment>
 
