@@ -34,9 +34,20 @@ module webglExp {
 		private isExiting:boolean;
 
 		private canvas;
+		private bgCanvas;
 		private context;
+		private bgContext;
 		private img;
 		private canvasReady:boolean;
+
+		private canvasAnimation:boolean;
+
+		private camera:THREE.PerspectiveCamera;
+
+		private lookAt:THREE.Vector3;
+
+		private radOver:number;
+		private rotateCircle:number;
 
 		constructor(x:number, y:number, id:number) {
 			this.canvasReady = false;
@@ -51,19 +62,34 @@ module webglExp {
 		}
 
 		createPlane(camera:THREE.PerspectiveCamera, projectName:string):THREE.Mesh {
-
+			this.camera = camera;
 			this.projectName = projectName;
-			this.geomSize = 64;
+			this.geomSize = 100;
+
+			this.bgCanvas = document.createElement("canvas");
+			this.bgCanvas.setAttribute('width', '256px');
+			this.bgCanvas.setAttribute('height', '256px');
+			this.bgContext = this.bgCanvas.getContext('2d');
 
 			this.canvas = document.createElement("canvas");
-			this.canvas.setAttribute('width', this.geomSize + 'px');
-			this.canvas.setAttribute('height', this.geomSize + 'px');
+			this.canvas.setAttribute('width', '256px');
+			this.canvas.setAttribute('height', '256px');
 			this.context = this.canvas.getContext('2d');
 
 			this.uniforms = {
 				camPosition: {
 			    	type: 'v3',
 			    	value: new THREE.Vector3(0, 0, this.sphereRad + 20)
+			  	},
+
+			  	size: {
+			  		type: 'f',
+					value: this.geomSize
+			  	},
+
+			  	bendRatio: {
+			  		type: 'f',
+					value: 20
 			  	},
 
 				fogDistance: {
@@ -93,15 +119,15 @@ module webglExp {
 				    side: THREE.DoubleSide,
 				    transparent:true
 			  	});
-			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(1, 1);
+			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(this.geomSize, this.geomSize, 10, 10);
 			geom.computeFaceNormals();
 			geom.computeVertexNormals();
 
 			this.overPlane = new THREE.Mesh(geom, mat);
-			this.overPlane.scale.x = this.geomSize;
-			this.overPlane.scale.y = this.geomSize;
 			var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + 10);
 			this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
+
+			this.lookAt = new THREE.Vector3(0);
 			
 			this.domEl = <HTMLElement>document.querySelectorAll("#sphere-buttons .hiddenButton").item(this.id);
 			this.href = this.domEl.getAttribute("href");
@@ -128,25 +154,50 @@ module webglExp {
 		}
 
 		imgLoaded = () => {
+			this.radOver = 0;
+			this.rotateCircle = 0;
 			this.canvasReady = true;
-			this.context.clearRect ( 0 , 0 , this.canvas.width, this.canvas.height );
-			var rad = this.geomSize * 0.5;
+			this.bgContext.clearRect ( 0 , 0 , this.canvas.width, this.canvas.height );
+			
+			var rad = this.canvas.width * 0.5;
+		    this.bgContext.beginPath();
+		    this.bgContext.arc(rad,rad,rad - 10,0,Math.PI * 2);
+		    this.bgContext.closePath();
+		    // 00fefc
+		    this.bgContext.strokeStyle = "#ffffff";
+		    this.bgContext.lineWidth = 10;
+		    this.bgContext.stroke();
+		    this.bgContext.fillStyle = "rgba(30, 30, 30, 0.65)";
+		    this.bgContext.fill();
 
+		    this.bgContext.fillStyle = "#00fefc";
+			this.bgContext.font = "70pt 'Lato'";
+			var str:string = String(this.id + 1);
+			var tSize = this.bgContext.measureText(str.toUpperCase());
+			console.log(tSize);
+			this.bgContext.fillText(str.toUpperCase(), (this.canvas.width - tSize.width) * 0.5, (this.canvas.height) * 0.5 + 20);
+			this.context.drawImage(this.bgCanvas, 0, 0);
+		    this.uniforms.text.value.needsUpdate = true;
+		}
+
+		updateCanvas() {
+			this.context.clearRect ( 0 , 0 , this.canvas.width, this.canvas.height );
+			this.context.drawImage(this.bgCanvas, 0, 0);
+			var rad = this.canvas.width * 0.5;
+			this.context.save();
+			this.context.translate(rad,rad);
+			this.context.rotate(this.rotateCircle * Math.PI / 180);
 		    this.context.beginPath();
-		    this.context.arc(rad,rad,rad - 5,0,Math.PI * 2);
-		    this.context.closePath();
-		    this.context.strokeStyle = "#00fefc";
+		    this.context.arc(0,0,rad - 22,0, this.radOver);
+		    this.context.strokeStyle = "#ffffff";
 		    this.context.lineWidth = 10;
 		    this.context.stroke();
-		    this.context.fillStyle = "#000";
-		    this.context.fill();
-
-		    this.context.fillStyle = "#00fefc";
-			this.context.font = "5pt 'Lato'";
-			var str:string = "Project bla bla";
-			var tSize:number = this.context.measureText(str).width;
-			this.context.fillText(str, (this.canvas.width - tSize) * 0.5, this.canvas.height * 0.5);
+		    this.context.restore();
 		    this.uniforms.text.value.needsUpdate = true;
+		}
+
+		endCanvasAnimation = () => {
+			this.canvasAnimation = false;
 		}
 
 		elementClick = (event:MouseEvent) => {
@@ -159,23 +210,39 @@ module webglExp {
 		over = (event) => {
 			this.overEvent.detail.id = this.id;
 			document.dispatchEvent(this.overEvent);
-
-/*
-			this.overEl.style.left = (this.three2Dom.middlePos.x - this.overEl.offsetWidth / 2) + "px";
-			this.overEl.style.top = (this.three2Dom.middlePos.y + this.overEl.offsetHeight) + "px";
-
-			this.overEl.classList.add("over");*/
-
-			// TweenLite.to(this.overPlane.scale, .5, { x: this.geomSize, y: this.geomSize, z: 1.3 });
-
+			this.canvasAnimation = true;
+			TweenLite.to(this, 1, { radOver: Math.PI * 2 - Math.PI / 10, ease: Expo.easeInOut });
+			TweenLite.to(this.uniforms.bendRatio, 1, { value: -10, ease: Expo.easeInOut });
+			/*TweenLite.to(this.lookAt, 1, { 
+							x: this.camera.position.x, 
+							y: this.camera.position.y, 
+							z: this.camera.position.z  });*/
 		}
 
 		out = (event) => {
 			this.outEvent.detail.id = this.id;
 			document.dispatchEvent(this.outEvent);
+			TweenLite.to(this, 1, { radOver: 0, onComplete: this.endCanvasAnimation, ease: Expo.easeInOut });
+			TweenLite.to(this.uniforms.bendRatio, 1, { value: 20, ease: Expo.easeInOut });
 
-			// this.overEl.classList.remove("over");
-			// TweenLite.to(this.overPlane.scale, .5, { x: this.geomSize, y: this.geomSize, z: 1 });
+			/*TweenLite.to(this.lookAt, 1, { 
+							x: 0, 
+							y: 0, 
+							z: 0  });*/
+		}
+
+		render() {
+			this.three2Dom.updatePosition();
+			if(this.canvasReady && this.canvasAnimation) {
+				this.rotateCircle += 2;
+				this.updateCanvas();
+			}
+			if(this.isExiting) {
+				var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + 10);
+				this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
+			}
+
+			this.overPlane.lookAt(this.lookAt);
 		}
 
 		randPoint(vRad:number):THREE.Vector2 {
@@ -231,19 +298,6 @@ module webglExp {
 
 		}
 
-		render() {
-			this.three2Dom.updatePosition();
-			if(this.canvasReady) {
-				
-			}
-			if(this.isExiting) {
-				var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + 10);
-				this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
-			}
-
-			this.overPlane.lookAt(new THREE.Vector3(0));
-		}
-
 		clear() {
 			this.domEl.removeEventListener("click",this.elementClick);
 
@@ -254,6 +308,7 @@ module webglExp {
 
 		exit() {
 			this.domEl.classList.add("disable");
+			this.domEl.removeEventListener("click",this.elementClick);
 			this.isExiting = true;
 			TweenLite.to(this, 3, { sphereRad: 500 + Math.random() * 500, ease: Expo.easeInOut, delay: Math.random() })
 		}
@@ -522,13 +577,10 @@ module webglExp {
 
 		    this.floatingObjects = [];
 		    this.floatingGeomList = [
-		    	new THREE.TetrahedronGeometry(5, 2),
-		    	new THREE.OctahedronGeometry(5, 2),
-		    	new THREE.DodecahedronGeometry(5, 2),
 		    	new THREE.SphereGeometry(5, 32, 32)
 		    ]
 		    var countGeom:number = 0;
-		    for (var i = 0; i < 5; ++i) {
+		    for (var i = 0; i < 10; ++i) {
 		    	this.createObject(countGeom);
 
 		    	countGeom = (countGeom < this.floatingGeomList.length - 1) ? countGeom + 1 : 0;
@@ -608,6 +660,12 @@ module webglExp {
 			this.scrollSpeed.x += (0.5 - this.scrollSpeed.x) * 0.1;
 			this.scrollSpeed.y += (0.6 - this.scrollSpeed.y) * 0.1;
 			var w:number = this.uniforms.width.value * .5;
+		}
+
+		exit() {
+			for (var i = 0; i < this.floatingObjects.length; ++i) {
+				TweenLite.to(this.floatingObjects[i].scale, .3 + Math.random() * .2, { x: 0, y: 0, z: 0, delay:.1 + Math.random() * 0.25 })
+			}
 		}
 	} 
 
@@ -870,7 +928,11 @@ module webglExp {
 
 				var button:THREE.Mesh = spot.createPlane(super.getCamera(), projectName);
 
-				spot.overPlane.scale.y = spot.overPlane.scale.x = 30;	
+				var vFOV = super.getCamera().fov * (Math.PI / 180);
+				var height = 2 * Math.tan( vFOV / 2 ) * (500 - 150);
+				var fraction = spot.geomSize / height;
+				spot.overPlane.scale.y = fraction;
+				spot.overPlane.scale.x = -fraction;	
 
 				this.buttonCtn.add(button);
 				button.lookAt(new THREE.Vector3());
@@ -1098,6 +1160,8 @@ module webglExp {
 
 			this.toHref = event.detail.href;
 
+			this.background.exit();
+
 			for (var j:number = 0; j < this.spots.length; ++j) {
 				this.spots[j].exit();
 				TweenLite.to(this.spots[j].uniforms.alpha, 2, { value: 0.0, delay: 1 + j * 0.5 });
@@ -1122,6 +1186,7 @@ module webglExp {
 			var event:CustomEvent = super.getLeaveEvent();
 			event.detail.href = this.toHref;
 			event.detail.scroll = this.background.uniforms.scroll.value;
+			event.detail.frame = this.frame;
 			document.dispatchEvent(event);
 		}
 

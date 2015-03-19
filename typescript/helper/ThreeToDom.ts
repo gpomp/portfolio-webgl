@@ -13,13 +13,16 @@ module webglExp {
 		private enabled:boolean;
 
 		private projScreenMat:THREE.Matrix4;
+		private scale:THREE.Vector2;
+		private box:THREE.Box3;
 
 		constructor(camera:THREE.PerspectiveCamera, obj:THREE.Mesh, el:HTMLElement) {
 			this.camera = camera;
 			this.obj = obj;
 			this.el = el;
 			this.enabled = true;
-
+			this.scale = new THREE.Vector2(1, 1);
+			this.box = new THREE.Box3();
 			this.middlePos = new THREE.Vector2();
 
             this.projScreenMat = new THREE.Matrix4();
@@ -36,14 +39,6 @@ module webglExp {
 			this.el.style.display = 'none';
 		}
 
-		getObjBoundingBox():THREE.Box3 {
-            this.obj.geometry.computeBoundingBox();
-            var bbox = this.obj.geometry.boundingBox;
-            bbox.min.multiply(this.obj.scale);
-            bbox.max.multiply(this.obj.scale);
-            return this.obj.geometry.boundingBox;
-		}
-
 		checkFaceCamera():boolean {
 			var q:THREE.Quaternion = new THREE.Quaternion();
 
@@ -56,12 +51,10 @@ module webglExp {
 
 		updatePosition(disableFaceTest?:boolean) {
 			if(!this.enabled) return;
-			var b:THREE.Box3 = this.getObjBoundingBox();
-			var pos = new THREE.Vector3();
-
-			pos.setFromMatrixPosition( this.obj.matrixWorld );
-			var minPoint:THREE.Vector3 = pos.clone().add(b.min);
-			var maxPoint:THREE.Vector3 = pos.clone().add(b.max);
+			this.box.setFromObject(this.obj);
+			
+			var minPoint:THREE.Vector3 = this.box.min;
+			var maxPoint:THREE.Vector3 = this.box.max;
 			minPoint = minPoint.project(this.camera);
 			maxPoint = maxPoint.project(this.camera);
 			var stageWidth:number = document.getElementById("canvas3D").offsetWidth;

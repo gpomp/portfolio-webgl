@@ -4,6 +4,9 @@
 	precision highp float;
 	#endif
 
+	uniform float size;
+	uniform float bendRatio;
+
 	varying vec2 vUv;
 	varying vec4 stagePos;
 	varying vec3 pos;
@@ -12,11 +15,13 @@
 	void main() {
 		vNormal = normal;
 	    vUv = uv;
-	    stagePos = modelMatrix * vec4(position,1.0);
+
 	    pos = position;
+	    pos.z = (position.x * position.x + position.y * position.y) / (size * size) * bendRatio;
+	    stagePos = modelMatrix * vec4(pos,1.0);
 	  	gl_Position = projectionMatrix *
 	                modelViewMatrix *
-	                vec4(position,1.0);
+	                vec4(pos,1.0);
 	}
 </vertex>
 

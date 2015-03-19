@@ -25,6 +25,7 @@ module webglExp {
 
 		private shaderLoadedCB:Function;
 		private scroll:THREE.Vector2;
+		private frame:number;
 
 		private body:HTMLElement;
 
@@ -71,6 +72,7 @@ module webglExp {
 			this.camera.position.z = 1000;
 
 			this.scroll = new THREE.Vector2();
+			this.frame = 0;
 
 			this.renderer.setSize(Scene3D.WIDTH,Scene3D.HEIGHT);
 
@@ -104,6 +106,7 @@ module webglExp {
 			this.currentAnim.clear();
 			this.currentAnim = null;
 			this.scroll = event.detail.scroll;
+			this.frame = event.detail.frame;
 			document.getElementById("projects").classList.remove("show");
 			document.getElementById("projects-buttons").classList.remove("show");
 			this.gui.clear();
@@ -135,7 +138,7 @@ module webglExp {
 			} else {
 				document.getElementById("projects").classList.add("show");
 				document.getElementById("projects-buttons").classList.add("show");
-				this.currentAnim = new webglExp.ProjectsAnimation(this.scene, this.camera, this.renderer, this.scroll, index);
+				this.currentAnim = new webglExp.ProjectsAnimation(this.scene, this.camera, this.renderer, this.scroll, this.frame, index);
 			}
 
 		}

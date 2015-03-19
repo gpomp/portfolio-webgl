@@ -519,7 +519,7 @@ module webglExp {
 
 		private isBackToSphere:boolean;
 
-		constructor(scene:THREE.Scene, camera:THREE.PerspectiveCamera, renderer:THREE.WebGLRenderer, startScroll:THREE.Vector2, index?:number) {
+		constructor(scene:THREE.Scene, camera:THREE.PerspectiveCamera, renderer:THREE.WebGLRenderer, startScroll:THREE.Vector2, frame:number, index?:number) {
 
 			super(scene, camera, renderer);
 
@@ -541,10 +541,13 @@ module webglExp {
 			var squareWidth:number = 1500;
 			var objSize:THREE.Vector2 = this.getWidthHeight();
 
+
+			this.frame = frame;
+
 			this.uniforms = {
 		    	time: {
     				type: 'f',
-    				value: 0
+    				value: this.frame
   				},
   				
 		    	width: {
@@ -624,7 +627,6 @@ module webglExp {
 
 			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.Floor.vNumber, webglExp.Floor.vNumber);
 
-			this.frame = 0;
 			this.particleList = [];
 			var shaders = GLAnimation.SHADERLIST.bgsphere;
 
@@ -666,9 +668,10 @@ module webglExp {
 
 		  	this.createPostEffects();
 
-			/*TweenLite.to(this.uniforms.colRatio, 3, { value:1, delay:1.5, ease: Sine.easeOut });
+			TweenLite.to(this.uniforms.colRatio, 3, { value:1, delay:1.5, ease: Sine.easeOut });
+			TweenLite.to(this.uniforms.fogRatio, 3, { value:0.5, delay:0.5, ease: Sine.easeOut });
 			TweenLite.to(this.uniforms.blackRatio, 5, { value:1.0, delay:0.5, ease: Sine.easeOut });
-			TweenLite.to(this.uniforms.wnoiseRatio, 5, { value:0.5, delay:0.5, ease: Sine.easeOut });*/
+			TweenLite.to(this.uniforms.wnoiseRatio, 5, { value:0.5, delay:0.5, ease: Sine.easeOut });
 
 			this.isStarted = false;
 
