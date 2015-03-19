@@ -21,8 +21,7 @@ module webglExp {
 
 		public plane:THREE.Mesh;
 		public overPlane:THREE.Mesh;
-
-		private geomSize:number;
+		public geomSize:number;
 
 		private domEl:HTMLElement;
 		private overEl:HTMLElement;
@@ -34,7 +33,14 @@ module webglExp {
 
 		private isExiting:boolean;
 
+		private canvas;
+		private context;
+		private img;
+		private canvasReady:boolean;
+
 		constructor(x:number, y:number, id:number) {
+			this.canvasReady = false;
+
 			this.rad = 0.5 + Math.random() * 0.2;
 			this.pos = new THREE.Vector2(x, y);
 			this.id = id;
@@ -47,6 +53,12 @@ module webglExp {
 		createPlane(camera:THREE.PerspectiveCamera, projectName:string):THREE.Mesh {
 
 			this.projectName = projectName;
+			this.geomSize = 64;
+
+			this.canvas = document.createElement("canvas");
+			this.canvas.setAttribute('width', this.geomSize + 'px');
+			this.canvas.setAttribute('height', this.geomSize + 'px');
+			this.context = this.canvas.getContext('2d');
 
 			this.uniforms = {
 				camPosition: {
@@ -61,9 +73,16 @@ module webglExp {
 
 				alpha: {
 					type: 'f',
-					value: 0
+					value: 0.0
+				},
+
+				text: {
+					type: 't',
+					value: new THREE.Texture(this.canvas)
 				}
 			};
+
+			this.prepCanvas();
 
 			var shaders = GLAnimation.SHADERLIST.foglight;
 			var mat:THREE.ShaderMaterial =
@@ -74,13 +93,16 @@ module webglExp {
 				    side: THREE.DoubleSide,
 				    transparent:true
 			  	});
-			this.geomSize = 5;
-			var geom:THREE.CylinderGeometry = new THREE.CylinderGeometry(0, this.geomSize, 10, 10);
-			geom.applyMatrix( new THREE.Matrix4().makeRotationFromEuler( new THREE.Euler( Math.PI / 2, Math.PI, 0, 'XYZ' ) ) );
+			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(1, 1);
+			geom.computeFaceNormals();
+			geom.computeVertexNormals();
+
 			this.overPlane = new THREE.Mesh(geom, mat);
-			var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + this.geomSize);
+			this.overPlane.scale.x = this.geomSize;
+			this.overPlane.scale.y = this.geomSize;
+			var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + 10);
 			this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
-			// this.overPlane.up = new THREE.Vector3(0,0,-1);
+			
 			this.domEl = <HTMLElement>document.querySelectorAll("#sphere-buttons .hiddenButton").item(this.id);
 			this.href = this.domEl.getAttribute("href");
 			
@@ -97,6 +119,35 @@ module webglExp {
 			return this.overPlane;
 		}
 
+		prepCanvas() {
+			this.img = document.createElement('img');
+
+			this.img.addEventListener('load', this.imgLoaded);
+			this.img.src = "/app/themes/portfolio/img/texture.jpg";
+		}
+
+		imgLoaded = () => {
+			this.canvasReady = true;
+			this.context.clearRect ( 0 , 0 , this.canvas.width, this.canvas.height );
+			var rad = this.geomSize * 0.5;
+
+		    this.context.beginPath();
+		    this.context.arc(rad,rad,rad - 5,0,Math.PI * 2);
+		    this.context.closePath();
+		    this.context.strokeStyle = "#00fefc";
+		    this.context.lineWidth = 10;
+		    this.context.stroke();
+		    this.context.fillStyle = "#000";
+		    this.context.fill();
+
+		    this.context.fillStyle = "#00fefc";
+			this.context.font = "5pt 'Lato'";
+			var str:string = "Project bla bla";
+			var tSize:number = this.context.measureText(str).width;
+			this.context.fillText(str, (this.canvas.width - tSize) * 0.5, this.canvas.height * 0.5);
+		    this.uniforms.text.value.needsUpdate = true;
+		}
+
 		elementClick = (event:MouseEvent) => {
 			event.preventDefault();
 			this.clickEvent.detail.id = this.id;
@@ -108,13 +159,13 @@ module webglExp {
 			this.overEvent.detail.id = this.id;
 			document.dispatchEvent(this.overEvent);
 
-
+/*
 			this.overEl.style.left = (this.three2Dom.middlePos.x - this.overEl.offsetWidth / 2) + "px";
 			this.overEl.style.top = (this.three2Dom.middlePos.y + this.overEl.offsetHeight) + "px";
 
-			this.overEl.classList.add("over");
+			this.overEl.classList.add("over");*/
 
-			TweenLite.to(this.overPlane.scale, .5, { x: 1.3, y: 1.3, z: 1.3 });
+			// TweenLite.to(this.overPlane.scale, .5, { x: this.geomSize, y: this.geomSize, z: 1.3 });
 
 		}
 
@@ -122,8 +173,8 @@ module webglExp {
 			this.outEvent.detail.id = this.id;
 			document.dispatchEvent(this.outEvent);
 
-			this.overEl.classList.remove("over");
-			TweenLite.to(this.overPlane.scale, .5, { x: 1, y: 1, z: 1 });
+			// this.overEl.classList.remove("over");
+			// TweenLite.to(this.overPlane.scale, .5, { x: this.geomSize, y: this.geomSize, z: 1 });
 		}
 
 		randPoint(vRad:number):THREE.Vector2 {
@@ -162,7 +213,7 @@ module webglExp {
 		}
 
 		changeRadius() {
-			var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + this.geomSize);
+			var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + 10);
 			this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
 		}
 
@@ -181,10 +232,11 @@ module webglExp {
 
 		render() {
 			this.three2Dom.updatePosition();
-
-
+			if(this.canvasReady) {
+				
+			}
 			if(this.isExiting) {
-				var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + this.geomSize);
+				var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + 10);
 				this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
 			}
 
@@ -1063,7 +1115,6 @@ module webglExp {
 		exit = () => {
 			var event:CustomEvent = super.getLeaveEvent();
 			event.detail.href = this.toHref;
-			console.log(this.background.uniforms.scroll.value.x, this.background.uniforms.scroll.value.y)
 			event.detail.scroll = this.background.uniforms.scroll.value;
 			document.dispatchEvent(event);
 		}

@@ -34,6 +34,7 @@
 	uniform vec3 camPosition;
 	uniform float fogDistance;
 	uniform float alpha;
+	uniform sampler2D text;
 
 	void main() {
 		float fog = 1.0 - min(1.0, max(0.0, (camPosition.z - stagePos.z) / 140.0)); 
@@ -42,10 +43,12 @@
 
 		float distance = distance(camPosition, stagePos.xyz);
 
+		vec4 texel = texture2D(text, vUv);
+
 		light = normalize(light);
 		 float dProd = max(0.0,
 	                    dot(normal, light));
-	  	gl_FragColor = vec4(vec3(dProd * alpha * fog), alpha * fog);
+	  	gl_FragColor = vec4(texel.rgb, texel.a * fog * alpha);
 	}
 </fragment>
 
