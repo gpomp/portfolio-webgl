@@ -120,10 +120,11 @@ module webglExp {
 		}
 
 		prepCanvas() {
-			this.img = document.createElement('img');
+			this.imgLoaded();
+			/*this.img = document.createElement('img');
 
 			this.img.addEventListener('load', this.imgLoaded);
-			this.img.src = "/app/themes/portfolio/img/texture.jpg";
+			this.img.src = "/app/themes/portfolio/img/texture.jpg";*/
 		}
 
 		imgLoaded = () => {
