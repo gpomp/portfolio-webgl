@@ -605,6 +605,11 @@ module webglExp {
   				thetraRT: {
   					type: 't',
   					value: THREE.ImageUtils.generateDataTexture(4, 4, new THREE.Color(0x000000))
+  				},
+
+  				shadowRatio: {
+  					type: 'f',
+  					value: 0.0
   				}
   				
 		    };
@@ -769,6 +774,8 @@ module webglExp {
 			// this.composer.addPass(this.effectBloom);
 
 			this.blendPass = new THREE.ShaderPass( <any>THREE.BlendShader );
+			this.blendPass.uniforms["tBackground"].value = THREE.ImageUtils.generateDataTexture(4, 4, new THREE.Color(0x000000));
+			this.blendPass.uniforms["tDiffuse1"].value = THREE.ImageUtils.generateDataTexture(4, 4, new THREE.Color(0x000000));
 			this.blendPass.uniforms["tDiffuse2"].value = this.composer.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse3"].value = this.composerObjects.getComposer().renderTarget2;
 			this.blendPass.renderToScreen = true;
@@ -1003,6 +1010,8 @@ module webglExp {
 			this.blendComposer.setSize(Scene3D.WIDTH, Scene3D.HEIGHT);
 
 			
+			this.blendPass.uniforms["tBackground"].value = THREE.ImageUtils.generateDataTexture(4, 4, new THREE.Color(0x000000));
+			this.blendPass.uniforms["tDiffuse1"].value = THREE.ImageUtils.generateDataTexture(4, 4, new THREE.Color(0x000000));
 			this.blendPass.uniforms["tDiffuse2"].value = this.composer.getComposer().renderTarget2;
 			this.blendPass.uniforms["tDiffuse3"].value = this.composerObjects.getComposer().renderTarget2;
 

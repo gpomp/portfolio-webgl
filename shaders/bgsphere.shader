@@ -293,6 +293,7 @@
 	uniform float colRatio;
 	uniform float blackRatio;
 	uniform float wnoiseRatio;
+	uniform float shadowRatio;
 
 	uniform sampler2D thetraRT;
 
@@ -312,7 +313,7 @@
  	
 		float noiseLevel = 50.0;
 		float lnoise = max(0.0, min(1.0, cnoise(vec2(abs(pos.x + 10.0 * (cos(time * 0.2) + 1.0) * 0.5 + scroll.x) / noiseLevel, 1.0))));
-		float line = 0.4 + max(0.0, min(1.0, ceil(lnoise))) * 0.2;
+		float line = 0.4 + max(0.0, min(1.0, ceil(lnoise))) * (0.2 + colRatio * 0.5);
 		
 		float fog = 1.0 - max(0.0, min(1.0, distance(vec3(0, 0, pos.z), pos) / (width * fogRatio)));
 
@@ -329,10 +330,10 @@
 
 		vec2 offsetShadow = vec2(.55,.55);
 		vec2 fromCenter = vUv - offsetShadow;
-		vec4 thetra = texture2D(thetraRT, offsetShadow + fromCenter * 2.0) * 0.1;
+		vec4 thetra = texture2D(thetraRT, offsetShadow + vec2(fromCenter.x * 2.0, fromCenter.y * 3.0)) * 0.1;
 
 		float thetraColor = thetra.a;
-		vec3 thetraFinal = vec3(max(0.0, min(1.0, ceil(thetraColor))) * 0.02);
+		vec3 thetraFinal = vec3(max(0.0, min(1.0, ceil(thetraColor))) * 0.02) * shadowRatio;
 		
 	  	gl_FragColor = vec4(vec3(line * dProd * finalCol * fog * wnoise * alpha) * colorchange - thetraFinal, 1.0);
 	}

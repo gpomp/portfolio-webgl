@@ -479,6 +479,11 @@ module webglExp {
   				thetraRT: {
   					type: 't',
   					value: thetraRT
+  				},
+
+  				shadowRatio: {
+  					type: 'f',
+  					value: 1.0
   				}
   				
 		    };
