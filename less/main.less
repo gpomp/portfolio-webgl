@@ -5,6 +5,21 @@
 
 @import "global.less";
 
+.clearfix {
+	*zoom: 1;
+
+	&:before,
+	&:after {
+		display: table;
+		content: "";
+		line-height: 0;
+	}
+
+	&:after {
+		clear: both;
+	}
+}
+
 html {
 	font-size: 62.5%;
 }
@@ -63,13 +78,20 @@ canvas {
 	display: none;
 }
 
+
+
+.enclosed-button {
+	display: inline-block;
+	margin: 10px 5px 10px 0px;
+}
+
  a.mainButton {
 	position: absolute;
 	top: 0;
 	left: 0;
 	text-decoration: none;
 	text-transform: uppercase;
-	.container {
+	.inner-button {
 		position: relative;
 		overflow: hidden;
 		.transition(all 0.25s ease-out 0.2s); 
@@ -113,7 +135,7 @@ canvas {
 	}
 
 	&.invert {
-		.container {
+		.inner-button {
 			.bg1, .bg2 {
 				background: black;
 			}
@@ -127,7 +149,39 @@ canvas {
 		}
 
 		&:hover {
-			.container {
+			.inner-button {
+				.container-text {
+					.text {
+						color: white;
+					}
+				}
+			}
+		}
+	}
+
+	&.ctn-button {
+		position: relative;
+		top: auto;
+		left: auto;
+		overflow: hidden;
+		display: inline-block !important;
+		.clearfix();
+
+		.inner-button {
+			.bg1, .bg2 {
+				background: #666666;
+			}
+		}
+
+		.container-text {
+			border:3px solid #666666;
+			.text {
+				color: #666666;
+			}
+		}
+
+		&:hover {
+			.inner-button {
 				.container-text {
 					.text {
 						color: white;
@@ -138,7 +192,7 @@ canvas {
 	}
 
 	&:hover {
-		.container {
+		.inner-button {
 			.transition(all 0.25s ease-out); 
 
 			.bg1, .bg2 {
@@ -269,7 +323,7 @@ canvas {
 	}
 	.transition(all 0.3s ease-out);
 
-	.container {
+	.inner-button {
 		background: black;
 	}
 

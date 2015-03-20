@@ -76,6 +76,25 @@
 			);
 		}
 
+		function block_button_function($atts) {
+			extract( shortcode_atts( array(
+				'class' => '',
+				'link' => '',
+				'text' => ''
+			), $atts ) );
+			return do_shortcode( 	'<div class="enclosed-button">
+										<a target="_blank" href="'.$link.'" class="mainButton ctn-button '.$class.'">
+											<div class="inner-button">
+										        <div class="bg1"></div>
+										        <div class="bg2"></div>
+										        <div class="container-text">
+										          <div class="text">'.$text.'</div>
+										        </div>
+										    </div>
+										</a>
+									</div>' );
+		}
+
 		function block_icon_function($atts) {
 			extract( shortcode_atts( array(
 				'icon' => ''
@@ -85,6 +104,7 @@
 
 		function register_shortcodes() {
 			add_shortcode( 'block-icon', array($this, 'block_icon_function') );
+			add_shortcode( 'block-button', array($this, 'block_button_function') );
 		}
 
 		function register_taxonomies(){
