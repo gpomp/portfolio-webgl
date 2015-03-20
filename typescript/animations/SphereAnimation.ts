@@ -146,14 +146,6 @@ module webglExp {
 		}
 
 		prepCanvas() {
-			this.imgLoaded();
-			/*this.img = document.createElement('img');
-
-			this.img.addEventListener('load', this.imgLoaded);
-			this.img.src = "/app/themes/portfolio/img/texture.jpg";*/
-		}
-
-		imgLoaded = () => {
 			this.radOver = 0;
 			this.rotateCircle = 0;
 			this.canvasReady = true;
@@ -170,12 +162,52 @@ module webglExp {
 		    this.bgContext.fillStyle = "rgba(30, 30, 30, 0.65)";
 		    this.bgContext.fill();
 
+		    var nbGrid = 5;
+		    var x:number = this.canvas.width / nbGrid;
+
+		    this.bgContext.save();
+
+		    this.bgContext.beginPath();
+		    this.bgContext.arc(rad,rad,rad - 10,0,Math.PI * 2);
+		    this.bgContext.closePath();
+		    this.bgContext.stroke();
+		    this.bgContext.clip();
+
+		    for (var i = 0; i < nbGrid - 1; ++i) {
+		    	this.bgContext.beginPath();
+		    	this.bgContext.moveTo(x, 0);
+		    	this.bgContext.lineTo(x, this.canvas.width);
+		    	this.bgContext.closePath();
+		    	this.bgContext.lineWidth = 1;
+		    	this.bgContext.strokeStyle = "rgb(200, 200, 200)";
+		    	this.bgContext.stroke();
+
+		    	x += this.canvas.width / nbGrid;
+		    }
+
+		    x = this.canvas.height / nbGrid;
+
+		    for (var i = 0; i < nbGrid - 1; ++i) {
+		    	this.bgContext.beginPath();
+		    	this.bgContext.moveTo(0, x);
+		    	this.bgContext.lineTo(this.canvas.height, x);
+		    	this.bgContext.closePath();
+		    	this.bgContext.lineWidth = 1;
+		    	this.bgContext.strokeStyle = "rgb(200, 200, 200)";
+		    	this.bgContext.stroke();
+
+		    	x += this.canvas.width / nbGrid;
+		    }
+
+		    
+
+		    this.bgContext.restore();
+
 		    this.bgContext.fillStyle = "#00fefc";
-			this.bgContext.font = "70pt 'Lato'";
+			this.bgContext.font = "85pt 'Lato'";
 			var str:string = String(this.id + 1);
 			var tSize = this.bgContext.measureText(str.toUpperCase());
-			console.log(tSize);
-			this.bgContext.fillText(str.toUpperCase(), (this.canvas.width - tSize.width) * 0.5, (this.canvas.height) * 0.5 + 20);
+			this.bgContext.fillText(str.toUpperCase(), (this.canvas.width - tSize.width) * 0.5, (this.canvas.height) * 0.5 + 30);
 			this.context.drawImage(this.bgCanvas, 0, 0);
 		    this.uniforms.text.value.needsUpdate = true;
 		}
@@ -293,7 +325,7 @@ module webglExp {
         						rad * Math.cos(phi) * Math.cos(theta),
         						rad * Math.cos(phi) * Math.sin(theta),
         						rad * Math.sin(phi)
-        						);
+        					);
 
 
 		}
@@ -1164,7 +1196,7 @@ module webglExp {
 
 			for (var j:number = 0; j < this.spots.length; ++j) {
 				this.spots[j].exit();
-				TweenLite.to(this.spots[j].uniforms.alpha, 2, { value: 0.0, delay: 1 + j * 0.5 });
+				TweenLite.to(this.spots[j].uniforms.alpha, 0.5, { value: 0.0, delay: j * 0.5, ease:Sine.easeOut });
 			}
 
 			

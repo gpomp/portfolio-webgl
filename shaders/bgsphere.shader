@@ -304,37 +304,46 @@
 	varying vec3 vNormal;
 
 	void main() {
-		float y = (pos.y + scroll.y) / (height + scroll.y) + 0.5;
-		float x = (pos.x + scroll.x);
+		// vec3 realPos = vec3(pos.x + scroll.x, pos.y + scroll.y, 0.0);
+		// hole
+		// float hole = ceil(1.0 - min(1.0, max(0.0, distance(realPos, vec3(200.0, 200.0, 0.0)) / 200.0)));
 
+		// Second shadow
 		vec2 noise = vec2((pos.x + scroll.x + time * 20.0) / 350.0, (pos.y + scroll.y + time * 30.0)  / 350.0);
 		float pnoise = cnoise(noise);
 		float wnoise = ((1.0 - wnoiseRatio) + pnoise * wnoiseRatio);
- 	
+ 		
+ 		// lines
 		float noiseLevel = 50.0;
 		float lnoise = max(0.0, min(1.0, cnoise(vec2(abs(pos.x + 10.0 * (cos(time * 0.2) + 1.0) * 0.5 + scroll.x) / noiseLevel, 1.0))));
-		float line = 0.4 + max(0.0, min(1.0, ceil(lnoise))) * (0.2 + colRatio * 0.5);
+		float line = (0.4 + max(0.0, min(1.0, ceil(lnoise))) * (0.2 + colRatio * 0.5));
+
 		
 		float fog = 1.0 - max(0.0, min(1.0, distance(vec3(0, 0, pos.z), pos) / (width * fogRatio)));
 
+		// light
 		vec3 light = vec3(0.2, 0.2, 0.2);
 		 float dProd = max(0.0,
 	                    dot(vNormal, light));
+
+		 // more black 
 		float finalCol = (1.0 - pos.z / -120.0);
 
+		// colorize
 		float t1 = (cos(time * 0.1) + 1.0) * 0.5;
 		float l = width;
 		vec3 colorchange = 	vec3((1.0 - colRatio)) + 	vec3((	pos.x + l * 0.5) / l + t1,
 							  								(pos.y + l * 0.5) / l +(1.0 - t1), 
 							  								1.0 - pos.z / -100.0) * colRatio;
 
+		// shadow
 		vec2 offsetShadow = vec2(.55,.55);
 		vec2 fromCenter = vUv - offsetShadow;
 		vec4 thetra = texture2D(thetraRT, offsetShadow + vec2(fromCenter.x * 2.0, fromCenter.y * 3.0)) * 0.1;
 
 		float thetraColor = thetra.a;
 		vec3 thetraFinal = vec3(max(0.0, min(1.0, ceil(thetraColor))) * 0.02) * shadowRatio;
-		
+		// max(0.0, min(1.0, line - hole))
 	  	gl_FragColor = vec4(vec3(line * dProd * finalCol * fog * wnoise * alpha) * colorchange - thetraFinal, 1.0);
 	}
 </fragment>
