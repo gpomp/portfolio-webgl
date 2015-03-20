@@ -350,6 +350,8 @@ module webglExp {
 			if(this.gallery !== null) {
 				this.gallery.resize();
 			}
+
+			
  		}
 
 		openProject() { 

@@ -74,6 +74,8 @@ module webglExp {
 			this.mesh = new THREE.Mesh(geom, mat);
 		}
 
+		
+
 		public setText(str:string, size:number = 60) {
 
 			this.ctx.fillStyle = "white";

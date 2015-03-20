@@ -211,6 +211,17 @@ module THREE {
 		  	document.addEventListener( 'touchmove', this.onMouseMove );
 		}
 
+		clear() {
+			document.removeEventListener( 'mousedown', this.onMouseDown, false );
+		  	document.removeEventListener( 'mouseup', this.onMouseUp, false );
+		  	document.removeEventListener( 'mousemove', this.onMouseMove, false );
+
+		  	document.removeEventListener( 'touchstart', this.onMouseDown );
+		  	document.removeEventListener( 'touchend', this.onMouseUp );
+		  	document.removeEventListener( 'touchmove', this.onMouseMove );
+		  	(<HTMLElement>document.querySelectorAll("body").item(0)).classList.remove("drag");
+		}
+
 		onMouseDown = (event) => {
 			var t = (event.touches && event.touches.length > 0) ? event.touches[0] : event;
 			this.lastPos = new THREE.Vector2(t.clientX, t.clientY);

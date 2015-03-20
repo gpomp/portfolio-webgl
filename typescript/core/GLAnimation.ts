@@ -107,6 +107,8 @@ module webglExp {
 			interactiveEl.removeEventListener('mouseup', this.stopTurning);
 			interactiveEl.removeEventListener('touchstart', this.turnAround);
 			interactiveEl.removeEventListener('touchend', this.stopTurning);
+
+			this.controls.clear();
 		}
 
 		public enableCameraAround(object:THREE.Object3D, interactiveEl:HTMLElement) {
