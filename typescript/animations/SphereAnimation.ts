@@ -156,11 +156,11 @@ module webglExp {
 			
 			var rad = this.canvas.width * 0.5;
 		    this.bgContext.beginPath();
-		    this.bgContext.arc(rad,rad,rad - 10,0,Math.PI * 2);
+		    this.bgContext.arc(rad,rad,rad - 20,0,Math.PI * 2);
 		    this.bgContext.closePath();
-		    // 00fefc
+
 		    this.bgContext.strokeStyle = "#ffffff";
-		    this.bgContext.lineWidth = 10;
+		    this.bgContext.lineWidth = 20;
 		    this.bgContext.stroke();
 		    this.bgContext.fillStyle = "rgba(30, 30, 30, 0.65)";
 		    this.bgContext.fill();
@@ -171,7 +171,7 @@ module webglExp {
 		    this.bgContext.save();
 
 		    this.bgContext.beginPath();
-		    this.bgContext.arc(rad,rad,rad - 10,0,Math.PI * 2);
+		    this.bgContext.arc(rad,rad,rad - 20,0,Math.PI * 2);
 		    this.bgContext.closePath();
 		    this.bgContext.stroke();
 		    this.bgContext.clip();
@@ -223,7 +223,7 @@ module webglExp {
 			this.context.translate(rad,rad);
 			this.context.rotate(this.rotateCircle * Math.PI / 180);
 		    this.context.beginPath();
-		    this.context.arc(0,0,rad - 22,0, this.radOver);
+		    this.context.arc(0,0,rad - 42,0, this.radOver);
 		    this.context.strokeStyle = "#ffffff";
 		    this.context.lineWidth = 10;
 		    this.context.stroke();
@@ -503,10 +503,13 @@ module webglExp {
 		private bgMat:THREE.ShaderMaterial;
 		private redoTimeout:number;
 
+		private thetraRT;
+
 
 
 		constructor(camera:THREE.PerspectiveCamera, thetraRT, buttonsRT) {
 			this.camera = camera;
+			this.thetraRT = thetraRT;
 			this.redoTimeout = -1;
 			var objSize:THREE.Vector2 = this.getWidthHeight();
 
@@ -704,7 +707,7 @@ module webglExp {
 
 		exit() {
 			for (var i = 0; i < this.floatingObjects.length; ++i) {
-				TweenLite.to(this.floatingObjects[i].scale, .3 + Math.random() * .2, { x: 0, y: 0, z: 0, delay:.1 + Math.random() * 0.25 })
+				TweenLite.to(this.floatingObjects[i].scale, .3 + Math.random() * .2, { x: 0.01, y: 0.01, z: 0.01, delay:.1 + Math.random() * 0.25 })
 			}
 		}
 	} 
@@ -1110,11 +1113,7 @@ module webglExp {
 
 			
 
-			for (var i = 0; i < this.spots.length; ++i) {
-				this.spots[i].sphereRad = this.uniforms.radius.value;
-				this.spots[i].changeRadius();
-				TweenLite.to(this.spots[i].uniforms.alpha, 2, { value: 1.0, delay: 4 + i * 0.5 });
-			}
+			
 
 			/*this.skipIntro();
 			return;*/
@@ -1167,7 +1166,24 @@ module webglExp {
 			this.inTransition = false;
 			var intro:HTMLElement = (<HTMLElement>document.getElementById("intro"));
 			var containerIntro:HTMLElement = (<HTMLElement>document.querySelectorAll("#intro .container").item(0));
-			(<HTMLElement>document.querySelectorAll("#intro").item(0)).classList.add("show");
+			var intro:HTMLElement = <HTMLElement>document.querySelectorAll("#intro").item(0);
+			intro.classList.add("show");
+			(<HTMLElement>intro.querySelectorAll(".mainButton.hide-intro").item(0)).addEventListener('click', this.showButtons);
+		}
+
+		showButtons = (event) => {
+			event.preventDefault();
+
+			(<HTMLElement>document.querySelectorAll("#intro .mainButton.hide-intro").item(0)).removeEventListener('click', this.showButtons);
+			// event.target.removeEventListener(event.type, arguments.callee);
+			for (var i = 0; i < this.spots.length; ++i) {
+				this.spots[i].sphereRad = this.uniforms.radius.value;
+				this.spots[i].changeRadius();
+				var scaleToGo:THREE.Vector3 = this.spots[i].overPlane.scale.clone();
+				this.spots[i].overPlane.scale.set(0.01, 0.01, 0.01);
+				TweenLite.to(this.spots[i].uniforms.alpha, 2, { value: 1.0, delay: i * 0.2 });
+				TweenLite.to(this.spots[i].overPlane.scale, 2, { x: scaleToGo.x, y: scaleToGo.y, z: scaleToGo.z, delay: i * 0.2, ease:Expo.easeInOut });
+			}
 		}
 
 		getPointOnSphere(lat:number, lng:number):THREE.Vector3 {

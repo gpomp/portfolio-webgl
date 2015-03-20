@@ -112,6 +112,18 @@ module webglExp {
 		reset() {
 			this.isDone = false;
 		}
+
+		resize() {
+			var h = this.ctn.offsetWidth / this.toLoad.width * this.toLoad.height ;			
+			for (var i = 0; i < this.ctnEl.querySelectorAll("img").length; ++i) {
+				var img:HTMLElement = <HTMLElement>this.ctnEl.querySelectorAll("img").item(i);
+				img.setAttribute("src", img.getAttribute("data-src"));
+				img.style.top = (i * -100) + "%";
+			}
+
+			this.ctnEl.style.width = this.ctn.offsetWidth + "px";
+			this.ctnEl.style.height = h + "px";
+		}
 	} 
 
 	export class Gallery {
@@ -145,30 +157,39 @@ module webglExp {
 		}
 
 		resize() {
-			
+
+			for (var i = 0; i < this.svgList.length; ++i) {
+				this.svgList[i].resize();
+			}
+
+			this.placeImages();
 		}
 
 		imgLoaded = () => {
 			this.nbLoaded++;
 			if(this.nbLoaded >= this.imgList.length) {
-				var y:number = 0;
-
-				var angle:number = 5;
-				var z:number = 0;
-				for (var i = 0; i < this.svgList.length; ++i) {
-					var el:HTMLElement = this.svgList[i].ctnEl;
-					var dir:number = (i%2 === 0) ? 1 : -1;
-					var translate:string = "translate3d(0, "+ y +"px, " + z + "px)";
-					var rotate:string = "rotateX(" + (dir * angle) + "deg)";
-					el.style[utils.Prefix.transformPrefix()] = translate + " " + rotate;
-					var h:number = el.clientHeight;
-					var rad:number = dir * angle * Math.PI / 180;
-					z += Math.sin(rad) * h;
-					y += Math.cos(rad) * h;
-				}
-				(<HTMLElement>this.ctn).style.height = (y + 30) + "px";
+				this.placeImages();
 				this.launch();
 			}
+		}
+
+		placeImages() {
+			var y:number = 0;
+			var angle:number = 5;
+			var z:number = 0;
+			for (var i = 0; i < this.svgList.length; ++i) {
+				var el:HTMLElement = this.svgList[i].ctnEl;
+				var dir:number = (i%2 === 0) ? 1 : -1;
+				console.log(y, z, el.clientHeight);
+				var translate:string = "translate3d(0, "+ y +"px, " + z + "px)";
+				var rotate:string = "rotateX(" + (dir * angle) + "deg)";
+				el.style[utils.Prefix.transformPrefix()] = translate + " " + rotate;
+				var h:number = el.clientHeight;
+				var rad:number = dir * angle * Math.PI / 180;
+				z += Math.sin(rad) * h;
+				y += Math.cos(rad) * h;
+			}
+			(<HTMLElement>this.ctn).style.height = (y + 30) + "px";
 		}
 
 		launch() {
