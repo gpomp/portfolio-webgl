@@ -270,7 +270,7 @@ module webglExp {
 			// console.log(this.title.getObject());
 
 
-		    var shaders = GLAnimation.SHADERLIST.dotImage;
+		    var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.dotImage_mobile : GLAnimation.SHADERLIST.dotImage;
 
 			this.uniforms = {
 				camPosition: {
@@ -628,7 +628,7 @@ module webglExp {
 			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.Floor.vNumber, webglExp.Floor.vNumber);
 
 			this.particleList = [];
-			var shaders = GLAnimation.SHADERLIST.bgsphere;
+			var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.bgsphere_mobile : GLAnimation.SHADERLIST.bgsphere;
 
 			this.shaderMaterial =
 		  	new THREE.ShaderMaterial({
@@ -682,7 +682,7 @@ module webglExp {
 
 			this.isBackToSphere = false;
 
-			this.launchProject(index);
+			this.launchProject(index, true);
 
 			(<HTMLElement>document.querySelectorAll("#next-prev a.left").item(0)).addEventListener("click", this.prevProject);
 			(<HTMLElement>document.querySelectorAll("#next-prev a.right").item(0)).addEventListener("click", this.nextProject);
@@ -829,9 +829,9 @@ module webglExp {
 			TweenLite.to(this.uniforms.alpha, 2, { value: 0, ease:Sine.easeOut, delay : 6 });
 		}
 
-		launchProject(index:number) {
+		launchProject(index:number, disableMenu?:boolean) {
 			this.projectToGo = index;
-			this.openProject();
+			this.openProject(disableMenu);
 
 			Array.prototype.forEach.call(this.buttonList, function(el:HTMLElement, i:number) {
 				el.classList.remove("active");
@@ -840,8 +840,8 @@ module webglExp {
 			(<HTMLElement>this.buttonList.item(index)).classList.add("active");
 		}
 
-		openProject() {
-			this.toggleMenu();
+		openProject(disableMenu?:boolean) {
+			if(!disableMenu) this.toggleMenu();
 			if(this.inProject) this.closeProject();
 			else this.showProject();
 		}

@@ -1,4 +1,5 @@
 /// <reference path="../../web/app/themes/portfolio/vendors/DefinitelyTyped/threejs/three.d.ts" />
+/// <reference path="../Site.ts" />
 
 module webglExp {
 
@@ -51,6 +52,11 @@ module webglExp {
   			event.initCustomEvent(name, true, true, {detail : {}});
 
 			return <CustomEvent>event;
+		}
+
+		public static getVertexNB(nb:number):number {
+			if(Site.activeDeviceType === 'touch') return Math.max(1, Math.floor(nb / 3));
+			return nb;
 		}
 	}
 }
@@ -195,36 +201,40 @@ module THREE {
 
 		  	this.oldOr = new THREE.Vector2();
 
+
 		  	document.addEventListener( 'mousedown', this.onMouseDown, false );
 		  	document.addEventListener( 'mouseup', this.onMouseUp, false );
 		  	document.addEventListener( 'mousemove', this.onMouseMove, false );
+
+		  	document.addEventListener( 'touchstart', this.onMouseDown );
+		  	document.addEventListener( 'touchend', this.onMouseUp );
+		  	document.addEventListener( 'touchmove', this.onMouseMove );
 		}
 
 		onMouseDown = (event) => {
-			event.preventDefault();
-			this.lastPos = new THREE.Vector2(event.clientX, event.clientY);
+			var t = (event.touches && event.touches.length > 0) ? event.touches[0] : event;
+			this.lastPos = new THREE.Vector2(t.clientX, t.clientY);
 			(<HTMLElement>document.querySelectorAll("body").item(0)).classList.add("drag");
 		}
 
 		onMouseUp = (event) => {
-			event.preventDefault();
 			(<HTMLElement>document.querySelectorAll("body").item(0)).classList.remove("drag");
 		}
 
-		onMouseMove = (event) => {
-			event.preventDefault();
-			if ( this.enabled === false ) return;
+		onMouseMove = (event) => {			if ( this.enabled === false ) return;
+
+			var t = (event.touches && event.touches.length > 0) ? event.touches[0] : event;
 
 		    var orientation = this.orientation;
 
-		    var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || event.clientX - this.lastPos.x || 0;
-		    var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || event.clientY - this.lastPos.y || 0;
+		    var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || t.clientX - this.lastPos.x || 0;
+		    var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || t.clientY - this.lastPos.y || 0;
 
 		    orientation.y += movementX * 0.0025;
 		    orientation.x += movementY * 0.0025;
 
 		    orientation.x = TheMath.max( - this.PI_2, TheMath.min( this.PI_2, orientation.x ) );
-			this.lastPos.set(event.clientX, event.clientY);
+			this.lastPos.set(t.clientX, t.clientY);
 		}
 
 		update() {

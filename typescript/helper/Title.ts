@@ -30,7 +30,7 @@ module webglExp {
 			this.texture.needsUpdate = true;
 			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(this.canvas.width, this.canvas.height);
 			
-			var shaders = GLAnimation.SHADERLIST.text;
+			var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.text_mobile : GLAnimation.SHADERLIST.text;
 
 			this.uniforms = {
 				tText: 	{ 

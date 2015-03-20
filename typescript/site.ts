@@ -7,6 +7,7 @@ declare var Modernizr;
 class Site {
 
 	public static activeDevice:string;
+	public static activeDeviceType:string;
  
 	private mainScene;
 	private aboutButton:HTMLElement;
@@ -17,12 +18,14 @@ class Site {
 		this.siteReady = false;
 		var detect:any = Detector;
 		if (detect.webgl) {
+			console.log("webgl!");
 			new webglExp.Gui(); 
 			this.mainScene = new webglExp.Scene3D(this.shaderLoaded);	
 
 			this.deviceType();
 			window.addEventListener("resize",this.resize);
 		} else {
+			console.log("uhoh no webgl!");
 			this.configNonWebgl();
 		}
 
@@ -99,15 +102,19 @@ class Site {
 
 		if(browserWidth > desktopWidth) {
 			Site.activeDevice = 'desktopXl';
+			Site.activeDeviceType = 'desktop';
 		}
 		else if(browserWidth > tabletWidth) {
 			Site.activeDevice = 'desktop';
+			Site.activeDeviceType = 'desktop';
 		}
 		else if(browserWidth > mobileWidth) {
 			Site.activeDevice = 'tablet';
+			Site.activeDeviceType = 'touch';
 		}
 		else {
 			Site.activeDevice = 'mobile';
+			Site.activeDeviceType = 'touch';
 		}
 	}
 }

@@ -6,6 +6,7 @@
 /// <reference path="../helper/ThreeToDom.ts" />
 /// <reference path="../helper/ThreeAddOns.ts" />
 /// <reference path="../helper/Title.ts" />
+/// <reference path="../Site.ts" />
 module webglExp {
 
 	export class HotSpot {
@@ -110,7 +111,7 @@ module webglExp {
 
 			this.prepCanvas();
 
-			var shaders = GLAnimation.SHADERLIST.foglight;
+			var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.foglight_mobile : GLAnimation.SHADERLIST.foglight;
 			var mat:THREE.ShaderMaterial =
 			  	new THREE.ShaderMaterial({
 				    vertexShader:   shaders.vertex,
@@ -119,7 +120,9 @@ module webglExp {
 				    side: THREE.DoubleSide,
 				    transparent:true
 			  	});
-			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(this.geomSize, this.geomSize, 10, 10);
+
+			var vnb:number = webglExp.Tools.getVertexNB(10);
+			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(this.geomSize, this.geomSize, vnb, vnb);
 			geom.computeFaceNormals();
 			geom.computeVertexNormals();
 
@@ -588,9 +591,10 @@ module webglExp {
 		   
 		    this.mesh = new THREE.Object3D();
 		    this.mesh.rotation.x = -Math.PI / 5;
-		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.SphereBackground.vNumber, webglExp.SphereBackground.vNumber);
+		    var vnb:number = webglExp.SphereBackground.vNumber;
+		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, vnb, vnb);
 
-		    var bgShader = GLAnimation.SHADERLIST.bgsphere;
+		    var bgShader =(Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.bgsphere_mobile : GLAnimation.SHADERLIST.bgsphere;
 		    this.bgMat = new THREE.ShaderMaterial({
 			    vertexShader:   bgShader.vertex,
 			    fragmentShader: bgShader.fragment,
@@ -608,8 +612,9 @@ module webglExp {
 		    this.floatingMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
 
 		    this.floatingObjects = [];
+		     var snb:number = webglExp.Tools.getVertexNB(32);
 		    this.floatingGeomList = [
-		    	new THREE.SphereGeometry(5, 32, 32)
+		    	new THREE.SphereGeometry(5, snb, snb)
 		    ]
 		    var countGeom:number = 0;
 		    for (var i = 0; i < 10; ++i) {
@@ -678,9 +683,12 @@ module webglExp {
 			this.uniforms.height = objSize.y;
 			window.clearTimeout(this.redoTimeout);
 			this.mesh.remove(this.plane);
-			var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.SphereBackground.vNumber, webglExp.SphereBackground.vNumber);
+			var vnb:number = webglExp.Tools.getVertexNB(webglExp.SphereBackground.vNumber);
+			var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, vnb, vnb);
 			this.plane = new THREE.Mesh(planeGeom, this.bgMat);
 			this.mesh.add(this.plane);
+
+			this.uniforms.thetraRT.value = this.thetraRT;
 		}
 
 		render() {
@@ -838,7 +846,7 @@ module webglExp {
 		    this.buttonScene.add(this.buttonCtn);
 
 			var superGeom:THREE.Geometry = new THREE.Geometry();
-			var shaders = GLAnimation.SHADERLIST.sphereAnimation;
+			var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.sphereAnimation_mobile : GLAnimation.SHADERLIST.sphereAnimation;
 
 			this.uniforms = {
 				radius: {
@@ -975,8 +983,8 @@ module webglExp {
 
 
 			this.buildThetra();
-
-			for(var i:number = 0; i < 5000; i++) {
+			var vnb:number = (Site.activeDeviceType === 'touch') ? 3000 : 5000;
+			for(var i:number = 0; i < vnb; i++) {
 				var p:webglExp.Particle = new webglExp.Particle(this.spots);
 				this.attributes.start.value.push(p.start);
 				this.attributes.dest.value.push(p.dest);
@@ -1039,8 +1047,8 @@ module webglExp {
 		}
 
 		buildThetra() {
-
-			var geom:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(1, 3);
+			var vnb:number = (Site.activeDeviceType === 'touch') ? 2 : 3;
+			var geom:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(1, vnb);
 			
 			this.tetraAttr = {
 		  		displacement: {
@@ -1081,7 +1089,7 @@ module webglExp {
 				this.tetraAttr.gap.value.push(i * 0.5);
 			}
 
-			var shaderT = GLAnimation.SHADERLIST.thetradron;
+			var shaderT = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.thetradron_mobile : GLAnimation.SHADERLIST.thetradron;
 			var shadTetrahedron:THREE.ShaderMaterial =
 		  	new THREE.ShaderMaterial({
 			    vertexShader:   shaderT.vertex,

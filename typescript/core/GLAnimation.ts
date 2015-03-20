@@ -105,6 +105,8 @@ module webglExp {
 
 			interactiveEl.removeEventListener('mousedown', this.turnAround);
 			interactiveEl.removeEventListener('mouseup', this.stopTurning);
+			interactiveEl.removeEventListener('touchstart', this.turnAround);
+			interactiveEl.removeEventListener('touchend', this.stopTurning);
 		}
 
 		public enableCameraAround(object:THREE.Object3D, interactiveEl:HTMLElement) {
@@ -112,6 +114,9 @@ module webglExp {
 			this.controls = new THREE.MouseControls(object);
 			interactiveEl.addEventListener('mousedown', this.turnAround);
 			interactiveEl.addEventListener('mouseup', this.stopTurning);
+
+			interactiveEl.addEventListener('touchstart', this.turnAround);
+			interactiveEl.addEventListener('touchend', this.stopTurning);
 
 		}
 
