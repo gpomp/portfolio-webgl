@@ -1178,7 +1178,7 @@ module webglExp {
 		mouseOver = (event) => {
 			SphereAnimation.overID = event.detail.id;
 			TweenLite.to(webglExp.Particle, .3, { addedSpeed : 0.01 });
-			TweenLite.to(this.tetraUniforms.pointAmplitude, .4, { value: 1.0 });
+			TweenLite.to(this.tetraUniforms.pointAmplitude, .8, { value: 1.0, ease:Expo.easeInOut });
 			this.tetraUniforms.pointsTo.value = this.spots[event.detail.id].overPlane.position;
 			// this.blurh = 2.3;
 			TweenLite.to(THREE.BloomPass.blurX, .3, { x : this.blurh / (Scene3D.WIDTH * 2) });
@@ -1189,7 +1189,7 @@ module webglExp {
 			SphereAnimation.overID = -1;
 			TweenLite.to(webglExp.Particle, 3, { addedSpeed : 0.0 });
 			// this.blurh = 0.7;
-			TweenLite.to(this.tetraUniforms.pointAmplitude, .4, { value: 0.0 });
+			TweenLite.to(this.tetraUniforms.pointAmplitude, .8, { value: 0.0, ease:Expo.easeInOut });
 			TweenLite.to(THREE.BloomPass.blurX, .3, { x : this.blurh / (Scene3D.WIDTH * 2) });
 			TweenLite.to(THREE.BloomPass.blurY, .3, { y : this.blurh / (Scene3D.HEIGHT * 2) });
 		}
