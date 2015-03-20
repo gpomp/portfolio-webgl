@@ -262,7 +262,17 @@ canvas {
 	color: white;
 	text-decoration: none;
 	text-align: center;
+
+
+	.no-threejs & {
+		position: fixed;
+	}
 	.transition(all 0.3s ease-out);
+
+	.container {
+		background: black;
+	}
+
 	.container-text {
 		.text {
 			&:before {
@@ -380,6 +390,10 @@ canvas {
 			.container {
 				color: black;
 			}
+
+			.no-threejs & {
+				display: none;
+			}
 		}
 
 		.bg {
@@ -487,6 +501,10 @@ canvas {
 		display: none;
 		padding: 30px 0;
 
+		.no-threejs & {
+			padding: 0;
+		}
+
 		@media @d {
 			margin: 0;
 			float: right;
@@ -518,6 +536,16 @@ canvas {
 				left: 0;
 				.transform-origin(50% 0);
 
+				.no-threejs & {
+					position: relative;
+
+					& > div {
+						position: relative;
+					  	border: 10px solid #FFF;
+					  	overflow: hidden;
+					}
+				}
+
 				div.bg {
 					position: absolute;
 					top: 0;
@@ -525,6 +553,7 @@ canvas {
 					width: 100%;
 					height: 100%;
 					.perspective(1000px);
+					
 
 					& > div {
 						background: white;
@@ -542,6 +571,15 @@ canvas {
 							top: 0;
 							left: 0;
 							width: 100%;
+
+							.no-threejs & {
+								position: relative;
+								display: none;
+							}
+						}
+
+						.no-threejs & {
+							position: relative;
 						}
 					}
 				}
@@ -553,6 +591,9 @@ canvas {
 					width: 100%;
 					height: 0;
 					z-index: 2;
+					.no-threejs & {
+						display: none;
+					}
 					.box-shadow(inset 0px 175px 175px 0 rgba(0, 0, 0, 0.15));
 					.transition(height 0.3s ease-out);
 
@@ -577,6 +618,11 @@ canvas {
 
 				img.main {
 					display: none;
+
+					.no-threejs & {
+						display: block;
+						width: 100%;
+					}
 				}
 			}
 
@@ -599,6 +645,11 @@ canvas {
 			color: black;
 			margin-top: 300px;
 			.box-shadow( inset 0px -30px 40px 0 rgba(0, 0, 0, 0.15));
+			.no-threejs & {
+				.box-shadow(none);
+				.transform(perspective(0) rotateX(0deg));
+				margin-top: 80px;
+			}
 
 			h1 {
 				font-size: 500%;
@@ -610,6 +661,9 @@ canvas {
 				width: 100%;
 				display: inline-block;
 				display: none;
+				.no-threejs & {
+					display: block;
+				}
 			}
 
 			p {
@@ -740,7 +794,32 @@ canvas {
 	}	
 }
 
-#intro {
+.overlay-nowebgl {
+	position: relative;
+	width: 100%;
+	display: none;
+
+	.no-threejs & {
+		display: block;
+		margin-bottom: 80px;
+	}
+
+	.container {
+		width: 100%;
+		max-width: 1100px;
+		margin: 0 auto;
+		color: white;
+		position: relative;
+		z-index: 2;
+		overflow: hidden;
+		padding: 50px 20px 20px 20px;
+		background: red;
+
+		font-size: 160%;
+	}
+}
+
+#intro, #home-intro {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -863,25 +942,24 @@ canvas {
 	overflow: hidden;
 	display: none;
 
-	h1 {
-		font-weight: 900;
-		font-size: 400%;
-	}
-
-	p {
-		font-size: 160%;
-		line-height: 120%;
-		margin: 0;
-
-		.hide-intro {
-			display: block;
-			margin-top: 15px;
-		}
-	}
-
 	.no-threejs & {
 		display: block;
 		max-height: none;
+		visibility: visible;
+	}
+
+	.container {
+		max-height: none;
+		background: white;
+		padding: 20px;
+	}
+
+	.container h1 {
+		margin-top: 0;
+	}
+
+	.bg {
+		display: none;
 	}
 }
 
@@ -890,4 +968,12 @@ a.showIntro {
 	left: auto;
 	right: 20px;
 	top: 20px;
+
+	.container {
+		background: black;
+	}
+
+	.no-threejs & {
+		display: none;
+	}
 }

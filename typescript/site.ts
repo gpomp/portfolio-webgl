@@ -42,7 +42,8 @@ class Site {
 
 	configNonWebgl() {
 		(<HTMLElement>document.querySelectorAll("html").item(0)).classList.add("no-threejs");
-
+		(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).addEventListener('click', this.clickToggleMenu);
+			
 		/*Buttons*/
 		(<HTMLElement>document.querySelectorAll("#projects-buttons").item(0)).classList.add("show");
 		var buttons:HTMLCollection = (<HTMLCollection>document.querySelectorAll("#projects-buttons a"));
@@ -67,6 +68,16 @@ class Site {
 				img.setAttribute("src", img.getAttribute("data-src"));
 			}
 		}
+	}
+
+	clickToggleMenu = (event) => {
+		event.preventDefault();
+		this.toggleMenu();
+	}
+
+	toggleMenu() {
+		(<HTMLElement>document.querySelectorAll("#projects-buttons").item(0)).classList.toggle("open");
+		(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).classList.toggle("open");
 	}
 
 	hideIntro = (event:MouseEvent) => {

@@ -2,7 +2,29 @@
 
 {% block content %}
 
-	<header id="home-intro">{{post.content}}</header>
+	<div class="overlay-nowebgl">
+		<div class="container">
+			Uhoh! It looks like your using a device or a browser not compatible with WebGL.<br/>
+			That's cool, you can still see my projects but if you want the real experience come back with a modern device &amp; browser.<br/>
+			<a href="http://get.webgl.org/" target="_blank">Here is a link with more explanation</a><br/>
+
+			Thanks!
+
+		</div>
+	</div>
+	<header id="home-intro">
+		<div class="bg">
+			<div class="bg1"></div>
+			<div class="bg2"></div>
+		</div>
+		<div class="table">
+			<div class="table-cell">
+				<div class="container">
+					{{post.content}}
+				</div>
+			</div>
+		</div>
+	</header>
 	<div class="preload-font" style="font-family: 'Lato';">.</div>
 	<div id="sphere-buttons">
 		{% for project in posts %}
