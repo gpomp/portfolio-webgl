@@ -175,6 +175,8 @@ module THREE {
 	  	private yVector;
 	  	public oldOr:THREE.Vector2;
 
+	  	private lastPos:THREE.Vector2;
+
 		constructor(object:THREE.Object3D) {
 			this.enabled = false;
 			this.orientation = {
@@ -199,25 +201,30 @@ module THREE {
 		}
 
 		onMouseDown = (event) => {
+			event.preventDefault();
+			this.lastPos = new THREE.Vector2(event.clientX, event.clientY);
 			(<HTMLElement>document.querySelectorAll("body").item(0)).classList.add("drag");
 		}
 
 		onMouseUp = (event) => {
+			event.preventDefault();
 			(<HTMLElement>document.querySelectorAll("body").item(0)).classList.remove("drag");
 		}
 
 		onMouseMove = (event) => {
+			event.preventDefault();
 			if ( this.enabled === false ) return;
 
 		    var orientation = this.orientation;
 
-		    var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-		    var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+		    var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || event.clientX - this.lastPos.x || 0;
+		    var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || event.clientY - this.lastPos.y || 0;
 
 		    orientation.y += movementX * 0.0025;
 		    orientation.x += movementY * 0.0025;
 
 		    orientation.x = TheMath.max( - this.PI_2, TheMath.min( this.PI_2, orientation.x ) );
+			this.lastPos.set(event.clientX, event.clientY);
 		}
 
 		update() {
