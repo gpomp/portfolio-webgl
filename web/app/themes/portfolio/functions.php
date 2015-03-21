@@ -88,7 +88,7 @@
 										        <div class="bg1"></div>
 										        <div class="bg2"></div>
 										        <div class="container-text">
-										          <div class="text">'.$text.'</div>
+										          <div class="txt">'.$text.'</div>
 										        </div>
 										    </div>
 										</a>
