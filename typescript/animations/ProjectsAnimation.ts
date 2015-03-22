@@ -180,7 +180,6 @@ module webglExp {
 			for (var i = 0; i < this.svgList.length; ++i) {
 				var el:HTMLElement = this.svgList[i].ctnEl;
 				var dir:number = (i%2 === 0) ? 1 : -1;
-				console.log(y, z, el.clientHeight);
 				var translate:string = "translate3d(0, "+ y +"px, " + z + "px)";
 				var rotate:string = "rotateX(" + (dir * angle) + "deg)";
 				el.style[utils.Prefix.transformPrefix()] = translate + " " + rotate;
@@ -351,6 +350,8 @@ module webglExp {
 				this.gallery.resize();
 			}
 
+			this.placeTitle();
+
 			
  		}
 
@@ -451,10 +452,19 @@ module webglExp {
 
 		placeTitle() {
 			this.title.setText(this.projectHTML.querySelectorAll("h1").item(0).textContent.toUpperCase());
-			var diffObj = this.position.z - this.camera.position.z;
+			
+			var diffObj = this.camera.position.z - this.position.z;
+			
 			var vFov:number = this.camera.fov * (Math.PI / 180);
-		   	this.title.getObject().position.z =  -(Scene3D.HEIGHT / (2 * Math.tan(vFov / 2) ) + diffObj);
-			this.title.getObject().position.y = -100;
+			var height = 2 * Math.tan( vFov / 2 ) * diffObj;
+			var fractionY = this.title.canvas.height / height;
+			
+			var aspect = Scene3D.WIDTH / Scene3D.HEIGHT;
+			var width = height * aspect;
+			
+			this.title.getObject().scale.x = width;
+			this.title.getObject().scale.y = width / this.title.canvas.width * this.title.canvas.height;
+			this.title.getObject().position.y = 140;
 			this.title.getObject().rotation.x = this.camera.rotation.x;
 		}
 

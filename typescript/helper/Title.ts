@@ -1,10 +1,11 @@
 /// <reference path="../../web/app/themes/portfolio/vendors/DefinitelyTyped/threejs/three.d.ts" />
 /// <reference path="../../web/app/themes/portfolio/vendors/DefinitelyTyped/greensock/greensock.d.ts" />
+/// <reference path="../core/Scene3D.ts" />
 
 module webglExp {
 	export class Title {
 
-		private canvas;
+		public canvas;
 		private ctx;
 
 		private mesh:THREE.Mesh;
@@ -20,15 +21,14 @@ module webglExp {
 
 			this.ctx = this.canvas.getContext('2d');
 
-			this.canvas.setAttribute("width", "1100px");
-			this.canvas.setAttribute("height", "100px");
+			
 			/*this.ctx.fillStyle = "white";
 			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);*/
 			
 
 			this.texture = new THREE.Texture(this.canvas);
 			this.texture.needsUpdate = true;
-			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(this.canvas.width, this.canvas.height);
+			var geom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(1, 1);
 			
 			var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.text_mobile : GLAnimation.SHADERLIST.text;
 
@@ -74,14 +74,16 @@ module webglExp {
 			this.mesh = new THREE.Mesh(geom, mat);
 		}
 
-		
 
-		public setText(str:string, size:number = 60) {
 
+		public setText(str:string, size:number = 40) {
+			this.canvas.setAttribute("width", Math.min(1100, Scene3D.WIDTH) + "px");
+			this.canvas.setAttribute("height", "130px");
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 			this.ctx.fillStyle = "white";
 			this.ctx.font = size + "pt 'Lato'";
 			var tSize:number = Math.max(this.ctx.measureText(str).width, 100);
-			this.ctx.fillText(str, (this.canvas.width - tSize) * 0.5, 80);
+			this.ctx.fillText(str, (this.canvas.width - tSize) * 0.5, 110);
 			this.texture.needsUpdate = true;
 		}
 
