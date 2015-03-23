@@ -43,7 +43,7 @@ module webglExp {
 
 		public static createCustomEvent(name:string):CustomEvent {
 			var event;
-			if (CustomEvent) {
+			if (typeof CustomEvent === 'function') {
   				event = new CustomEvent(name);
 			} else {
 				event = document.createEvent('CustomEvent');
