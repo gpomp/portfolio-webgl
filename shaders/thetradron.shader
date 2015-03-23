@@ -29,7 +29,7 @@
 
 	    vec3 normTo = normalize(pointsTo);
 	    float dist = (1.0 - max(0.0, min(1.0, distance(normTo, newPosition)))) * pointAmplitude;
-	    newPosition = newPosition + normTo * dist * 2.0;
+	    newPosition = newPosition + normTo * dist;
 
 
 	  	gl_Position = projectionMatrix *

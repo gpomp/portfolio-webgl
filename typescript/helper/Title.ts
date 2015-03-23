@@ -77,7 +77,7 @@ module webglExp {
 
 
 
-		public setText(str:string, size:number = 40) {
+		public setText(str:string, size:number = 25) {
 			if(Site.activeDevice === "mobile") size = 20;
 			this.canvas.setAttribute("width", Math.min(1100, Scene3D.WIDTH) + "px");
 			this.canvas.setAttribute("height", "130px");

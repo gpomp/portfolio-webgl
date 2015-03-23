@@ -1018,7 +1018,7 @@ module webglExp {
 				spot.overPlane.scale.x = -fraction;	
 
 				this.buttonCtn.add(button);
-				// this.sceneCtn.add(spot.linePlane);
+				this.sceneCtn.add(spot.linePlane);
 
 				button.lookAt(new THREE.Vector3());
 			}
