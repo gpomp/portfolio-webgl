@@ -285,6 +285,16 @@ canvas {
 				.translate(0 0);
 				.opacity(1);
 				.transition(all .3s ease-out);
+
+				@media @m {
+					visibility: hidden;
+					.opacity(0);
+				}
+				
+				@media @t {
+					visibility: hidden;
+					.opacity(0);
+				}
 			}
 			
 		}
@@ -737,6 +747,7 @@ canvas {
 				line-height: 120%;
 				width: 100%;
 				display: inline-block;
+				letter-spacing: 0.05em;
 
 				@media @m {
 					font-size: 120%;
@@ -747,7 +758,7 @@ canvas {
 
 			&.show {
 				.opacity(1);
-				.transition(opacity 0.5s ease-out);
+				.transition(opacity 0.5s ease-out 1s);
 			}
 		}
 	}
@@ -997,6 +1008,7 @@ canvas {
 			line-height: 120%;
 			margin: 0;
 			color: black;
+			letter-spacing: 0.05em;
 			@media @m {
 				font-size: 120%;
 				margin: 0;

@@ -238,7 +238,7 @@ module webglExp {
 		    this.context.beginPath();
 		    this.context.arc(0,0, 45,0, this.radOver);
 		    this.context.strokeStyle = "#ffffff";
-		    this.context.lineWidth = 12;
+		    this.context.lineWidth = 20;
 		    this.context.stroke();
 		    this.context.restore();
 		    this.uniforms.text.value.needsUpdate = true;
