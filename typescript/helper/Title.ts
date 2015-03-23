@@ -1,6 +1,7 @@
 /// <reference path="../../web/app/themes/portfolio/vendors/DefinitelyTyped/threejs/three.d.ts" />
 /// <reference path="../../web/app/themes/portfolio/vendors/DefinitelyTyped/greensock/greensock.d.ts" />
 /// <reference path="../core/Scene3D.ts" />
+/// <reference path="../site.ts" />
 
 module webglExp {
 	export class Title {
@@ -77,6 +78,7 @@ module webglExp {
 
 
 		public setText(str:string, size:number = 40) {
+			if(Site.activeDevice === "mobile") size = 20;
 			this.canvas.setAttribute("width", Math.min(1100, Scene3D.WIDTH) + "px");
 			this.canvas.setAttribute("height", "130px");
 			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
