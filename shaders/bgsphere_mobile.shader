@@ -126,6 +126,10 @@
 	varying vec4 stagePos;
 	varying vec3 vNormal;
 
+	uniform vec2 hole;
+	uniform float holeRatio;
+	uniform float holeDist;
+
 	
 
 	varying vec2 vUv;
@@ -135,7 +139,7 @@
 		vUv = uv;
 		vec2 noise = vec2((pos.x + scroll.x) / 200.0, (pos.y + scroll.y)  / 200.0);
 		pos.z = cnoise(noise) * (-80.0 - 30.0 * sin(time * 0.4 + pos.x / width * 20.0 + pos.y / height * 20.0));		
-
+		pos.z += (1.0 - max(0.0, min(1.0, distance(pos.xy, hole) / holeRatio))) * -(holeRatio * 3.0);
 		stagePos = modelMatrix * vec4(pos,1.0);
 	  	gl_Position = projectionMatrix *
 	                modelViewMatrix *
