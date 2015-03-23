@@ -1058,7 +1058,18 @@ a.showIntro {
 	left: auto;
 	right: 20px;
 	top: 20px;
+	position: absolute;
 	background: black;
+	font-size: 120%;
+	text-transform: uppercase;
+	padding-bottom: 2px;
+	border-bottom: 1px solid white;
+	color: white;
+	text-decoration: none;
+
+	&:hover {
+		border-bottom-color: transparent;
+	}
 
 	body.projects & {
 		right: 40px;
