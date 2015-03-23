@@ -134,8 +134,6 @@ module webglExp {
 			
 			this.domEl = <HTMLElement>document.querySelectorAll("#sphere-buttons .hiddenButton").item(this.id);
 			this.href = this.domEl.getAttribute("href");
-			
-			this.overEl = <HTMLElement>document.querySelectorAll("#sphere-buttons .overButton").item(this.id);
 
 			this.three2Dom = new webglExp.ThreeToDom(camera, this.overPlane, this.domEl);
 			this.three2Dom.updatePosition();
@@ -577,6 +575,16 @@ module webglExp {
   				shadowRatio: {
   					type: 'f',
   					value: 1.0
+  				},
+
+  				hole: {
+  					type: 'v2',
+  					value: new THREE.Vector2(0.0, 0.0)
+  				},
+
+  				holeRatio: {
+  					type: 'f',
+  					value: 0.0
   				}
   				
 		    };
