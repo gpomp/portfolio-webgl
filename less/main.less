@@ -94,7 +94,7 @@ canvas {
 	.inner-button {
 		position: relative;
 		overflow: hidden;
-		.transition(all 0.25s ease-out 0.2s); 
+		.transition(all 0.25s ease-in 0.2s); 
 		padding: 0;
 		border:0px solid black;
 		.bg1, .bg2 {
@@ -108,14 +108,14 @@ canvas {
 
 		.bg1 {
 			.translate(-100%, 0);
-			.transition(transform 0.25s ease-out); 
+			.transition(transform 0.25s ease-in 0.1s); 
 		}
 
 		.bg2 {
 			top: auto;
 			bottom: 0;
-			.translate(100%, 0);
-			.transition(transform 0.25s ease-out); 
+			.translate(-100%, 0);
+			.transition(transform 0.25s ease-in); 
 		}
 
 		.container-text {
@@ -218,13 +218,17 @@ canvas {
 
 			.bg1, .bg2 {
 				.translate(0, 0);
-				.transition(transform 0.25s ease-out 0.2s); 
+				.transition(transform 0.25s ease-out); 
+			}
+
+			.bg2 {
+				.transition(transform 0.25s ease-out 0.1s); 
 			}
 
 			.container-text {
 				.txt {
 					color: black;
-					.transition(color 0.25s ease-out 0.2s); 
+					.transition(color 0.25s ease-out); 
 				}
 			}
 		}
