@@ -73,6 +73,7 @@ gulp.task('libscripts', function () {
 			config.bower + "webgl-shader-loader-js/ShaderLoader.js",
 			config.bower + "three-effectComposer/shaders/ConvolutionShader.js",
 			config.bower + "three-effectComposer/shaders/CopyShader.js",
+			config.bower + "three-effectComposer/js/postprocessing/MaskPass.js",
 			config.bower + "three-effectComposer/js/postprocessing/RenderPass.js",
 			config.bower + "three-effectComposer/js/postprocessing/BloomPass.js",
 			config.bower + "three-effectComposer/js/postprocessing/ShaderPass.js",
