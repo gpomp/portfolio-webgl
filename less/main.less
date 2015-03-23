@@ -123,11 +123,16 @@ canvas {
 			position: relative;
 			border:3px solid white;
 			.txt {
-				padding: 10px 10px;
+				padding: 10px;
 				color: white;
 				font-weight: 900;
 				font-size: 170%;
 				.transition(color 0.25s ease-out 0.2s); 
+
+				@media @m {
+					font-size: 120%;
+					padding: 5px;
+				}
 			}
 		}
 
@@ -308,11 +313,10 @@ canvas {
 #open-menu {
 	z-index: 7;
 	display: none;
-	padding: 10px;
 	position: absolute;
-	top: 0;
+	top: 20px;
 	min-width: 0;
-	left: 0;
+	left: 20px;
 	color: white;
 	text-decoration: none;
 	text-align: center;
@@ -336,7 +340,6 @@ canvas {
 	}
 
 	&.open {
-		min-width: 200px;
 		.transition(all 0.3s ease-out);
 		.container-text {
 			.txt {
@@ -408,11 +411,11 @@ canvas {
 		html.webgl &, & {
 			top: 0;
 			background: rgba(0, 0, 0, 0.75);
-			
+			width: 100%;
 			height: 100%;
-			.transform(perspective(0) rotateY(0deg) translate(-200px, 0));
+			.transform(perspective(0) rotateY(0deg) translate(-100%, 0));
 			.transition(transform 0.2s ease-out);
-			border-right: 2px solid #FFF;
+			border-right: 0;
 
 			&.open {
 				.transform(perspective(0) rotateY(0deg) translate(0, 0));
@@ -431,6 +434,10 @@ canvas {
 		overflow: hidden;
 		.translate(-100% 0);
 		.transition(transform 0.2s ease-out);
+
+		@media @m {
+			width: 50%;
+		}
 
 		&.show {
 			.translate(0 0);
@@ -461,6 +468,9 @@ canvas {
 			.grayscale(100%);
 			.transform(translate(-100px, 0) scale(1));
 			.transition(all 0.2s ease-out 0.1s);
+			@media @m {
+				.transform(translate(0px, 0) scale(1));
+			}
 			img {
 				position: absolute;
 				top: 50%;
@@ -488,6 +498,7 @@ canvas {
 			.opacity(0);
 			.translate(-100px 0);
 			.transition(all 0.2s ease-out);
+
 		}
 		
 		&.active, &:hover {
@@ -568,6 +579,12 @@ canvas {
 		}
 
 		@media @t {
+			width: 100%;
+			max-width: 100%;
+			padding: 0 25px;
+		}
+
+		@media @m {
 			width: 100%;
 			max-width: 100%;
 			padding: 0 25px;
@@ -705,6 +722,10 @@ canvas {
 				margin-top: 80px;
 			}
 
+			@media @m {
+				margin-top: 200px;
+			}
+
 			h1 {
 				font-size: 500%;
 				font-weight: 900;
@@ -718,6 +739,10 @@ canvas {
 				.no-threejs & {
 					display: block;
 				}
+
+				@media @m {
+					font-size: 200%;
+				}
 			}
 
 			p {
@@ -725,6 +750,10 @@ canvas {
 				line-height: 120%;
 				width: 100%;
 				display: inline-block;
+
+				@media @m {
+					font-size: 120%;
+				}
 			}
 
 			&.show {
@@ -772,6 +801,9 @@ canvas {
 			height: 50px;
 			position: relative;
 			overflow: hidden;
+			@media @m {
+				height: 34px;
+			}
 			.arrow {
 				padding: 10px;
 				font-size: 200%;
@@ -780,6 +812,10 @@ canvas {
 				height: 100%;
 				span {
 					vertical-align: middle;
+				}
+
+				@media @m {
+					font-size: 120%;
 				}
 			}
 
@@ -793,6 +829,10 @@ canvas {
 				height: 100%;
 				.transition(max-width 0.15s ease-out);
 				text-align: center;
+
+				@media @m {
+					font-size: 120%;
+				}
 				.ctn {
 					padding: 10px;
 					min-width: 130px;
@@ -955,6 +995,9 @@ canvas {
 			font-weight: 900;
 			font-size: 400%;
 			color: black;
+			@media @m {
+				font-size: 200%;
+			}
 		}
 
 		p {
@@ -962,6 +1005,9 @@ canvas {
 			line-height: 120%;
 			margin: 0;
 			color: black;
+			@media @m {
+				font-size: 120%;
+			}
 
 			a {
 				color: black;
@@ -1022,9 +1068,18 @@ a.showIntro {
 	left: auto;
 	right: 20px;
 	top: 20px;
+	background: black;
 
 	body.projects & {
 		right: 40px;
+
+		@media @m {
+			right: 20px;
+		}
+
+		@media @t {
+			right: 20px;
+		}
 	}
 
 	.container {
