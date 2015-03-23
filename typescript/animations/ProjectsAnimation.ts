@@ -387,7 +387,9 @@ module webglExp {
 		getRandomPointAround(signX:number, signY:number):THREE.Vector3 {
 			var v:THREE.Vector3 = new THREE.Vector3();
 			v.z = this.position.z;
-			v.y = this.position.y + signY * 150;
+			signX = (Math.random() > .5) ? -1 : 1;
+			signY = (Math.random() > .5) ? -1 : 1;
+			v.y = this.position.y + signY * (this.size.width * 3);
 
 			v.x = this.position.x + signX * (this.size.width * 3);
 
@@ -413,8 +415,8 @@ module webglExp {
 			this.title.hide();
 			var longest:number = 0;
 			for (var i = 0; i < this.fracTween.length; ++i) {
-				var t:number = .1 + Math.random() * 0.01;
-				var d:number = 1 + Math.random() * 0.003;
+				var t:number = .1 + Math.random() * 0.2;
+				var d:number = 1 + Math.random() * 0.3;
 				TweenLite.to(this.fracTween[i], t, { f : 0, delay: d });
 				longest = Math.max(longest, t + d);
 			}
@@ -819,7 +821,6 @@ module webglExp {
 			this.composerObjects.addPass(objectRender);
 
 			var bloomStrength = 11;
-			this.updateBloomBlur(0);
 			this.effectBloom = new THREE.BloomPass(bloomStrength, 25, 5.0, 1024);
 			this.renderPass = new THREE.RenderPass(this.getScene(), super.getCamera());
 			this.renderPass.clear = false;
@@ -942,6 +943,7 @@ module webglExp {
 		}
 
 		closeProject() {
+			this.inProject = false;
 			this.isBluring = true;
 			this.projectsList[this.currProject].leaveFront();
 
@@ -1034,6 +1036,10 @@ module webglExp {
 		}
 
 		atProject = () => {
+			this.scrollVal = this.currScroll = 0;
+			
+			var points = this.cameraCurve.points;
+			this.onProjectY = points[points.length - 1].y;
 			this.projectsList[this.currProject].cameraInFront();
 			this.isCamMoving = false;
 
@@ -1044,6 +1050,7 @@ module webglExp {
 
 
 			this.inProject = true;
+
 		}
 
 		toggleBlurPass(b:boolean) {
@@ -1056,7 +1063,6 @@ module webglExp {
 			this.project = this.projectsList[this.currProject];
 			this.project.openProject();
 			this.nextPrev.classList.add("show");
-			this.onProjectY = super.getCamera().position.y;
 			this.projectsMove(<HTMLElement>this.project.projectHTML);
 		}
 
@@ -1067,12 +1073,9 @@ module webglExp {
 				var speedZ:number = Math.abs(curvPos.z - super.getCamera().position.z) / 50;
 				super.getCamera().position.set(curvPos.x, curvPos.y, curvPos.z);
 
-				this.updateBloomBlur(0.3 + speedZ);
 				for (var i = 0; i < this.projectsList.length; ++i) {
 					this.projectsList[i].update(speedZ);
 				}
-			} else if(this.isBluring) {
-				this.updateBloomBlur(this.bloomStrength / 30 * 2);
 			}
 
 			this.floorCtn.position.z = super.getCamera().position.z - 700;
@@ -1098,9 +1101,7 @@ module webglExp {
 			}
  			
 
- 			if(this.project !== null && this.project.galleryReady) {
-	 			this.mSpeed += (this.mouseVel.distSquared - this.mSpeed) * 0.05;
- 				this.updateBloomBlur(1.0 + Math.abs(this.mSpeed * 0.1));
+ 			if(this.project !== null && this.project.galleryReady && this.inProject) {
 
  				this.project.renderGallery();
  				this.currScroll += (this.scrollVal - this.currScroll) * 0.1;
@@ -1108,9 +1109,6 @@ module webglExp {
  			}
 
  			
-		}
-
-		updateBloomBlur(n:number) {
 		}
 
 		resize() {
