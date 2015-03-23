@@ -259,23 +259,21 @@ module webglExp {
 			this.overEvent.detail.id = this.id;
 			document.dispatchEvent(this.overEvent);
 			this.canvasAnimation = true;
-			console.log(this.three2Dom.middlePos);
 			this.overEl.style.left = this.three2Dom.middlePos.x + "px";
 			this.overEl.style.top = (this.three2Dom.middlePos.y - this.overEl.clientHeight * 0.5) + "px";
 			this.overEl.classList.add("over");
 			TweenLite.to(this.linePlane.scale, 1, { x: 1, y: 1, z: 1, ease: Expo.easeInOut });
 			TweenLite.to(this, 1, { radOver: Math.PI * 2 - Math.PI / 10, ease: Expo.easeInOut });
 			TweenLite.to(this.uniforms.bendRatio, 1, { value: -10, ease: Expo.easeInOut });
-			var mpos:THREE.Vector3 = new THREE.Vector3();
+			var m = new THREE.Matrix4().getInverse(this.overPlane.parent.matrix).multiply(this.camera.matrix);  
+			var rel_pos = new THREE.Vector3().setFromMatrixPosition(m);
+
+			TweenLite.to(this.lookAt, 1, { 
+							x: rel_pos.x, 
+							y: rel_pos.y, 
+							z: rel_pos.z  });
 
 			
-		}
-
-		overAfter(scene:THREE.Scene) {
-			/*THREE.SceneUtils.detach(this.overPlane, scene, scene);
-			this.overPlane.lookAt(this.camera.position);
-			this.overPlane.updateMatrix();
-			THREE.SceneUtils.attach(this.overPlane, scene, scene);*/
 		}
 
 		out = (event) => {
@@ -293,7 +291,7 @@ module webglExp {
 		}
 
 		render() {
-			this.three2Dom.updatePosition();
+			this.three2Dom.updatePosition(true);
 			if(this.canvasReady && this.canvasAnimation) {
 				this.rotateCircle += 2;
 				this.updateCanvas();

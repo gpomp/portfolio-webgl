@@ -17,7 +17,7 @@
 	    vUv = uv;
 
 	    pos = position;
-	    pos.z = (position.x * position.x + position.y * position.y) / (size * size) * bendRatio;
+	    // pos.z = (position.x * position.x + position.y * position.y) / (size * size) * bendRatio;
 	    stagePos = modelMatrix * vec4(pos,1.0);
 	  	gl_Position = projectionMatrix *
 	                modelViewMatrix *
