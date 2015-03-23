@@ -458,7 +458,7 @@ module webglExp {
 			var vFov:number = this.camera.fov * (Math.PI / 180);
 			var height = 2 * Math.tan( vFov / 2 ) * diffObj;
 			var fractionY = this.title.canvas.height / height;
-			
+
 			var aspect = Scene3D.WIDTH / Scene3D.HEIGHT;
 			var width = height * aspect;
 			
@@ -551,6 +551,10 @@ module webglExp {
 		private floorCtn:THREE.Object3D;
 
 		private isBackToSphere:boolean;
+
+		private cylinder:THREE.Mesh;
+		private cylinderCtn:THREE.Object3D;
+		private cUniforms;
 
 		constructor(scene:THREE.Scene, camera:THREE.PerspectiveCamera, renderer:THREE.WebGLRenderer, startScroll:THREE.Vector2, frame:number, index?:number) {
 
@@ -646,6 +650,16 @@ module webglExp {
   				shadowRatio: {
   					type: 'f',
   					value: 0.0
+  				},
+
+  				hole: {
+  					type: 'v2',
+  					value: new THREE.Vector2(0.0, 0.0)
+  				},
+
+  				holeRatio: {
+  					type: 'f',
+  					value: 0.0
   				}
   				
 		    };
@@ -678,6 +692,9 @@ module webglExp {
 
 		  	this.floorCtn.add(this.floor);
 		  	super.getScene().add(this.floorCtn);
+		  	this.createCylinders();
+
+
 		  	this.currProject = -1;
 		  	this.project = null;
 
@@ -822,6 +839,51 @@ module webglExp {
 
 		}
 
+		createCylinders() {
+			var geom:THREE.CylinderGeometry = new THREE.CylinderGeometry(210.0, 150.0, 2000.0, 20, 32, true, 0, Math.PI * 2);
+			
+			var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.cylinder_mobile : GLAnimation.SHADERLIST.cylinder;
+
+			this.cUniforms = {
+				time: {
+					type: 'f',
+					value: 0.0
+				},
+				alphaRatio: {
+					type: 'f',
+					value: 0.0
+				}
+			};
+
+			var mat:THREE.ShaderMaterial =
+		  	new THREE.ShaderMaterial({
+			    vertexShader:   shaders.vertex,
+			    fragmentShader: shaders.fragment,
+			    uniforms: this.cUniforms, 
+			    side:THREE.DoubleSide,
+			    transparent: true
+		  	});
+
+			//var mat:THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({color: 0xFF0000, transparent:true, opacity: 0.5, side:THREE.DoubleSide});
+
+			this.cylinder = new THREE.Mesh(geom, mat);
+
+			this.cylinderCtn = new THREE.Object3D();
+			this.cylinderCtn.add(this.cylinder);
+			super.getScene().add(this.cylinderCtn);
+
+			this.cylinderCtn.position.y = -480;
+
+			this.cylinder.position.y = 500;
+			this.cylinder.rotation.y = Math.PI / 2;
+
+			this.cylinder.scale.x = 0.01;
+			this.cylinder.scale.z = 0.01;
+
+			this.cylinderCtn.position.z = super.getCamera().position.z - 700;
+			this.cylinderCtn.position.x = super.getCamera().position.x;
+		}
+
 		createProjects() {
 			this.projectsList = [];
 			var z:number = super.getCamera().position.z - 1000;
@@ -885,12 +947,19 @@ module webglExp {
 
 			this.nextPrev.classList.remove("show");
 
+			
+			TweenLite.to(this.cylinder.scale, 2, { x: 0.01, z: 0.01, ease:Expo.easeInOut, onComplete: this.holeOff });
 			if(this.isBackToSphere) {
+				TweenLite.to(this.uniforms.holeRatio, 2, { value:0.0, ease:Expo.easeInOut });
 				this.backtoSphere();
 			} else {
-				TweenLite.to(this, 2, { bloomStrength:0, onComplete: this.showProject });
+				TweenLite.to(this.uniforms.holeRatio, 2, { value:0.0, ease:Expo.easeInOut, onComplete: this.showProject });
 			}
 			
+		}
+
+		holeOff = () => {
+			this.cUniforms.alphaRatio.value = 0.0;
 		}
 
 		showProject = () => {
@@ -967,10 +1036,11 @@ module webglExp {
 		atProject = () => {
 			this.projectsList[this.currProject].cameraInFront();
 			this.isCamMoving = false;
-			// this.toggleBlurPass(true);
 
 			this.isBluring = true;
-			TweenLite.to(this, 2, { bloomStrength:30, onComplete: this.sceneBlured });
+			TweenLite.to(this.uniforms.holeRatio, 2, { value:350.0, ease:Expo.easeInOut });
+			this.cUniforms.alphaRatio.value = 1.0;
+			TweenLite.to(this.cylinder.scale, 2, { x: 1, z: 1, ease:Expo.easeInOut, onComplete: this.sceneBlured });
 
 
 			this.inProject = true;
@@ -992,7 +1062,6 @@ module webglExp {
 
 		render() {
 			this.frame += 0.1;
-
 			if(this.isCamMoving) {
 				var curvPos:THREE.Vector3 = this.cameraCurve.getPointAt(this.posOnPath);
 				var speedZ:number = Math.abs(curvPos.z - super.getCamera().position.z) / 50;
@@ -1009,7 +1078,11 @@ module webglExp {
 			this.floorCtn.position.z = super.getCamera().position.z - 700;
 			this.floorCtn.position.x = super.getCamera().position.x ;
 
+			this.cylinderCtn.position.z = super.getCamera().position.z - 700;
+			this.cylinderCtn.position.x = super.getCamera().position.x;
+
 			this.uniforms.time.value = this.frame;
+			this.cUniforms.time.value = this.frame;
 			this.uniforms.scroll.value.y = -super.getCamera().position.z;
 			this.uniforms.scroll.value.x = super.getCamera().position.x;
 
