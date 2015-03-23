@@ -53,7 +53,7 @@
 		light = normalize(light);
 		 float dProd = max(0.0,
 	                    dot(normal, light));
-	  	gl_FragColor = vec4(texel.rgb * dProd, texel.a * fog * alpha);
+	  	gl_FragColor = vec4(texel.rgb, texel.a * fog * alpha);
 	}
 </fragment>
 

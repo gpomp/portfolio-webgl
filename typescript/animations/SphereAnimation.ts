@@ -22,6 +22,7 @@ module webglExp {
 
 		public plane:THREE.Mesh;
 		public overPlane:THREE.Mesh;
+		public linePlane:THREE.Line;
 		public geomSize:number;
 
 		private domEl:HTMLElement;
@@ -65,7 +66,7 @@ module webglExp {
 		createPlane(camera:THREE.PerspectiveCamera, projectName:string):THREE.Mesh {
 			this.camera = camera;
 			this.projectName = projectName;
-			this.geomSize = 100;
+			this.geomSize = 75;
 
 			this.bgCanvas = document.createElement("canvas");
 			this.bgCanvas.setAttribute('width', '256px');
@@ -131,7 +132,7 @@ module webglExp {
 			this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
 
 			this.lookAt = new THREE.Vector3(0);
-			
+			this.overEl = <HTMLElement>document.querySelectorAll("#sphere-buttons .overButton").item(this.id);
 			this.domEl = <HTMLElement>document.querySelectorAll("#sphere-buttons .hiddenButton").item(this.id);
 			this.href = this.domEl.getAttribute("href");
 
@@ -143,6 +144,15 @@ module webglExp {
 			this.domEl.addEventListener('mouseover', this.over, false);
 			this.domEl.addEventListener('mouseout', this.out, false);
 
+			var lineMat = new THREE.LineBasicMaterial({ color: 0x00a74d });
+			var lineGeometry = new THREE.Geometry();
+			lineGeometry.vertices.push(
+				new THREE.Vector3( 0, 0, 0 ),
+				new THREE.Vector3( oPlanePos.x, oPlanePos.y, oPlanePos.z )
+			);
+
+			this.linePlane =  new THREE.Line( lineGeometry, lineMat );
+			this.linePlane.scale.set(0.01, 0.01, 0.01);
 			return this.overPlane;
 		}
 
@@ -154,10 +164,13 @@ module webglExp {
 			
 			var rad = this.canvas.width * 0.5;
 		    this.bgContext.beginPath();
-		    this.bgContext.arc(rad,rad,rad - 20,0,Math.PI * 2);
+		    this.bgContext.arc(rad,rad,30,0,Math.PI * 2);
 		    this.bgContext.closePath();
 
-		    this.bgContext.strokeStyle = "#ffffff";
+		    this.bgContext.fillStyle = "#00a74d";
+		    this.bgContext.fill();
+
+		    /*this.bgContext.strokeStyle = "#ffffff";
 		    this.bgContext.lineWidth = 20;
 		    this.bgContext.stroke();
 		    this.bgContext.fillStyle = "rgba(30, 30, 30, 0.65)";
@@ -209,6 +222,8 @@ module webglExp {
 			var str:string = String(this.id + 1);
 			var tSize = this.bgContext.measureText(str.toUpperCase());
 			this.bgContext.fillText(str.toUpperCase(), (this.canvas.width - tSize.width) * 0.5, (this.canvas.height) * 0.5 + 30);
+			this.context.drawImage(this.bgCanvas, 0, 0);*/
+
 			this.context.drawImage(this.bgCanvas, 0, 0);
 		    this.uniforms.text.value.needsUpdate = true;
 		}
@@ -221,9 +236,9 @@ module webglExp {
 			this.context.translate(rad,rad);
 			this.context.rotate(this.rotateCircle * Math.PI / 180);
 		    this.context.beginPath();
-		    this.context.arc(0,0,rad - 42,0, this.radOver);
+		    this.context.arc(0,0, 45,0, this.radOver);
 		    this.context.strokeStyle = "#ffffff";
-		    this.context.lineWidth = 10;
+		    this.context.lineWidth = 12;
 		    this.context.stroke();
 		    this.context.restore();
 		    this.uniforms.text.value.needsUpdate = true;
@@ -244,24 +259,37 @@ module webglExp {
 			this.overEvent.detail.id = this.id;
 			document.dispatchEvent(this.overEvent);
 			this.canvasAnimation = true;
+			console.log(this.three2Dom.middlePos);
+			this.overEl.style.left = this.three2Dom.middlePos.x + "px";
+			this.overEl.style.top = (this.three2Dom.middlePos.y - this.overEl.clientHeight * 0.5) + "px";
+			this.overEl.classList.add("over");
+			TweenLite.to(this.linePlane.scale, 1, { x: 1, y: 1, z: 1, ease: Expo.easeInOut });
 			TweenLite.to(this, 1, { radOver: Math.PI * 2 - Math.PI / 10, ease: Expo.easeInOut });
 			TweenLite.to(this.uniforms.bendRatio, 1, { value: -10, ease: Expo.easeInOut });
-			/*TweenLite.to(this.lookAt, 1, { 
-							x: this.camera.position.x, 
-							y: this.camera.position.y, 
-							z: this.camera.position.z  });*/
+			var mpos:THREE.Vector3 = new THREE.Vector3();
+
+			
+		}
+
+		overAfter(scene:THREE.Scene) {
+			/*THREE.SceneUtils.detach(this.overPlane, scene, scene);
+			this.overPlane.lookAt(this.camera.position);
+			this.overPlane.updateMatrix();
+			THREE.SceneUtils.attach(this.overPlane, scene, scene);*/
 		}
 
 		out = (event) => {
 			this.outEvent.detail.id = this.id;
 			document.dispatchEvent(this.outEvent);
+			this.overEl.classList.remove("over");
+			TweenLite.to(this.linePlane.scale, 1, { x: 0.01, y: 0.01, z: 0.01, ease: Expo.easeInOut });
 			TweenLite.to(this, 1, { radOver: 0, onComplete: this.endCanvasAnimation, ease: Expo.easeInOut });
 			TweenLite.to(this.uniforms.bendRatio, 1, { value: 20, ease: Expo.easeInOut });
 
-			/*TweenLite.to(this.lookAt, 1, { 
+			TweenLite.to(this.lookAt, 1, { 
 							x: 0, 
 							y: 0, 
-							z: 0  });*/
+							z: 0  });
 		}
 
 		render() {
@@ -316,6 +344,9 @@ module webglExp {
 		changeRadius() {
 			var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + 10);
 			this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
+			this.linePlane.geometry.vertices[0].set(0, 0, 0);
+			this.linePlane.geometry.vertices[1].set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
+			this.linePlane.geometry.verticesNeedUpdate = true;
 		}
 
 		convert(v:THREE.Vector2, rad?:number):THREE.Vector3 {
@@ -340,6 +371,7 @@ module webglExp {
 		}
 
 		exit() {
+			console.log("exit");
 			this.domEl.classList.add("disable");
 			this.domEl.removeEventListener("click",this.elementClick);
 			this.isExiting = true;
@@ -986,6 +1018,8 @@ module webglExp {
 				spot.overPlane.scale.x = -fraction;	
 
 				this.buttonCtn.add(button);
+				// this.sceneCtn.add(spot.linePlane);
+
 				button.lookAt(new THREE.Vector3());
 			}
 
@@ -1055,6 +1089,8 @@ module webglExp {
 			this.inStartTransition = true;
 			this.startCounter = 0;
 			this.start();
+
+			// this.showButtons();
 		}
 
 		buildThetra() {
@@ -1178,12 +1214,12 @@ module webglExp {
 			intro.classList.add("show");
 			(<HTMLElement>intro.querySelectorAll(".mainButton.hide-intro").item(0)).addEventListener('click', this.showButtons);
 		}
-
+		// event
 		showButtons = (event) => {
 			event.preventDefault();
 
 			(<HTMLElement>document.querySelectorAll("#intro .mainButton.hide-intro").item(0)).removeEventListener('click', this.showButtons);
-			// event.target.removeEventListener(event.type, arguments.callee);
+			event.target.removeEventListener(event.type, arguments.callee);
 			for (var i = 0; i < this.spots.length; ++i) {
 				this.spots[i].sphereRad = this.uniforms.radius.value;
 				this.spots[i].changeRadius();
@@ -1200,6 +1236,7 @@ module webglExp {
 		}
 
 		mouseOver = (event) => {
+			this.spots[event.detail.id].overAfter(this.buttonCtn);
 			SphereAnimation.overID = event.detail.id;
 			TweenLite.to(webglExp.Particle, .3, { addedSpeed : 0.01 });
 			TweenLite.to(this.tetraUniforms.pointAmplitude, .8, { value: 1.0, ease:Expo.easeInOut });

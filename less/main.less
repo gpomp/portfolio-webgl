@@ -261,67 +261,28 @@ canvas {
 		position: absolute;
 		top: 0;
 		left: 0;
-		visibility: hidden;
 		text-decoration: none;
 		text-transform: uppercase;
-		.container {
-			position: relative;
-			overflow: hidden;
-			.transform(perspective(200px) rotateX(-90deg));
+
+
+		& > div {
+
+			visibility: hidden;
+			.translate(0 10px);
 			.opacity(0);
-			.transition(all 0.25s ease-out 0.2s); 
-			
-			border:0px solid black;
-			.bg1, .bg2 {
-				.transform-origin(0, 0);
-				position: absolute;
-				width: 100%;
-				height: 50%;
-				background: black;
-				top: 0;
-				left: 0;
-			}
-
-			.bg1 {
-				.translate(-100%, 0);
-				.transition(transform 0.25s ease-out); 
-			}
-
-			.bg2 {
-				top: auto;
-				bottom: 0;
-				.translate(100%, 0);
-				.transition(transform 0.25s ease-out); 
-			}
-
-			.container-text {
-				z-index: 2;
-				position: relative;
-				border:3px solid white;
-				.txt {
-					padding: 10px 10px;
-					color: white;
-					font-weight: 900;
-					font-size: 170%;
-				}
-			}
-
-			
+			.transition(all .3s ease-in);
+			padding-bottom: 1px;
+			border-bottom: 1px solid white;
 		}
 
 		&.over {
-			visibility: visible;
-			.container {
-				border-width: 3px;
-				.transform(perspective(200px) rotateX(0));
+			& > div {
+				visibility: visible;
+				.translate(0 0);
 				.opacity(1);
-				.transition(all 0.25s ease-out); 
-
-				.bg1, .bg2 {
-					.translate(0, 0);
-					.transition(transform 0.25s ease-out 0.2s); 
-				}
+				.transition(all .3s ease-out);
 			}
+			
 		}
 	}
 }

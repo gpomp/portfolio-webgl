@@ -29,7 +29,7 @@
 	<div id="sphere-buttons">
 		{% for project in posts %}
 			<a href="{% do action('make_link_relative', project.link) %}" class="hiddenButton"></a>
-			
+			<a href="#" class="overButton"><div>{{project.title}}</div></a>
 		{% endfor %}
 	</div>
 	<a href="#" id="open-menu" class="mainButton">

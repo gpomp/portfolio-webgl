@@ -31,7 +31,7 @@ class Site {
 
 		(<HTMLElement>document.querySelectorAll("#intro .hide-intro").item(0)).addEventListener('click', this.hideIntro);
 
-		this.aboutButton = <HTMLElement>document.querySelectorAll(".showIntro.mainButton").item(0);
+		this.aboutButton = <HTMLElement>document.querySelectorAll(".showIntro").item(0);
 		this.aboutButton.addEventListener("click", this.showAbout);
 	}
 

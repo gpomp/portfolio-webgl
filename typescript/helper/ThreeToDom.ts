@@ -81,7 +81,7 @@ module webglExp {
             this.el.style.left = 	middle.x + "px";
             this.el.style.top = 	middle.y + "px";
 
-            this.middlePos.set(middle.x + w / 2, middle.y + h / 2);
+            this.middlePos.set(middle.x + w, middle.y + h / 2);
 
         }
 	}
