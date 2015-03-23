@@ -1236,7 +1236,7 @@ module webglExp {
 		}
 
 		mouseOver = (event) => {
-			this.spots[event.detail.id].overAfter(this.buttonCtn);
+			// this.spots[event.detail.id].overAfter(this.buttonCtn);
 			SphereAnimation.overID = event.detail.id;
 			TweenLite.to(webglExp.Particle, .3, { addedSpeed : 0.01 });
 			TweenLite.to(this.tetraUniforms.pointAmplitude, .8, { value: 1.0, ease:Expo.easeInOut });
