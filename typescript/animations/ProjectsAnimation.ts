@@ -675,8 +675,8 @@ module webglExp {
 			super.getCamera().rotation.set(0, 0, 0);
 			super.getCamera().position.x = startScroll.x;
 			super.getCamera().position.z = -startScroll.y;
-
-			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, webglExp.Floor.vNumber, webglExp.Floor.vNumber);
+			var fnb:number =  (Site.activeDeviceType === 'touch') ? Math.floor(webglExp.Floor.vNumber / 2) : webglExp.Floor.vNumber;
+			var floorGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, fnb, fnb);
 
 			this.particleList = [];
 			var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.bgsphere_mobile : GLAnimation.SHADERLIST.bgsphere;

@@ -172,13 +172,13 @@
 
 	void main() {
 		vec3 normal  = normalize(cross(dFdx(stagePos.xyz), dFdy(stagePos.xyz)));
-		vec3 light = vec3(0.5, 0.2, 1.0);
+		vec3 light = vec3(0.2, 0.2, 0.2);
 		light = normalize(light);
 		 float dProd = max(0.0,
 	                    dot(normalize(normal), light));
 
 		 float fog = 1.0 - max(0.0, min(1.0, distance(vec3(0, 0, pos.z), pos) / (width * 0.5)));
-	  	gl_FragColor = vec4(vec3(0.6 * dProd * fog * alpha), 1.0);
+	  	gl_FragColor = vec4(vec3(0.3 * dProd * fog * alpha), 1.0);
 	}
 </fragment>
 

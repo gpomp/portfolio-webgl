@@ -637,7 +637,7 @@ module webglExp {
 		   
 		    this.mesh = new THREE.Object3D();
 		    this.mesh.rotation.x = -Math.PI / 5;
-		    var vnb:number = webglExp.SphereBackground.vNumber;
+		    var vnb:number = (Site.activeDeviceType === 'touch') ? Math.floor(webglExp.SphereBackground.vNumber / 2) : webglExp.SphereBackground.vNumber;
 		    var planeGeom:THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(objSize.x, objSize.y, vnb, vnb);
 
 		    var bgShader =(Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.bgsphere_mobile : GLAnimation.SHADERLIST.bgsphere;
@@ -663,7 +663,8 @@ module webglExp {
 		    	new THREE.SphereGeometry(5, snb, snb)
 		    ]
 		    var countGeom:number = 0;
-		    for (var i = 0; i < 10; ++i) {
+		    var nbSpheres:number = (Site.activeDeviceType === 'touch') ? 0 : 10;
+		    for (var i = 0; i < nbSpheres; ++i) {
 		    	this.createObject(countGeom);
 
 		    	countGeom = (countGeom < this.floatingGeomList.length - 1) ? countGeom + 1 : 0;
@@ -1097,7 +1098,7 @@ module webglExp {
 		}
 
 		buildThetra() {
-			var vnb:number = (Site.activeDeviceType === 'touch') ? 2 : 3;
+			var vnb:number = 3;
 			var geom:THREE.TetrahedronGeometry = new THREE.TetrahedronGeometry(1, vnb);
 			
 			this.tetraAttr = {
