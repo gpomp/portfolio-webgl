@@ -2,6 +2,7 @@
 /// <reference path="GLAnimation.ts" />
 /// <reference path="EffectComposer.ts" />
 declare var page;
+declare var _gaq;
 
 module webglExp {
 	export class Scene3D {
@@ -120,6 +121,8 @@ module webglExp {
 			this.body.classList.remove("projects");
 			this.body.classList.add("sphere");
 			this.currentAnim = new webglExp.SphereAnimation(this.scene, this.camera, this.renderer);
+
+			_gaq.push(['_trackPageview', '/sphere']);
 		}
 
 		launchProject = (ctx) => {
@@ -140,6 +143,8 @@ module webglExp {
 				document.getElementById("projects-buttons").classList.add("show");
 				this.currentAnim = new webglExp.ProjectsAnimation(this.scene, this.camera, this.renderer, this.scroll, this.frame, index);
 			}
+
+			_gaq.push(['_trackPageview', '/projects/' + ctx.params.projectName]);
 
 		}
 

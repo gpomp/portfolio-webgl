@@ -3,6 +3,7 @@
 
 declare var page;
 declare var Modernizr;
+declare var _gaq;
 
 class Site {
 
@@ -38,6 +39,7 @@ class Site {
 	showAbout = (event) => {
 		event.preventDefault();
 		(<HTMLElement>document.querySelectorAll("#intro").item(0)).classList.add("show");
+		_gaq.push(['_trackEvent', 'intro', 'clicked', 'showintro']);
 	}
 
 	configNonWebgl() {
@@ -83,6 +85,7 @@ class Site {
 	hideIntro = (event:MouseEvent) => {
 		event.preventDefault();
 		(<HTMLElement>document.querySelectorAll("#intro").item(0)).classList.remove("show");
+		_gaq.push(['_trackEvent', 'intro', 'clicked', "hideintro"]);
 	}
 
 	shaderLoaded = () => {

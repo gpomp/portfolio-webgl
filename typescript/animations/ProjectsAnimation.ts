@@ -9,6 +9,7 @@
 /// <reference path="../helper/polyfill.ts" />
 /// <reference path="../helper/Title.ts" />
 declare var page;
+declare var _gaq;
 
 module webglExp {
 	interface Point {
@@ -408,6 +409,7 @@ module webglExp {
 		goToProject = (event) => {
 			event.preventDefault();
 			page(this.link.getAttribute("href"));
+			_gaq.push(['_trackEvent', 'projects', 'clicked', this.link.getAttribute("href")]);
 		}
 
 		leaveFront() {
@@ -907,6 +909,7 @@ module webglExp {
 		clickBackToSphere = (event:MouseEvent) => {
 			event.preventDefault();
 			if(this.isBackToSphere) return;
+			_gaq.push(['_trackEvent', 'projects', 'clicked', "backsphere"]);
 			this.isBackToSphere = true;
 			this.closeProject();
 			this.toggleMenu();

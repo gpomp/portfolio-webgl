@@ -7,6 +7,8 @@
 /// <reference path="../helper/ThreeAddOns.ts" />
 /// <reference path="../helper/Title.ts" />
 /// <reference path="../Site.ts" />
+declare var _gaq;
+
 module webglExp {
 
 	export class HotSpot {
@@ -1262,6 +1264,7 @@ module webglExp {
 			this.outCounter = 0;
 
 			this.toHref = event.detail.href;
+			_gaq.push(['_trackEvent', 'sphere', 'clicked', event.detail.href]);
 
 			this.background.exit();
 
