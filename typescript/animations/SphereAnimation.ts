@@ -269,9 +269,9 @@ module webglExp {
 			var rel_pos = new THREE.Vector3().setFromMatrixPosition(m);
 
 			TweenLite.to(this.lookAt, 1, { 
-							x: rel_pos.x, 
-							y: rel_pos.y, 
-							z: rel_pos.z  });
+							x: -rel_pos.x, 
+							y: -rel_pos.y, 
+							z: -rel_pos.z  });
 
 			
 		}
@@ -291,7 +291,7 @@ module webglExp {
 		}
 
 		render() {
-			this.three2Dom.updatePosition(true);
+			this.three2Dom.updatePosition();
 			if(this.canvasReady && this.canvasAnimation) {
 				this.rotateCircle += 2;
 				this.updateCanvas();
