@@ -108,6 +108,7 @@ class Site {
 	}
 
 	deviceType() {
+		var istouch:boolean = (<HTMLElement>document.querySelectorAll("html").item(0)).classList.contains("touch");
 		var browserWidth:number = window.innerWidth,
 		browserHeight:number = window.innerHeight;
 		var mobileWidth:number = 767,
@@ -122,13 +123,16 @@ class Site {
 			Site.activeDevice = 'desktop';
 			Site.activeDeviceType = 'desktop';
 		}
-		else if(browserWidth > mobileWidth) {
+		else if(browserWidth > mobileWidth && istouch) {
 			Site.activeDevice = 'tablet';
 			Site.activeDeviceType = 'touch';
 		}
-		else {
+		else if(istouch) {
 			Site.activeDevice = 'mobile';
 			Site.activeDeviceType = 'touch';
+		} else {
+			Site.activeDevice = 'desktop';
+			Site.activeDeviceType = 'desktop';
 		}
 	}
 }
