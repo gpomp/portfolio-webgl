@@ -51,6 +51,7 @@ module webglExp {
 		private lookAt:THREE.Vector3;
 
 		private radOver:number;
+		private cirlceSize:number;
 		private rotateCircle:number;
 
 		constructor(x:number, y:number, id:number) {
@@ -160,6 +161,7 @@ module webglExp {
 
 		prepCanvas() {
 			this.radOver = 0;
+			this.cirlceSize = 0;
 			this.rotateCircle = 0;
 			this.canvasReady = true;
 			this.bgContext.clearRect ( 0 , 0 , this.canvas.width, this.canvas.height );
@@ -172,59 +174,12 @@ module webglExp {
 		    this.bgContext.fillStyle = "#00a74d";
 		    this.bgContext.fill();
 
-		    /*this.bgContext.strokeStyle = "#ffffff";
-		    this.bgContext.lineWidth = 20;
-		    this.bgContext.stroke();
-		    this.bgContext.fillStyle = "rgba(30, 30, 30, 0.65)";
-		    this.bgContext.fill();
-
-		    var nbGrid = 5;
-		    var x:number = this.canvas.width / nbGrid;
-
-		    this.bgContext.save();
-
 		    this.bgContext.beginPath();
-		    this.bgContext.arc(rad,rad,rad - 20,0,Math.PI * 2);
+		    this.bgContext.arc(rad,rad,10,0,Math.PI * 2);
 		    this.bgContext.closePath();
-		    this.bgContext.stroke();
-		    this.bgContext.clip();
 
-		    for (var i = 0; i < nbGrid - 1; ++i) {
-		    	this.bgContext.beginPath();
-		    	this.bgContext.moveTo(x, 0);
-		    	this.bgContext.lineTo(x, this.canvas.width);
-		    	this.bgContext.closePath();
-		    	this.bgContext.lineWidth = 1;
-		    	this.bgContext.strokeStyle = "rgb(200, 200, 200)";
-		    	this.bgContext.stroke();
-
-		    	x += this.canvas.width / nbGrid;
-		    }
-
-		    x = this.canvas.height / nbGrid;
-
-		    for (var i = 0; i < nbGrid - 1; ++i) {
-		    	this.bgContext.beginPath();
-		    	this.bgContext.moveTo(0, x);
-		    	this.bgContext.lineTo(this.canvas.height, x);
-		    	this.bgContext.closePath();
-		    	this.bgContext.lineWidth = 1;
-		    	this.bgContext.strokeStyle = "rgb(200, 200, 200)";
-		    	this.bgContext.stroke();
-
-		    	x += this.canvas.width / nbGrid;
-		    }
-
-		    
-
-		    this.bgContext.restore();
-
-		    this.bgContext.fillStyle = "#00fefc";
-			this.bgContext.font = "85pt 'Lato'";
-			var str:string = String(this.id + 1);
-			var tSize = this.bgContext.measureText(str.toUpperCase());
-			this.bgContext.fillText(str.toUpperCase(), (this.canvas.width - tSize.width) * 0.5, (this.canvas.height) * 0.5 + 30);
-			this.context.drawImage(this.bgCanvas, 0, 0);*/
+		    this.bgContext.fillStyle = "#000000";
+		    this.bgContext.fill();
 
 			this.context.drawImage(this.bgCanvas, 0, 0);
 		    this.uniforms.text.value.needsUpdate = true;
@@ -234,6 +189,13 @@ module webglExp {
 			this.context.clearRect ( 0 , 0 , this.canvas.width, this.canvas.height );
 			this.context.drawImage(this.bgCanvas, 0, 0);
 			var rad = this.canvas.width * 0.5;
+			this.context.beginPath();
+		    this.context.arc(rad,rad,10 + this.cirlceSize * 10,0,Math.PI * 2);
+		    this.context.closePath();
+
+		    this.context.fillStyle = "#000000";
+		    this.context.fill();
+
 			this.context.save();
 			this.context.translate(rad,rad);
 			this.context.rotate(this.rotateCircle * Math.PI / 180);
@@ -269,6 +231,7 @@ module webglExp {
 			this.linePlane.material.opacity = 1.0;
 			TweenLite.to(this.linePlane.scale, 1, { x: 1, y: 1, z: 1, ease: Expo.easeInOut });
 			TweenLite.to(this, 1, { radOver: Math.PI * 2 - Math.PI / 10, ease: Expo.easeInOut });
+			TweenLite.to(this, 1, { cirlceSize: 1, ease: Expo.easeInOut });
 			TweenLite.to(this.uniforms.bendRatio, 1, { value: -10, ease: Expo.easeInOut });
 			var m = new THREE.Matrix4().getInverse(this.overPlane.parent.matrix).multiply(this.camera.matrix);  
 			var rel_pos = new THREE.Vector3().setFromMatrixPosition(m);
@@ -286,6 +249,7 @@ module webglExp {
 			document.dispatchEvent(this.outEvent);
 			this.overEl.classList.remove("over");
 			TweenLite.to(this.linePlane.scale, 1, { x: 0.01, y: 0.01, z: 0.01, ease: Expo.easeInOut });
+			TweenLite.to(this, 1, { cirlceSize: 0, ease: Expo.easeInOut });
 			TweenLite.to(this, 1, { radOver: 0, onComplete: this.endCanvasAnimation, ease: Expo.easeInOut });
 			TweenLite.to(this.uniforms.bendRatio, 1, { value: 20, ease: Expo.easeInOut });
 
