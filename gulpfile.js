@@ -78,7 +78,8 @@ gulp.task('libscripts', function () {
 			config.bower + "three-effectComposer/js/postprocessing/BloomPass.js",
 			config.bower + "three-effectComposer/js/postprocessing/ShaderPass.js",
 			config.bower + "three-effectComposer/js/postprocessing/EffectComposer.js",
-			config.bower + "greensock/src/uncompressed/TweenMax.js"
+			config.bower + "greensock/src/uncompressed/TweenMax.js",
+			config.bower + "greensock/src/uncompressed/plugins/ScrollToPlugin.js"
 		];
 
 		gulp.src(src)

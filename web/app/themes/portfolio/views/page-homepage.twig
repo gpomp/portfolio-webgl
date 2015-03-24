@@ -45,7 +45,7 @@
 		<div class="table">
 			<div class="table-cell">
 				{% for project in posts %}
-					<a href="{% do action('make_link_relative', project.link) %}">
+					<a href="{% do action('make_link_relative', project.link) %}" name="{{project.post_name}}">
 			          	<div class="bg"><img src="{{TimberImage(project.get_field('link_image')).src('large')}}" alt=""></div>
 			          	<div class="container">
 			        		<div class="table"><div class="table-cell">{{project.title}}</div></div>

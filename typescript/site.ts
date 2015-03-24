@@ -53,7 +53,11 @@ class Site {
 		for (var i = 0; i < buttons.length; ++i) {
 			var button:HTMLElement = (<HTMLElement>buttons.item(i));
 			button.classList.add("show");
-			button.setAttribute("href", "#" + button.getAttribute("href"))
+			button.setAttribute("href", "#" + button.getAttribute("href"));
+			var self = this;
+			button.addEventListener("click", function(event) {
+				self.clickProject(event, this);
+			});
 		}
 
 		/*Projects*/
@@ -70,6 +74,16 @@ class Site {
 				img.setAttribute("src", img.getAttribute("data-src"));
 			}
 		}
+	}
+
+	clickProject = (event, link) => {
+		event.preventDefault();
+		this.toggleMenu();
+		var name:string = link.getAttribute("name");
+		var project = (<HTMLElement>document.querySelectorAll("#projects .project." + name).item(0));
+		var ctnTop = document.getElementById("projects").offsetTop;
+
+		TweenLite.to(window, 1, {scrollTo:{ y: ctnTop + project.offsetTop, x: 0 }, ease: Expo.easeInOut});
 	}
 
 	clickToggleMenu = (event) => {
