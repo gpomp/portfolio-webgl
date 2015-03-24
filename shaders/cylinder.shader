@@ -159,7 +159,7 @@
 
 		vec2 noise = vec2((pos.x) / halfHeight, 1.0);
 		// - 30.0 * ((sin(time * 0.1) + 1.0) * 0.5)	
-		float n = cnoise(noise) * 20.0;
+		float n = cnoise(noise) * 50.0;
 
 		float alpha = max(0.0, min(1.0, 1.0 - (pos.y + halfHeight) / (halfHeight + sin(time * 0.2 + n) * 20.0)));
 		float pSin = (1.0 + sin(time * 0.2 + n)) * 0.5;
