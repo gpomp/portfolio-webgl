@@ -4,6 +4,8 @@
 	precision highp float;
 	#endif
 
+	uniform float time;
+
 	varying vec4 stagePos;
 	varying vec3 pos;
 	varying vec2 vUv;
@@ -12,6 +14,8 @@
 		vUv = uv;
 		pos = position;
 	    stagePos = modelMatrix * vec4(pos,1.0);
+	    pos.x += cos(time * 0.2 + pos.y) * 20.0;
+	    pos.z += sin(time * 0.2 + pos.y) * 20.0;
 	  	gl_Position = projectionMatrix *
 	                modelViewMatrix *
 	                vec4(pos,1.0);
@@ -164,7 +168,7 @@
 			uv.x += uvPlus * 2.0;
 			wave_width = abs(1.0 / (uv.x * (40.0 + sin(time * 0.6 + n) * 20.0))) ;
 			alphaWave += wave_width * (1.0 - (pos.y + halfHeight) / height);
-			wave_color += vec3(wave_width + (1.0 - pSin), wave_width * 0.5, wave_width + pSin);
+			wave_color += vec3(wave_width + (1.0 - pSin), wave_width, wave_width + pSin);
 		}
 		alphaWave =  max(0.0, min(1.0, alphaWave)) * 0.8;
 	  	gl_FragColor = vec4(wave_color * alpha, alphaWave * alphaRatio * alpha );
