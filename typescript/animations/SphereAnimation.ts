@@ -1207,6 +1207,7 @@ module webglExp {
 		}
 
 		startDone() {
+			(<HTMLElement>document.getElementById("sphere-buttons")).classList.add("show");
 			super.enableCameraAround(this.sphereCtn, document.getElementById("sphere-buttons"));
 			this.inTransition = false;
 			var intro:HTMLElement = (<HTMLElement>document.getElementById("intro"));
