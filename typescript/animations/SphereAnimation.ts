@@ -144,7 +144,7 @@ module webglExp {
 			this.domEl.addEventListener('mouseover', this.over, false);
 			this.domEl.addEventListener('mouseout', this.out, false);
 
-			var lineMat = new THREE.LineBasicMaterial({ color: 0x00a74d });
+			var lineMat = new THREE.LineBasicMaterial({ color: 0x00a74d, transparent:true, opacity: 0 });
 			var lineGeometry = new THREE.Geometry();
 			lineGeometry.vertices.push(
 				new THREE.Vector3( 0, 0, 0 ),
@@ -246,6 +246,8 @@ module webglExp {
 
 		endCanvasAnimation = () => {
 			this.canvasAnimation = false;
+
+			this.linePlane.material.opacity = 0.0;
 		}
 
 		elementClick = (event:MouseEvent) => {
@@ -262,6 +264,7 @@ module webglExp {
 			this.overEl.style.left = this.three2Dom.middlePos.x + "px";
 			this.overEl.style.top = (this.three2Dom.middlePos.y - this.overEl.clientHeight * 0.5) + "px";
 			this.overEl.classList.add("over");
+			this.linePlane.material.opacity = 1.0;
 			TweenLite.to(this.linePlane.scale, 1, { x: 1, y: 1, z: 1, ease: Expo.easeInOut });
 			TweenLite.to(this, 1, { radOver: Math.PI * 2 - Math.PI / 10, ease: Expo.easeInOut });
 			TweenLite.to(this.uniforms.bendRatio, 1, { value: -10, ease: Expo.easeInOut });
