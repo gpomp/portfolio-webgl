@@ -843,7 +843,7 @@ module webglExp {
 		}
 
 		createCylinders() {
-			var geom:THREE.CylinderGeometry = new THREE.CylinderGeometry(210.0, 150.0, 2000.0, 20, 32, true, 0, Math.PI * 2);
+			var geom:THREE.CylinderGeometry = new THREE.CylinderGeometry(210.0, 150.0, 3000.0, 20, 32, true, 0, Math.PI * 2);
 			
 			var shaders = (Site.activeDeviceType === 'touch') ? GLAnimation.SHADERLIST.cylinder_mobile : GLAnimation.SHADERLIST.cylinder;
 
@@ -877,7 +877,7 @@ module webglExp {
 
 			this.cylinderCtn.position.y = -480;
 
-			this.cylinder.position.y = 500;
+			this.cylinder.position.y = 600;
 			this.cylinder.rotation.y = Math.PI / 2;
 
 			this.cylinder.scale.x = 0.01;

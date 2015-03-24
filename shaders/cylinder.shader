@@ -149,7 +149,7 @@
 	varying vec2 vUv;
 
 	void main() {
-		float height = 2000.0;
+		float height = 3000.0;
 		float halfHeight = height * 0.5;
 		vec3 wave_color = vec3(0.0);
 		float wave_width = 0.01;

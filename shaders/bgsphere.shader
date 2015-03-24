@@ -151,7 +151,7 @@
 		// 
 		pos.z = cnoise(noise) * (-80.0 - 30.0 * sin(time * 0.4 + pos.x / width * 20.0 + pos.y / height * 20.0));
 
-		pos.z += (1.0 - max(0.0, min(1.0, distance(pos.xy, hole) / holeRatio))) * -(holeRatio * 3.0);
+		pos.z += (1.0 - max(0.0, min(1.0, distance(pos.xy, hole) / holeRatio))) * -(holeRatio * 5.0);
 
 		vec2 n1 = vec2(pos.x + small, pos.y);
 		vec3 neigh1 = zAt(n1);
