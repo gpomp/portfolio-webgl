@@ -109,7 +109,7 @@ class Site {
 	}
 
 	buildRoutes() {
-		page("/homepage/", this.mainScene.goToSphere);
+		page("/", this.mainScene.goToSphere);
 		page('/projects/:projectName', this.mainScene.launchProject);
 	}
 

@@ -1136,7 +1136,7 @@ module webglExp {
 
 		clearProjects = () => {
 			var event:CustomEvent = super.getLeaveEvent();
-			event.detail.href = "/homepage/";
+			event.detail.href = "/";
 			document.dispatchEvent(event);
 		}
 
