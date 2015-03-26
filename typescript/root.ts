@@ -1,6 +1,6 @@
-/// <reference path="../web/app/themes/portfolio/vendors/DefinitelyTyped/threejs/three.d.ts" />
-/// <reference path="../web/app/themes/portfolio/vendors/DefinitelyTyped/greensock/greensock.d.ts" />
-/// <reference path="../web/app/themes/portfolio/vendors/DefinitelyTyped/svgjs/svgjs.d.ts" />
+	/// <reference path="../web/app/themes/portfolio/vendors/DefinitelyTyped/threejs/three.d.ts" />
+	/// <reference path="../web/app/themes/portfolio/vendors/DefinitelyTyped/greensock/greensock.d.ts" />
+	/// <reference path="../web/app/themes/portfolio/vendors/DefinitelyTyped/svgjs/svgjs.d.ts" />
 /// <reference path="animations/ProjectsAnimation.ts" />
 /// <reference path="animations/SphereAnimation.ts" />
 /// <reference path="core/EffectComposer.ts" />
