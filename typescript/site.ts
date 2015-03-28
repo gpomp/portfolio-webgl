@@ -43,6 +43,7 @@ class Site {
 	}
 
 	configNonWebgl() {
+		_gaq.push(['_trackPageview', '/nowebgl']);
 		(<HTMLElement>document.querySelectorAll("html").item(0)).classList.add("no-threejs");
 		(<HTMLElement>document.querySelectorAll("#open-menu").item(0)).addEventListener('click', this.clickToggleMenu);
 			
