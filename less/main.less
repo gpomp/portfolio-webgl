@@ -22,6 +22,11 @@
 
 html {
 	font-size: 62.5%;
+	
+}
+
+header.header {
+	display: none;
 }
 
 body {
@@ -334,6 +339,11 @@ canvas {
 	padding: 5px;
 	border: 1px solid white;
 	background: black;
+	border: none;
+	top: auto;
+	bottom: 0;
+	left: 0;
+	width: 100%;
 
 
 	.no-threejs & {
@@ -587,6 +597,7 @@ canvas {
 
 		.no-threejs & {
 			padding: 0;
+			background: white;
 		}
 
 		@media @d {
@@ -619,6 +630,10 @@ canvas {
 			padding-bottom: 50px;
 			position: relative;
 			.perspective(1000px);
+
+			.no-threejs & {
+				padding-bottom: 20px;
+			}
 
 			& > div {
 				position: absolute;
@@ -731,14 +746,16 @@ canvas {
 			background: white;
 			padding: 20px;
 			.transform-origin(50% 100%);
-			.transform(perspective(1000px) rotateX(-5deg));
+			// .transform(perspective(1000px) rotateX(-5deg));
 			color: black;
 			margin-top: 300px;
 			.box-shadow( inset 0px -30px 40px 0 rgba(0, 0, 0, 0.15));
 			.no-threejs & {
 				.box-shadow(none);
 				.transform(perspective(0) rotateX(0deg));
-				margin-top: 80px;
+				padding-top: 40px;
+				margin-top: 0;
+				border-top: 5px solid black;
 			}
 
 			@media @m {
@@ -935,8 +952,8 @@ canvas {
 		position: relative;
 		z-index: 2;
 		overflow: hidden;
-		padding: 50px 20px 20px 20px;
-		background: red;
+		padding: 20px 20px 20px 20px;
+		background: #910000;
 
 		font-size: 160%;
 	}

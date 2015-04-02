@@ -54,8 +54,13 @@ module webglExp {
 		private cirlceSize:number;
 		private rotateCircle:number;
 
+		private isover:boolean;
+
+		public planeScale:number;
+
 		constructor(x:number, y:number, id:number) {
 			this.canvasReady = false;
+			this.isover = false;
 
 			this.rad = 0.5 + Math.random() * 0.2;
 			this.pos = new THREE.Vector2(x, y);
@@ -133,6 +138,8 @@ module webglExp {
 			this.overPlane = new THREE.Mesh(geom, mat);
 			var oPlanePos:THREE.Vector3 = this.convert(this.pos, this.sphereRad + 10);
 			this.overPlane.position.set(oPlanePos.x, oPlanePos.y, oPlanePos.z);
+
+			
 
 			this.lookAt = new THREE.Vector3(0);
 			this.overEl = <HTMLElement>document.querySelectorAll("#sphere-buttons .overButton").item(this.id);
@@ -221,7 +228,15 @@ module webglExp {
 			document.dispatchEvent(this.clickEvent);
 		}
 
+		breathing = () => {
+			if(this.isover) return;
+			var d:number = Math.random();
+			TweenLite.to(this.overPlane.scale, 1, { x: -this.planeScale - 0.1, y: this.planeScale + 0.1, delay: d, ease: Sine.easeInOut });
+			TweenLite.to(this.overPlane.scale, 1, { x: -this.planeScale, y: this.planeScale, ease: Sine.easeInOut, delay: d + 1, onComplete: this.breathing });
+		}
+
 		over = (event) => {
+			this.isover = true;
 			this.overEvent.detail.id = this.id;
 			document.dispatchEvent(this.overEvent);
 			this.canvasAnimation = true;
@@ -230,6 +245,7 @@ module webglExp {
 			this.overEl.classList.add("over");
 			this.linePlane.material.opacity = 1.0;
 			TweenLite.to(this.linePlane.scale, 1, { x: 1, y: 1, z: 1, ease: Expo.easeInOut });
+			TweenLite.to(this.overPlane.scale, 0.2, { x: -this.planeScale, y: this.planeScale });
 			TweenLite.to(this, 1, { radOver: Math.PI * 2 - Math.PI / 10, ease: Expo.easeInOut });
 			TweenLite.to(this, 1, { cirlceSize: 1, ease: Expo.easeInOut });
 			TweenLite.to(this.uniforms.bendRatio, 1, { value: -10, ease: Expo.easeInOut });
@@ -256,7 +272,13 @@ module webglExp {
 			TweenLite.to(this.lookAt, 1, { 
 							x: 0, 
 							y: 0, 
-							z: 0  });
+							z: 0,
+							onComplete:this.outDone  });
+		}
+
+		outDone = () => {
+			this.isover = false;
+			this.breathing();
 		}
 
 		render() {
@@ -984,6 +1006,8 @@ module webglExp {
 				var fraction = spot.geomSize / height;
 				spot.overPlane.scale.y = fraction;
 				spot.overPlane.scale.x = -fraction;	
+				spot.planeScale = fraction;
+				spot.breathing();
 
 				this.buttonCtn.add(button);
 				this.sceneCtn.add(spot.linePlane);
@@ -1192,10 +1216,11 @@ module webglExp {
 			for (var i = 0; i < this.spots.length; ++i) {
 				this.spots[i].sphereRad = this.uniforms.radius.value;
 				this.spots[i].changeRadius();
-				var scaleToGo:THREE.Vector3 = this.spots[i].overPlane.scale.clone();
-				this.spots[i].overPlane.scale.set(0.01, 0.01, 0.01);
+				/*var scaleToGo:THREE.Vector3 = this.spots[i].overPlane.scale.clone();
+				this.spots[i].overPlane.scale.set(0.01, 0.01, 0.01);*/
 				TweenLite.to(this.spots[i].uniforms.alpha, 2, { value: 1.0, delay: i * 0.2 });
-				TweenLite.to(this.spots[i].overPlane.scale, 2, { x: scaleToGo.x, y: scaleToGo.y, z: scaleToGo.z, delay: i * 0.2, ease:Expo.easeInOut });
+				this.spots[i].breathing();
+				// TweenLite.to(this.spots[i].overPlane.scale, 2, { x: scaleToGo.x, y: scaleToGo.y, z: scaleToGo.z, delay: i * 0.2, ease:Expo.easeInOut });
 			}
 		}
 
@@ -1372,7 +1397,6 @@ module webglExp {
 			this.uniforms.amplitude.value = this.frame * 0.05;
 			this.background.uniforms.time.value = this.frame;
 			if(!this.inTransition) {
-
 				var xDir:number = this.background.scrollSpeed.x;
 				var yDir:number = this.background.scrollSpeed.y;
 				this.background.scrollSpeed.y += (super.getControl().oldOr.x - super.getControl().orientation.x) * 20;
@@ -1384,28 +1408,7 @@ module webglExp {
 			this.sceneCtn.quaternion.copy(this.sphereCtn.quaternion);
 			this.buttonCtn.quaternion.copy(this.sphereCtn.quaternion);
 
-			/*if(super.getIsTurning()) {
-				this.mSpeed += (this.mouseVel.distSquared - this.mSpeed) * 0.1;
- 				this.effectBloom.copyUniforms[ "opacity" ].value = this.bloomStrength + 0.2 * (this.mSpeed);
-			} else {
-				this.mSpeed += (0 - this.mSpeed) * 0.2;
- 				this.effectBloom.copyUniforms[ "opacity" ].value = this.bloomStrength + 0.2 * (this.mSpeed);
-			}*/
-
-			if(this.inTransition) {
-				/*if(this.inCurve) {
-					var curvPos:THREE.Vector3 = this.camCurve.getPointAt(this.curvPerc);
-					//super.getCamera().position.set(curvPos.x, curvPos.y, curvPos.z);
-					//this.lookAt = this.camCurve.getPointAt(Math.max(0, this.curvPerc - 0.05));
-				}*/
-
-
-				/*this.currlookAt.x += (this.lookAt.x - this.currlookAt.x) * 0.01;
-				this.currlookAt.y += (this.lookAt.y - this.currlookAt.y) * 0.01;
-				this.currlookAt.z += (this.lookAt.z - this.currlookAt.z) * 0.01;
-				super.getCamera().lookAt(this.currlookAt);*/
-			}
-				super.getCamera().lookAt(this.lookAt);
+			super.getCamera().lookAt(this.lookAt);
 
 
 			this.composerBackground.getComposer().render();
@@ -1413,8 +1416,6 @@ module webglExp {
 			this.composerButton.getComposer().render();
 			this.composerBloom.getComposer().render();
 			this.blendComposer.render();
-
-			// this._renderer.render(super.getScene(), super.getCamera());
 
 			super.render();
 		}
