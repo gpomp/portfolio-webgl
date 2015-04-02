@@ -225,6 +225,7 @@ module THREE {
 		onMouseDown = (event) => {
 			var t = (event.touches && event.touches.length > 0) ? event.touches[0] : event;
 			this.lastPos = new THREE.Vector2(t.clientX, t.clientY);
+			(<HTMLElement>document.querySelectorAll(".drag-instruction").item(0)).classList.remove("show");
 			(<HTMLElement>document.querySelectorAll("body").item(0)).classList.add("drag");
 		}
 

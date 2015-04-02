@@ -54,13 +54,13 @@ module webglExp {
 		private cirlceSize:number;
 		private rotateCircle:number;
 
-		private isover:boolean;
+		public isStarted:boolean;
 
 		public planeScale:number;
 
 		constructor(x:number, y:number, id:number) {
 			this.canvasReady = false;
-			this.isover = false;
+			this.isStarted = false;
 
 			this.rad = 0.5 + Math.random() * 0.2;
 			this.pos = new THREE.Vector2(x, y);
@@ -229,14 +229,20 @@ module webglExp {
 		}
 
 		breathing = () => {
-			if(this.isover) return;
-			var d:number = Math.random();
-			TweenLite.to(this.overPlane.scale, 1, { x: -this.planeScale - 0.1, y: this.planeScale + 0.1, delay: d, ease: Sine.easeInOut });
-			TweenLite.to(this.overPlane.scale, 1, { x: -this.planeScale, y: this.planeScale, ease: Sine.easeInOut, delay: d + 1, onComplete: this.breathing });
+			if(this.isStarted) return;
+			var d:number = 2 + Math.random();
+			TweenLite.to(this.overPlane.scale, 0.1, { x: -this.planeScale + 0.1, y: this.planeScale - 0.1, delay: d, ease: Sine.easeInOut });
+			TweenLite.to(this.overPlane.scale, 0.1, { x: -this.planeScale - 0.1, y: this.planeScale + 0.1, delay: d + 0.2, ease: Sine.easeInOut });
+			TweenLite.to(this.overPlane.scale, 0.1, { x: -this.planeScale, y: this.planeScale, ease: Sine.easeInOut, delay: d + 0.3, onComplete: this.breathing });
+		}
+
+		start() {
+			this.isStarted = true;
+			TweenLite.to(this.overPlane.scale, 0.1, { x: -this.planeScale, y: this.planeScale });
 		}
 
 		over = (event) => {
-			this.isover = true;
+			this.isStarted = true;
 			this.overEvent.detail.id = this.id;
 			document.dispatchEvent(this.overEvent);
 			this.canvasAnimation = true;
@@ -272,13 +278,7 @@ module webglExp {
 			TweenLite.to(this.lookAt, 1, { 
 							x: 0, 
 							y: 0, 
-							z: 0,
-							onComplete:this.outDone  });
-		}
-
-		outDone = () => {
-			this.isover = false;
-			this.breathing();
+							z: 0  });
 		}
 
 		render() {
@@ -1007,7 +1007,6 @@ module webglExp {
 				spot.overPlane.scale.y = fraction;
 				spot.overPlane.scale.x = -fraction;	
 				spot.planeScale = fraction;
-				spot.breathing();
 
 				this.buttonCtn.add(button);
 				this.sceneCtn.add(spot.linePlane);
@@ -1158,9 +1157,9 @@ module webglExp {
 			super.getCamera().position.x = this.uniforms.radius.value + 50;
 			this.lookAt = new THREE.Vector3(0, 0, -this.uniforms.radius.value);
 			
-			this.sphereCtn.rotation.y = Math.PI * 4 + Math.random() * Math.PI * 3;
+			this.sphereCtn.rotation.y = Math.PI * 10 + Math.random() * Math.PI * 3;
 			var maxTime:number = 0;
-			TweenLite.to(this.sphereCtn.rotation, 10, { y : 0, ease: Sine.easeInOut});
+			TweenLite.to(this.sphereCtn.rotation, 10, { y : Math.PI + Math.random() * Math.PI * 2, ease: Sine.easeInOut});
 			maxTime = Math.max(maxTime, 10);
 
 			TweenLite.to(this.background.uniforms.alpha, 3, { value: 1, ease:Sine.easeOut });
@@ -1198,9 +1197,6 @@ module webglExp {
 		}
 
 		startDone() {
-			(<HTMLElement>document.getElementById("sphere-buttons")).classList.add("show");
-			super.enableCameraAround(this.sphereCtn, document.getElementById("sphere-buttons"));
-			this.inTransition = false;
 			var intro:HTMLElement = (<HTMLElement>document.getElementById("intro"));
 			var containerIntro:HTMLElement = (<HTMLElement>document.querySelectorAll("#intro .container").item(0));
 			var intro:HTMLElement = <HTMLElement>document.querySelectorAll("#intro").item(0);
@@ -1222,6 +1218,16 @@ module webglExp {
 				this.spots[i].breathing();
 				// TweenLite.to(this.spots[i].overPlane.scale, 2, { x: scaleToGo.x, y: scaleToGo.y, z: scaleToGo.z, delay: i * 0.2, ease:Expo.easeInOut });
 			}
+
+			TweenLite.to(this.sphereCtn.rotation, 4, { y : 0, ease: Expo.easeInOut, onComplete: this.showInstruction});
+		}
+
+		showInstruction = () => {
+			(<HTMLElement>document.getElementById("sphere-buttons")).classList.add("show");
+			(<HTMLElement>document.querySelectorAll(".drag-instruction").item(0)).classList.add("show");
+			super.enableCameraAround(this.sphereCtn, document.getElementById("sphere-buttons"));
+			this.inTransition = false;
+
 		}
 
 		getPointOnSphere(lat:number, lng:number):THREE.Vector3 {
@@ -1231,6 +1237,10 @@ module webglExp {
 
 		mouseOver = (event) => {
 			// this.spots[event.detail.id].overAfter(this.buttonCtn);
+
+			for (var i = 0; i < this.spots.length; ++i) {
+				this.spots[i].start();
+			}
 			SphereAnimation.overID = event.detail.id;
 			TweenLite.to(webglExp.Particle, .3, { addedSpeed : 0.01 });
 			TweenLite.to(this.tetraUniforms.pointAmplitude, .8, { value: 1.0, ease:Expo.easeInOut });
@@ -1242,6 +1252,7 @@ module webglExp {
 
 		mouseOut = (event) => {
 			SphereAnimation.overID = -1;
+
 			TweenLite.to(webglExp.Particle, 3, { addedSpeed : 0.0 });
 			// this.blurh = 0.7;
 			TweenLite.to(this.tetraUniforms.pointAmplitude, .8, { value: 0.0, ease:Expo.easeInOut });
