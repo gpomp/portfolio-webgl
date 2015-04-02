@@ -33,7 +33,7 @@ body {
 	width: 100%;
 	padding: 0;
 	margin: 0;
-	background: black;
+	background-color: black;
 	font-family: 'Lato', sans-serif;
 
 	&.drag {
@@ -46,6 +46,11 @@ body {
 
 	* {
 		.box-sizing(border-box);
+	}
+
+	.no-threejs & {
+		.transition(background-color 1s ease-out);
+		background-color: #5E5E5E;
 	}
 }
 
@@ -428,32 +433,37 @@ canvas {
 	width: 200px;
 	overflow: hidden;
 	display: none;
-	html.webgl & {
+	/*html.webgl & {
 		.transform-origin(0 50%);
 		.transform(perspective(200px) rotateY(15deg));
-	}
+	}*/
 	&.show {
 		display: block;
 	}
 
-	.no-threejs & {
+	html.no-threejs & {
 		position: fixed;
+		.transform(perspective(0px) rotateY(0deg));
+
 	}
 
 	@media @t {
 		html.webgl &, & {
 			top: 0;
-			background: rgba(0, 0, 0, 0.75);
+			background: black;
 			
 			height: 100%;
 			.transform(perspective(0) rotateY(0deg) translate(-200px, 0));
 			.transition(transform 0.2s ease-out);
-			border-right: 2px solid #FFF;
 
 			&.open {
 				.transform(perspective(0) rotateY(0deg) translate(0, 0));
 				.transition(transform 0.2s ease-out);
 			}
+		}
+
+		html.no-threejs & {
+			.box-shadow(0px 25px 25px 0 #000);
 		}
 		
 	}
@@ -462,7 +472,7 @@ canvas {
 		html.webgl &, & {
 			top: 0;
 			overflow: auto;
-			background: rgba(0, 0, 0, 0.75);
+			background: black;
 			width: 100%;
 			height: 100%;
 			.transform(perspective(0) rotateY(0deg) translate(-100%, 0));
@@ -479,16 +489,21 @@ canvas {
 
 	a {
 		position: relative;
-		width: 100%;
-		height: 75px;
+		max-width: 100%;
+		float: left;
+		clear: both;
 		display: block;
 		text-decoration: none;
 		overflow: hidden;
 		.translate(-100% 0);
 		.transition(transform 0.2s ease-out);
+		margin-bottom: 5px;
 
-		@media @m {
-			width: 50%;
+		&:nth-child(even) {
+			.bg {
+				.transform-origin(100% 100%);
+				.transform(translate(0, -100%) rotate(5deg) scale(0.5, 1.0));
+			}
 		}
 
 		&.show {
@@ -497,12 +512,6 @@ canvas {
 		}
 
 		&.sphere {
-			.bg {
-				background: white;
-			}
-			.container {
-				color: black;
-			}
 
 			.no-threejs & {
 				display: none;
@@ -516,14 +525,14 @@ canvas {
 			width: 100%;
 			height: 100%;
 			overflow: hidden;
-			background: black;
-			.grayscale(100%);
-			.transform(translate(-100px, 0) scale(1));
+			background: white;
+			.transform-origin(0 0);
+			.transform(translate(0, 100%) rotate(5deg) scale(0.5, 1.0));
 			.transition(all 0.2s ease-out 0.1s);
 			@media @m {
 				.transform(translate(0px, 0) scale(1));
 			}
-			img {
+			/*img {
 				position: absolute;
 				top: 50%;
 				left: 50%;
@@ -531,15 +540,11 @@ canvas {
 				max-width: 100%;
 				.opacity(1);
 				.transition(opacity 0.2s ease-out 0.1s);
-			}
+			}*/
 		}
 
 		.container {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
+			padding: 10px 20px;
 			z-index: 2;
 			color:white;
 			text-decoration: none; 	
@@ -548,8 +553,8 @@ canvas {
 			letter-spacing: 0.05em;
 			text-transform: uppercase;
 			text-align: center;
-			.opacity(0);
-			.translate(-100px 0);
+			font-weight: 400;	
+			display: inline-block;
 			.transition(all 0.2s ease-out);
 			@media @m {
 				font-size: 120%;
@@ -559,33 +564,15 @@ canvas {
 		
 		&.active, &:hover {
 			.bg {
-				.transform(translate(0, 0) scale(1.6));
-				.grayscale(0);
+				.transform(translate(0, 0) rotate(0deg) scale(1.0, 1.0));
 				.transition(all 0.2s ease-out);
-				img {
-					.opacity(0.3);
-					.transition(opacity 0.2s ease-out);
-				}
 			}
 
 			.container {
 				.opacity(1);
 				.translate(0 0);
 				.transition(all 0.2s ease-out 0.1s);
-			}
-		}
-
-		@media @t {
-			.bg {
-				.transform(translate(0, 0) scale(1.6));
-				img {
-					.opacity(0.3);
-				}
-			}
-
-			.container {
-				.opacity(1);
-				.translate(0 0);
+				color: black;
 			}
 		}
 
@@ -623,8 +610,17 @@ canvas {
 		padding: 30px 0 400px 0;
 
 		.no-threejs & {
-			padding: 0;
+			padding: 0 25px;
 			background: white;
+			visibility: hidden;
+			.box-shadow(0px 175px 175px 0 rgba(0, 0, 0, 0.5));
+			.opacity(0);
+			.transition(all 1s ease-out);
+			&.anim {
+				visibility: visible;
+				.opacity(1);
+				.transition(all 1s ease-out);
+			}
 		}
 
 		@media @d {
@@ -712,6 +708,8 @@ canvas {
 
 						.no-threejs & {
 							position: relative;
+							border-left: 0;
+							border-right: 0;
 						}
 					}
 				}
@@ -968,7 +966,6 @@ canvas {
 
 	.no-threejs & {
 		display: block;
-		margin-bottom: 80px;
 	}
 
 	.container {
@@ -1121,19 +1118,35 @@ canvas {
 	color: white;
 	position: relative;
 	z-index: 2;
-	overflow: hidden;
 	display: none;
+
+	@media @d {
+		margin: 0;
+		float: right;
+		padding-right: 30px;
+
+		max-width: 70%;
+		padding-right: 0;
+	}
 
 	.no-threejs & {
 		display: block;
 		max-height: none;
 		visibility: visible;
+
+
+		margin-top: 80px;
+
+		.container {
+
+			.box-shadow(0px 175px 175px 0 rgba(0, 0, 0, 0.5));
+		}
 	}
 
 	.container {
 		max-height: none;
 		background: white;
-		padding: 20px;
+		padding: 20px 45px;
 	}
 
 	.container h1 {

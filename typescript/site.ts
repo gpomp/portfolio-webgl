@@ -75,6 +75,45 @@ class Site {
 				img.setAttribute("src", img.getAttribute("data-src"));
 			}
 		}
+
+		window.addEventListener('scroll', this.scroll);
+
+		this.checkScroll();
+	}
+
+
+	scroll = (event) => {
+		this.checkScroll();
+	}
+
+	checkScrollAnim = () => {
+		this.checkScroll();
+	}
+
+	checkScroll() {
+		var h:number = window.innerHeight;
+		var projects:HTMLCollection = (<HTMLCollection>document.querySelectorAll("#projects .project"));
+		for (var i = 0; i < projects.length; ++i) {
+			var node:HTMLElement = <HTMLElement>projects[i];
+			var br = node.getBoundingClientRect();
+			var t:number = br.top;
+			if(t + 30 > 0 && (t + 300) - h < 0) {
+				if(!node.classList.contains("anim")) {
+					node.classList.add("anim");
+				}
+				var pID:number = Array.prototype.indexOf.call(node.parentNode.children, node);
+				var btn:HTMLElement = (<HTMLElement>document.querySelectorAll("#projects-buttons a").item(pID));
+				if(!btn.classList.contains('active')) {
+					var btnList:HTMLCollection = <HTMLCollection>document.querySelectorAll("#projects-buttons a");
+
+					for (var i = 0; i < btnList.length; ++i) {
+						(<HTMLElement>btnList.item(i)).classList.remove('active');
+					}
+					btn.classList.add('active');
+				}
+				break;
+			}
+		}
 	}
 
 	clickProject = (event, link) => {
@@ -84,7 +123,7 @@ class Site {
 		var project = (<HTMLElement>document.querySelectorAll("#projects .project." + name).item(0));
 		var ctnTop = document.getElementById("projects").offsetTop;
 
-		TweenLite.to(window, 1, {scrollTo:{ y: ctnTop + project.offsetTop, x: 0 }, ease: Expo.easeInOut});
+		TweenLite.to(window, 1, {scrollTo:{ y: ctnTop + project.offsetTop, x: 0 }, ease: Expo.easeInOut, onComplete:this.checkScrollAnim});
 	}
 
 	clickToggleMenu = (event) => {
