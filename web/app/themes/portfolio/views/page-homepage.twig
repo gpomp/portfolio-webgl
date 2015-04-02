@@ -31,6 +31,37 @@
 			<div class="table-cell"><div class="drag-content">Drag to begin...</div></div>
 		</div>
 	</div>
+
+	<div id="site-choice">
+
+		<div class="table">
+			<div class="table-cell">
+				<div class="choice-ctn">
+					<p>Hi! What do you want to see?</p>
+					<a href="#" class="mainButton full-exp">
+						<div class="inner-button">
+					        <div class="bg1"></div>
+					        <div class="bg2"></div>
+					        <div class="container-text">
+					          <div class="txt">Full WebGL Experience</div>
+					        </div>
+					    </div>
+					</a>
+					<a href="#" class="mainButton simple-site">
+						<div class="inner-button">
+					        <div class="bg1"></div>
+					        <div class="bg2"></div>
+					        <div class="container-text">
+					          <div class="txt">I don't have time for that!</div>
+					        </div>
+					    </div>
+					</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
 	<div id="sphere-buttons">
 		{% for project in posts %}
 			<a href="{% do action('make_link_relative', project.link) %}" class="hiddenButton"></a>

@@ -20,11 +20,9 @@ class Site {
 		var detect:any = Detector;
 		if (detect.webgl) {
 			console.log("webgl!");
-			new webglExp.Gui(); 
-			this.mainScene = new webglExp.Scene3D(this.shaderLoaded);	
-
-			this.deviceType();
-			window.addEventListener("resize",this.resize);
+			(<HTMLElement>document.querySelectorAll("#site-choice").item(0)).classList.add("show");
+			(<HTMLElement>document.querySelectorAll("#site-choice a.full-exp").item(0)).addEventListener('click', this.clickWebgl);
+			(<HTMLElement>document.querySelectorAll("#site-choice a.simple-site").item(0)).addEventListener('click', this.clickNonWebgl);
 		} else {
 			console.log("uhoh no webgl!");
 			this.configNonWebgl();
@@ -34,6 +32,29 @@ class Site {
 
 		this.aboutButton = <HTMLElement>document.querySelectorAll(".showIntro").item(0);
 		this.aboutButton.addEventListener("click", this.showAbout);
+	}
+
+	clickNonWebgl = (event) => {
+		event.preventDefault();
+		(<HTMLElement>document.querySelectorAll("#site-choice").item(0)).classList.remove("show");
+		
+		(<HTMLElement>document.querySelectorAll(".overlay-nowebgl").item(0)).style.display = 'none';
+		this.configNonWebgl();
+	}
+
+	clickWebgl = (event) => {
+		event.preventDefault();
+		(<HTMLElement>document.querySelectorAll("#site-choice").item(0)).classList.remove("show");
+		this.configWebgl();
+	}
+
+	configWebgl() {
+
+		new webglExp.Gui(); 
+		this.mainScene = new webglExp.Scene3D(this.shaderLoaded);	
+
+		this.deviceType();
+		window.addEventListener("resize",this.resize);
 	}
 
 	showAbout = (event) => {
