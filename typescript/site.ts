@@ -40,12 +40,14 @@ class Site {
 		
 		(<HTMLElement>document.querySelectorAll(".overlay-nowebgl").item(0)).style.display = 'none';
 		this.configNonWebgl();
+		_gaq.push(['_trackEvent', 'intro', 'clicked', 'shownonwebgl']);
 	}
 
 	clickWebgl = (event) => {
 		event.preventDefault();
 		(<HTMLElement>document.querySelectorAll("#site-choice").item(0)).classList.remove("show");
 		this.configWebgl();
+		_gaq.push(['_trackEvent', 'intro', 'clicked', 'showwebgl']);
 	}
 
 	configWebgl() {
