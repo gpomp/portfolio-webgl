@@ -101,7 +101,7 @@ class Site {
 
 		window.addEventListener('scroll', this.scroll);
 
-		this.checkScroll();
+        window.setTimeout(function() { this.checkScroll(); }.bind(this), 1000);
 	}
 
 
@@ -116,27 +116,38 @@ class Site {
 	checkScroll() {
 		var h:number = window.innerHeight;
 		var projects:HTMLCollection = (<HTMLCollection>document.querySelectorAll("#projects .project"));
+        var cProject = null;
+        var biggest = -1;
+        var big = 0;
 		for (var i = 0; i < projects.length; ++i) {
 			var node:HTMLElement = <HTMLElement>projects[i];
 			var br = node.getBoundingClientRect();
 			var t:number = br.top;
-			if(t + 30 > 0 && (t + 300) - h < 0) {
+            var b: number = br.bottom;
+            var perc = Math.max(0, t);
+			if(t - h < 0 && b - h > 0) {
 				if(!node.classList.contains("anim")) {
 					node.classList.add("anim");
 				}
-				var pID:number = Array.prototype.indexOf.call(node.parentNode.children, node);
-				var btn:HTMLElement = (<HTMLElement>document.querySelectorAll("#projects-buttons a").item(pID));
-				if(!btn.classList.contains('active')) {
-					var btnList:HTMLCollection = <HTMLCollection>document.querySelectorAll("#projects-buttons a");
 
-					for (var i = 0; i < btnList.length; ++i) {
-						(<HTMLElement>btnList.item(i)).classList.remove('active');
-					}
-					btn.classList.add('active');
-				}
-				break;
+                biggest = i;
+				
 			}
+
 		}
+        if(biggest !== -1) {
+            var btn:HTMLElement = (<HTMLElement>document.querySelectorAll("#projects-buttons a").item(biggest));
+            if(!btn.classList.contains('active')) {
+                var btnList:HTMLCollection = <HTMLCollection>document.querySelectorAll("#projects-buttons a");
+
+                for (var i = 0; i < btnList.length; ++i) {
+                    (<HTMLElement>btnList.item(i)).classList.remove('active');
+                }
+                btn.classList.add('active');
+            }
+
+        }
+        
 	}
 
 	clickProject = (event, link) => {
