@@ -953,12 +953,12 @@ module webglExp {
 			this.nextPrev.classList.remove("show");
 
 			
-			TweenLite.to(this.cylinder.scale, 2, { x: 0.01, z: 0.01, ease:Expo.easeInOut, onComplete: this.holeOff });
+			TweenLite.to(this.cylinder.scale, 1, { x: 0.01, z: 0.01, ease:Expo.easeInOut, onComplete: this.holeOff });
 			if(this.isBackToSphere) {
-				TweenLite.to(this.uniforms.holeRatio, 2, { value:0.0, ease:Expo.easeInOut });
+				TweenLite.to(this.uniforms.holeRatio, 1, { value:0.0, ease:Expo.easeInOut });
 				this.backtoSphere();
 			} else {
-				TweenLite.to(this.uniforms.holeRatio, 2, { value:0.0, ease:Expo.easeInOut, onComplete: this.showProject });
+				TweenLite.to(this.uniforms.holeRatio, 1, { value:0.0, ease:Expo.easeInOut, onComplete: this.showProject });
 			}
 			
 		}
@@ -975,12 +975,12 @@ module webglExp {
 			this.isCamMoving = true;
 			this.posOnPath = 0;
 			this.calcRoute(project);
-			var speed:number = Math.abs(this.projectToGo - this.currProject) / this.projectsList.length * (this.projectsList.length * 2);
+			var speed:number = Math.abs(this.projectToGo - this.currProject) / this.projectsList.length * (this.projectsList.length);
 
 			this.currProject = this.projectToGo;
 			var ease = Expo.easeInOut;
 			if(!this.isStarted) {
-				speed += 2;
+				speed += 1;
 				ease = Strong.easeInOut;
 			}
 
@@ -1047,9 +1047,9 @@ module webglExp {
 			this.isCamMoving = false;
 
 			this.isBluring = true;
-			TweenLite.to(this.uniforms.holeRatio, 2, { value:350.0, ease:Expo.easeInOut });
+			TweenLite.to(this.uniforms.holeRatio, 1, { value:350.0, ease:Expo.easeInOut });
 			this.cUniforms.alphaRatio.value = 1.0;
-			TweenLite.to(this.cylinder.scale, 2, { x: 1, z: 1, ease:Expo.easeInOut, onComplete: this.sceneBlured });
+			TweenLite.to(this.cylinder.scale, 1, { x: 1, z: 1, ease:Expo.easeInOut, onComplete: this.sceneBlured });
 
 
 			this.inProject = true;

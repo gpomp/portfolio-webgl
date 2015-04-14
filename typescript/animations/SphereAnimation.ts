@@ -360,11 +360,10 @@ module webglExp {
 		}
 
 		exit() {
-			console.log("exit");
 			this.domEl.classList.add("disable");
 			this.domEl.removeEventListener("click",this.elementClick);
 			this.isExiting = true;
-			TweenLite.to(this, 3, { sphereRad: 500 + Math.random() * 500, ease: Expo.easeInOut, delay: Math.random() })
+			TweenLite.to(this, 1, { sphereRad: 500 + Math.random() * 500, ease: Expo.easeInOut, delay: Math.random() })
 		}
 
 		
@@ -457,14 +456,14 @@ module webglExp {
 		outRender() {
 			if(this.onOutRender) return;
 			this.outFrac = 1;
-			TweenLite.to(this, 5 + Math.random() * 3, {outFrac: 0, ease: Expo.easeInOut});
+			TweenLite.to(this, 4 + Math.random() * 1, {outFrac: 0, ease: Expo.easeInOut});
 			this.onOutRender = true;
 		}
 
 		inRender() {
 			if(this.onInRender) return;
 			this.outFrac = 0;
-			TweenLite.to(this, 7 + Math.random() * 3, {outFrac: 1, ease: Expo.easeInOut});
+			TweenLite.to(this, 4 + Math.random() * 1, {outFrac: 1, ease: Expo.easeInOut});
 			this.onInRender = true;
 		}
 
@@ -1146,10 +1145,6 @@ module webglExp {
 
 		start() {
 
-			
-
-			
-
 			/*this.skipIntro();
 			return;*/
 			
@@ -1159,27 +1154,25 @@ module webglExp {
 			
 			this.sphereCtn.rotation.y = Math.PI * 10 + Math.random() * Math.PI * 3;
 			var maxTime:number = 0;
-			TweenLite.to(this.sphereCtn.rotation, 10, { y : Math.PI + Math.random() * Math.PI * 2, ease: Sine.easeInOut});
-			maxTime = Math.max(maxTime, 10);
+			TweenLite.to(this.sphereCtn.rotation, 5, { y : Math.PI + Math.random() * Math.PI * 2, ease: Sine.easeInOut});
+			maxTime = Math.max(maxTime, 5);
 
 			TweenLite.to(this.background.uniforms.alpha, 3, { value: 1, ease:Sine.easeOut });
 			
-			TweenLite.to(this.uniforms.radius, 5, { value : 130, ease: Strong.easeInOut, delay: 2 });
-			maxTime = Math.max(maxTime, 7);
+			TweenLite.to(this.uniforms.radius, 3, { value : 130, ease: Strong.easeInOut });
+			maxTime = Math.max(maxTime, 3);
 
 			super.getCamera().position.set(0, 0, 500);
 
 			for (var i = 0; i < this.introThetra.length; ++i) {
-				var t:number = 1 + Math.random() * 0.3;
-				var d:number = (i * 0.001 + Math.random() * .01) + 5;
+				var t:number = 0.4 + Math.random() * 0.3;
+				var d:number = (i * 0.001 + Math.random() * .01) + 3;
 				TweenLite.to(this.introThetra[i], t, { t : 1.0, ease:Expo.easeInOut, delay: d });
 				maxTime = Math.max(maxTime, d + t);
 			}
 
 			this.dummyAnim = 0;
 			TweenLite.to(this, maxTime, { dummyAnim : 1, onComplete: this.transitionDone});
-			
-
 			
 
 		}
@@ -1214,12 +1207,12 @@ module webglExp {
 				this.spots[i].changeRadius();
 				/*var scaleToGo:THREE.Vector3 = this.spots[i].overPlane.scale.clone();
 				this.spots[i].overPlane.scale.set(0.01, 0.01, 0.01);*/
-				TweenLite.to(this.spots[i].uniforms.alpha, 2, { value: 1.0, delay: i * 0.2 });
+				TweenLite.to(this.spots[i].uniforms.alpha, 1, { value: 1.0, delay: i * 0.01 });
 				this.spots[i].breathing();
 				// TweenLite.to(this.spots[i].overPlane.scale, 2, { x: scaleToGo.x, y: scaleToGo.y, z: scaleToGo.z, delay: i * 0.2, ease:Expo.easeInOut });
 			}
 
-			TweenLite.to(this.sphereCtn.rotation, 4, { y : 0, ease: Expo.easeInOut, onComplete: this.showInstruction});
+			TweenLite.to(this.sphereCtn.rotation, 1, { y : 0, ease: Expo.easeInOut, onComplete: this.showInstruction});
 		}
 
 		showInstruction = () => {
@@ -1271,22 +1264,22 @@ module webglExp {
 
 			for (var j:number = 0; j < this.spots.length; ++j) {
 				this.spots[j].exit();
-				TweenLite.to(this.spots[j].uniforms.alpha, 0.5, { value: 0.0, delay: j * 0.5, ease:Sine.easeOut });
+				TweenLite.to(this.spots[j].uniforms.alpha, 0.1, { value: 0.0, delay: j * 0.1, ease:Sine.easeOut });
 			}
 
 			
-			TweenLite.to(this.sphereCtn.rotation, 3, { y : 0, x: 0, z: 0, ease: Sine.easeInOut });
+			TweenLite.to(this.sphereCtn.rotation, 1, { y : 0, x: 0, z: 0, ease: Sine.easeInOut });
 			// TweenLite.to(this.uniforms.radius, 5, { value : 0, ease: Strong.easeInOut, delay: 2 });
 			for (var i = 0; i < this.introThetra.length; ++i) {
-				TweenLite.to(this.introThetra[i], 1 + Math.random() * 2, { t : 0.0, ease:Expo.easeInOut });
+				TweenLite.to(this.introThetra[i], 1, { t : 0.0, ease:Expo.easeInOut });
 			}
 
-			TweenLite.to(this.bgMesh.rotation, 3, { x: -Math.PI / 2, delay: 4, ease:Sine.easeOut });
-			TweenLite.to(this.bgMesh.position, 3, { x: 0, y: -450, delay: 4, z: super.getCamera().position.z - 700, ease:Sine.easeOut });
+			TweenLite.to(this.bgMesh.rotation, 3, { x: -Math.PI / 2, delay: 0.5, ease:Sine.easeOut });
+			TweenLite.to(this.bgMesh.position, 3, { x: 0, y: -450, delay: 0.5, z: super.getCamera().position.z - 700, ease:Sine.easeOut });
 			TweenLite.to(this.lookAt, 3, { 	x : 0, y: super.getCamera().position.y - 70, 
 											z: super.getCamera().position.z - 100, 
 											ease: Sine.easeInOut, 
-											delay: 4, onComplete: this.exit });
+											delay: 1, onComplete: this.exit });
 		}
 
 		exit = () => {
@@ -1390,7 +1383,7 @@ module webglExp {
 				this.tetraAttr.appear.needsUpdate = true;
 				this.attributes.outFrac.needsUpdate = true;
 
-				this.startCounter += 500;
+				this.startCounter += 200;
 				this.outCounter += 500;
 
 				var mSphereScale:number = this.uniforms.radius.value - 80;
