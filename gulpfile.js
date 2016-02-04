@@ -118,9 +118,25 @@ function rebundle(bundler) {
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('./'))
-    .pipe(gulpif(config.env === 'prod', uglify({mangle: true, compress : {drop_console:true}})))
     .pipe(gulp.dest(config.theme + 'js'));
 }
+
+gulp.task('build-app-prod', function() {
+
+    var browserifyOptions = {
+        entries: ['./js/index.js']
+    };
+
+    var bApp = browserify(browserifyOptions)
+                .transform("babelify", { presets: ["es2015"] })
+                .transform('glslify');
+
+    vendorExternal.forEach(function(external) {
+        bApp.external(external.require);
+    });
+
+    return rebundle(bApp);
+});
 
 gulp.task('build-app', function () {
 
@@ -130,8 +146,6 @@ gulp.task('build-app', function () {
         cache: {},
         packageCache: {}
     };
-
-    console.log(watchify.args);
 
     var bApp = browserify(browserifyOptions)
                 .transform("babelify", { presets: ["es2015"] })
@@ -167,13 +181,12 @@ gulp.task('devconfig', function () {
     config.env = 'dev';
 });
 
-gulp.task('dev', ['devconfig','common', 'watch']);
+gulp.task('dev', function(callback) {
+    runSequence(['devconfig','build-vendor', 'build-app', 'less', 'watch'], 'modernizr' );
+});
 
-gulp.task('prod', ['common']);
-
-gulp.task('common', function(callback) {
-		runSequence( 'font', ['build-vendor', 'build-app', 'less'], 'modernizr' );
-	}
-)
+gulp.task('prod', function(callback) {
+    runSequence(['build-vendor', 'build-app-prod', 'less'], 'modernizr' );
+});
 
 gulp.task('default',['prod']);
