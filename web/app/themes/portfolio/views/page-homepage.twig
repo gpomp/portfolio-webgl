@@ -12,164 +12,73 @@
 
 		</div>
 	</div>
-	<header id="home-intro">
-		<div class="bg">
-			<div class="bg1"></div>
-			<div class="bg2"></div>
-		</div>
-		<div class="table">
-			<div class="table-cell">
-				<div class="container">
-					{{post.content}}
-				</div>
+
+	<div id="intro-canvas"></div>
+	<div id="drag-canvas"></div>
+
+	<div id="global-wrapper">
+		<header id="home-intro">
+			<div class="bg">
+				<div class="bg1"></div>
+				<div class="bg2"></div>
 			</div>
-		</div>
-	</header>
-	<div class="preload-font" style="font-family: 'Lato';">.</div>
-	<div class="drag-instruction">
-		<div class="table">
-			<div class="table-cell"><div class="drag-content">Drag to begin...</div></div>
-		</div>
-	</div>
-
-	<div id="site-choice">
-
-		<div class="table">
-			<div class="table-cell">
-				<div class="choice-ctn">
-					<p>Hi! What do you want to see?</p>
-					<a href="#" class="mainButton full-exp">
-						<div class="inner-button">
-					        <div class="bg1"></div>
-					        <div class="bg2"></div>
-					        <div class="container-text">
-					          <div class="txt">Full WebGL Experience</div>
-					        </div>
-					    </div>
-					</a>
-					<a href="#" class="mainButton simple-site">
-						<div class="inner-button">
-					        <div class="bg1"></div>
-					        <div class="bg2"></div>
-					        <div class="container-text">
-					          <div class="txt">I don't have time for that!</div>
-					        </div>
-					    </div>
-					</a>
-				</div>
-			</div>
-		</div>
-
-	</div>
-
-	<div id="sphere-buttons">
-		{% for project in posts %}
-			<a href="{% do action('make_link_relative', project.link) %}" class="hiddenButton"></a>
-			<a href="{% do action('make_link_relative', project.link) %}" class="overButton"><div>{{project.title}}</div></a>
-		{% endfor %}
-	</div>
-	<a href="#" id="open-menu">
-		<div class="inner-button">
-	        <div class="bg1"></div>
-	        <div class="bg2"></div>
-	        <div class="container-text">
-	          <div class="txt"></div>
-	        </div>
-	    </div>
-	</a>
-	<div id="projects-buttons">
-		<div class="table">
-			<div class="table-cell">
-				{% for project in posts %}
-					<a href="{% do action('make_link_relative', project.link) %}" name="{{project.post_name}}">
-			          	<div class="bg"></div>
-			          	<div class="container">
-			        		{{project.title}}
-				      	</div>
-			        </a>
-		        {% endfor %}
-				<a class="sphere" href="#">
-		          	<div class="bg"></div>
-		          	<div class="container">
-		        		<div class="table"><div class="table-cell">&lt; Back To Sphere</div></div>
-			      	</div>
-		        </a>
-			</div>
-		</div>
-	</div>
-
-	<div id="projects">
-		{% for project in posts %}
-			<div class="project {{project.post_name}}">
-	            <a class="project-slug" name="{% do action('make_link_relative', project.link) %}"></a>
-	          	<div class="text">
-	              	<h1>{{project.title}}</h1>
-	              	<p>{{project.content}}</p>
-	          	</div>
-	          	<div class="images">
-	             	{% for image in project.get_field('images') %}
-	             		<div>
-	             			<div class="bg">
-	             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
-	             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
-	             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
-	             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
-	             			</div>
-	             			<div class="shadow"></div>
-							<img class="main" data-src="{{TimberImage(image).src('large')}}" alt="">
-	             		</div>
-					{% endfor %}
-	          	</div>                       
-	        </div>
-		{% endfor %}
-	</div>
-
-	<div id="next-prev">
-		<div class="container">
-			<a href="#" class="left">
-				<div class="arrow"><span class="icon-arrow-left"></span></div><!-- 
-			--><div class="text">
-					<div class="ctn"><span>Previous</span></div>
-				</div>
-			</a>
-			<a href="#" class="right">
-				<div class="text">
-					<div class="ctn"><span>Next</span></div>
-				</div><!-- 
-			--><div class="arrow"><span class="icon-arrow-right"></span></div>
-			</a>
-		</div>
-	</div>
-
-	<div id="intro">
-		<div class="bg">
-			<div class="bg1"></div>
-			<div class="bg2"></div>
-		</div>
-		<div class="table">
-			<div class="table-cell">
-				<div class="container">
-					{{post.content}}
-					<div class="btn-ctn">
-						<a href="#" class="mainButton invert hide-intro">
-							<div class="inner-button">
-						        <div class="bg1"></div>
-						        <div class="bg2"></div>
-						        <div class="container-text">
-						          <div class="txt">Continue</div>
-						        </div>
-						    </div>
-						</a>
+			<div class="table">
+				<div class="table-cell">
+					<div class="container">
+						{{post.content}}
 					</div>
 				</div>
 			</div>
+		</header>
+
+		<div class="preload-font" style="font-family: 'Lato';">.</div>
+
+		<div id="projects-buttons">
+			<div class="table">
+				<div class="table-cell">
+					{% for project in posts %}
+						<a href="{% do action('make_link_relative', project.link) %}" name="{{project.post_name}}">
+				          	<div class="bg"></div>
+				          	<div class="container">
+				        		{{project.title}}
+					      	</div>
+				        </a>
+			        {% endfor %}
+					<a class="sphere" href="#">
+			          	<div class="bg"></div>
+			          	<div class="container">
+			        		<div class="table"><div class="table-cell">&lt; Back To Sphere</div></div>
+				      	</div>
+			        </a>
+				</div>
+			</div>
+		</div>
+
+		<div id="projects">
+			{% for project in posts %}
+				<div class="project {{project.post_name}}">
+		            <a class="project-slug" name="{% do action('make_link_relative', project.link) %}"></a>
+		          	<div class="text">
+		              	<h1>{{project.title}}</h1>
+		              	<p>{{project.content}}</p>
+		          	</div>
+		          	<div class="images">
+		             	{% for image in project.get_field('images') %}
+		             		<div>
+		             			<div class="bg">
+		             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
+		             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
+		             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
+		             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
+		             			</div>
+		             			<div class="shadow"></div>
+								<img class="main" data-src="{{TimberImage(image).src('large')}}" alt="">
+		             		</div>
+						{% endfor %}
+		          	</div>                       
+		        </div>
+			{% endfor %}
 		</div>
 	</div>
-
-	<a href="#" class="showIntro">
-		About Gauthier
-	</a>
-
-	<script data-src="{{theme.path}}/js/shaders.xml" data-type="all-shaders"></script>
 
 {% endblock %}
