@@ -242,7 +242,7 @@ body {
 	z-index: 2;
 }
 
-#intro-canvas, #drag-canvas {
+#intro-canvas, #drag-canvas, #game-canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -254,6 +254,15 @@ body {
 	canvas {
 		width: 100%;
 		height: 100%;
+	}
+}
+
+#game-canvas {
+	@media @d {
+		position: fixed;
+	}
+	@media @dX {
+		position: fixed;
 	}
 }
 
@@ -434,6 +443,14 @@ body {
 		display: none;
 		padding: 30px 0 400px 0;
 
+		@media @d {
+			margin-bottom: 400px;
+		}
+
+		@media @dX {
+			margin-bottom: 400px;
+		}
+
 		.no-threejs & {
 			padding: 0 25px;
 			background: white;
@@ -610,6 +627,14 @@ body {
 				padding-top: 40px;
 				margin-top: 0;
 				border-top: 5px solid black;
+
+				@media @d {
+					border-top: 0;
+				}
+
+				@media @dX {
+					border-top: 0;
+				}
 			}
 
 			@media @m {

@@ -32,11 +32,11 @@ class Intro {
 
         this.setupScene();
 
-        this.render(); 
+        this.render();
 
         window.addEventListener('resize', this.resize.bind(this));
     }
-
+ 
     resize(event) {
         this.windowWidth = window.innerWidth;
         this.windowHeight = window.innerHeight;
@@ -48,7 +48,7 @@ class Intro {
         this.scene.remove(this.ground.plane);
         this.ground.resize( this.windowWidth, this.windowHeight );
     }
-
+ 
     setupScene() {
 
         

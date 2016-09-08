@@ -36,12 +36,46 @@ class DrawCanvas {
         this.ctx.fillRect(this.canvas.width * 0.5, this.canvas.height * 0.5, 200, 200);
 
         this.ready = true;
+
+        this._speed = {
+            x: 5 + Math.random() * 5,
+            y: 5 + Math.random() * 5 
+        }
+
+        this._startPos = {
+            x: Math.random() * this.canvas.width,
+            y: document.body.scrollTop + Math.random() * this.canvas.height,
+            speed: 5
+        }
+
+        this._locList.push({
+            x: this._startPos.x,
+            y: this._startPos.y,
+            speed: this._startPos.speed
+        });
+
+        this._currPos = {
+            x: this._startPos.x,
+            y: this._startPos.y,
+            speed: this._startPos.speed
+        }
+
+        this.beginInteraction = false;
+        /*this.introIMG = new Image();
+        this.introIMG.addEventListener('load', this.introLoaded.bind(this));
+        this.introIMG.src = introIMG;*/
     }
+
+    /*introLoaded() {
+        console.log('introLoaded');
+        this.ctx.drawImage(this.introIMG, 0, 0);
+    }*/
 
     mousedown(event) {
         this._isDrawing = true;
 
         this._domEl.style.zIndex = 1000;
+        this.beginInteraction = true;
 
         window.addEventListener('mouseup', this.mouseup.bind(this));
     }
@@ -76,8 +110,9 @@ class DrawCanvas {
     }
 
     render() {
+
         this.ctx.fillStyle = "#000000";
-         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         if(this._locList.length > 0) {
             
@@ -92,10 +127,38 @@ class DrawCanvas {
 
             
             // this.ctx.stroke();
+        } 
+
+        if(!this.beginInteraction) {
+            this._startPos = {
+                x: this._startPos.x + this._speed.x,
+                y: this._startPos.y + this._speed.y,
+                speed: 5
+            }
+
+            this._currPos.x += (this._startPos.x - this._currPos.x) * 0.3;
+            this._currPos.y += (this._startPos.y - this._currPos.y) * 0.3;
+
+            var limit = 50;
+
+            if(this._currPos.x > this.canvas.width - limit || this._currPos.x < limit) {
+                this._speed.x = -1 * this._speed.x;
+            }  
+     
+            if(this._currPos.y > this.canvas.height - limit || this._currPos.y < limit) {
+                this._speed.y = -1 * this._speed.y;
+            }
+
+
+            this._locList.push({
+                x: this._currPos.x,
+                y: this._currPos.y,
+                speed: this._startPos.speed
+            });
         }
         
 
-        while(this._locList.length > 600) {
+        while(this._locList.length > 1000) {
             this._locList.splice(0, 1);
         }
     }

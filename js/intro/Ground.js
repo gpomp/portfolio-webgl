@@ -1,4 +1,4 @@
-var work = require('webworkify');
+var work = require('unworkify');
 var THREE = require('three');
 var glslify = require('glslify');
 var Noise = require("noisejs").Noise;
@@ -37,13 +37,13 @@ class Ground {
         this.buildGeometry();
     }
 
-    createWorker() {
+    createWorker () {
         this.worker = work(require('./workers/getVoronoiPoints.js'));
         this.worker.addEventListener('message', function (ev) {
             var superGeometry = new THREE.Geometry();
 
             let w = this.width, h = this.height;
-            let widthHalf = w / 2; 
+            let widthHalf = w / 2;
             let heightHalf = h / 2;
 
             var noise2d = new Noise();
@@ -132,6 +132,8 @@ class Ground {
 
             this.plane = new THREE.Mesh(bGeom, this.mat);
 
+            this.plane.rotation.x = Math.PI * 0.5;
+   
             this.firstCallback();
 
             this.ready = true;
@@ -139,10 +141,10 @@ class Ground {
 
         }.bind(this));  
     }
-
+ 
     buildGeometry() {        
         this.worker.postMessage([deviceType() === 'desktop' ? 150 : 90, this.width, this.height]);
-    }
+    }  
 
     resize(w, h) {
         this.width = w;

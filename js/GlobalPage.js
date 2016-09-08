@@ -5,22 +5,30 @@ var classes = require('dom-classes');
 var Tween = require('gsap/src/uncompressed/TweenLite');
 var ScrollToPlugin = require('gsap/src/uncompressed/plugins/ScrollToPlugin');
 var EasePack = require('gsap/src/uncompressed/easing/EasePack');
+var on = require('dom-event');
 
-var Intro = require('./intro/');
+// var Intro = require('./intro/');
  
 class GlobalPage {
     constructor() {
+        console.log('global page');
         this.init();
+    }
+
+    resize (event) {
+        select("#home-intro").style.marginTop = (window.innerHeight - select("#home-intro").offsetHeight) + "px";
     }
 
     init() {
         _gaq.push(['_trackPageview', '/nowebgl']);
+        on(window, 'resize', this.resize.bind(this));
+        this.resize();
 
-        var intro = new Intro(); 
+        // var intro = new  Intro(); 
 
         classes(select('html')).add('no-threejs');
         select('.overlay-nowebgl').style.display = 'none';
-            
+             
         /*Buttons*/
         classes(select('#projects-buttons')).add("show");
         var buttons = select.all('#projects-buttons a');
@@ -85,7 +93,7 @@ class GlobalPage {
                 biggest = i;
                 
             }
-
+ 
         }
         if(biggest !== -1) {
             let btn = select.all('#projects-buttons a')[biggest];

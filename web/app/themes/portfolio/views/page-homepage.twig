@@ -2,6 +2,11 @@
 
 {% block content %}
 
+	<script type="text/javascript">
+		var introIMG = "{{theme.path}}/img/intro.png";
+
+	</script>
+
 	<div class="overlay-nowebgl">
 		<div class="container">
 			Uhoh! It looks like your using a device or a browser not compatible with WebGL.<br/>
@@ -13,8 +18,7 @@
 		</div>
 	</div>
 
-	<div id="intro-canvas"></div>
-	<div id="drag-canvas"></div>
+	<canvas id="game-canvas"></canvas>
 
 	<div id="global-wrapper">
 		<header id="home-intro">
@@ -65,14 +69,7 @@
 		          	<div class="images">
 		             	{% for image in project.get_field('images') %}
 		             		<div>
-		             			<div class="bg">
-		             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
-		             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
-		             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
-		             				<div><img data-src="{{TimberImage(image).src('large')}}" alt=""></div>
-		             			</div>
-		             			<div class="shadow"></div>
-								<img class="main" data-src="{{TimberImage(image).src('large')}}" alt="">
+											<img class="main" data-src="{{TimberImage(image).src('large')}}" alt="">
 		             		</div>
 						{% endfor %}
 		          	</div>                       
