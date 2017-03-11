@@ -443,14 +443,6 @@ body {
 		display: none;
 		padding: 30px 0 400px 0;
 
-		@media @d {
-			margin-bottom: 400px;
-		}
-
-		@media @dX {
-			margin-bottom: 400px;
-		}
-
 		.no-threejs & {
 			padding: 0 25px;
 			background: white;
@@ -471,10 +463,18 @@ body {
 			}
 		}
 
+
 		@media @d {
+			float:right;
+			max-width: 80%;
+			margin-bottom: 400px;
+		}
+
+		@media @dX {
 			margin: 0 auto;
 
-			max-width: 90%;
+    	max-width: 1100px;
+			margin-bottom: 400px;
 		}
 
 		@media @t {
@@ -855,7 +855,14 @@ body {
 	position: relative;
 	z-index: 2;
 
+
+
 	@media @d {
+		float:right;
+		max-width: 80%;
+	}
+
+	@media @dX {
 		margin: 0 auto;
 
 		max-width: 90%;
@@ -940,4 +947,12 @@ a.showIntro {
 	.no-threejs & {
 		display: none;
 	}
+}
+
+canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
