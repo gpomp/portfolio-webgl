@@ -32,4 +32,5 @@ web/app/themes/portfolio/css/main.css
 
 web/app/themes/onecoffee/assets/fonts/Glyph*
 
-web/app/themes/portfolio/js
+web/app/themes/portfolio/js/*
+!web/app/themes/portfolio/js/demo.js
