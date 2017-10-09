@@ -46,7 +46,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node --harmony `which gulp` build"
+    "build": "node --harmony `which gulp` build",
+    "build": "node-es6 `which gulp` build"
   },
   "repository": {
     "type": "git"
