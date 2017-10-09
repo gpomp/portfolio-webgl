@@ -159,7 +159,7 @@ gulp.task('build-app', function () {
  
 gulp.task('watch', function () {
 	gulp.watch('less/*.less', ['less']);
-    gulp.watch(['./js/**/*.js', './js/**/*.glsl'], ['build-app']);
+    // gulp.watch(['./js/**/*.js', './js/**/*.glsl'], ['build-app']);
 });
 
 gulp.task('devconfig', function () {
@@ -168,7 +168,7 @@ gulp.task('devconfig', function () {
 });
 
 gulp.task('dev', function(callback) {
-    runSequence('devconfig',['build-vendor', 'build-app', 'less'] );
+    runSequence('devconfig',['build-vendor', 'build-app', 'less', 'watch'] );
 });
 
 gulp.task('prod', function(callback) {

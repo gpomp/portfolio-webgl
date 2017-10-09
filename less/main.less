@@ -493,6 +493,26 @@ body {
 			display: block;
 		}
 
+		.tech-tags {
+			width: 100%;
+			position: relative;
+			overflow: hidden;
+			padding: 0;
+			margin: 0;
+
+			li {
+				list-style: none;
+				margin: 0;
+				margin-right: 3px;
+				padding: 5px 10px;
+				background: black;
+				color: white;
+				display: inline-block;
+				border-radius: 5px 10px;
+				font-size: 120%;
+			}
+		}
+
 		.images {
 			width: 100%;
 			height: 50%;
@@ -882,9 +902,9 @@ body {
 
 		.container {
 
-			background-color: black;
+			background-color: white;
 			h1, p {
-				color: white;
+				color: black;
 			}
 			
 			.box-shadow(0px 175px 175px 0 rgba(0, 0, 0, 0.5));
@@ -897,7 +917,7 @@ body {
 		padding: 20px 45px;
 
 		a.mainButton.small .inner-button .container-text .txt {
-			color: white;
+			color: black;
 		}
 	}
 
@@ -907,6 +927,64 @@ body {
 
 	.bg {
 		display: none;
+	}
+
+	.award {
+		.container {
+			background-color: black;
+
+			h1 {
+				color: white;
+			}
+
+			& > div {
+				float: left;
+				width: 33.33%;
+				position: relative;
+				overflow: hidden;
+				img {
+					max-width: 150px;
+				}
+
+				@media @m {
+					float: none;
+					width: 100%;
+					margin-bottom: 20px;
+
+					&:last-child {
+						margin-bottom: 0;
+					}
+				}
+
+				ul {
+					margin: 0;
+					padding: 0;
+
+					li {
+						margin: 0;
+						margin-bottom: 5px;
+						padding: 0;
+						list-style: none;
+
+						span {
+							font-size: 150%;
+							font-weight: bold;
+							color: #999;
+							&.award-title {
+								font-size: 200%;
+								margin-right: 5px;
+								color: white;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+
+		h2 {
+
+		}
 	}
 }
 

@@ -16,7 +16,7 @@ class GlobalPage {
     }
 
     resize (event) {
-        select("#home-intro").style.marginTop = (window.innerHeight - select("#home-intro").offsetHeight) + "px";
+        select("#home-intro").style.marginTop = (window.innerHeight - select("#home-intro .intro-p").offsetHeight) + "px";
     }
 
     init() {

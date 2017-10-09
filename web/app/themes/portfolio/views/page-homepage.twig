@@ -24,10 +24,40 @@
 				<div class="bg1"></div>
 				<div class="bg2"></div>
 			</div>
-			<div class="table">
+			<div class="intro-p table">
 				<div class="table-cell">
 					<div class="container">
 						{{post.content}}
+					</div>
+				</div>
+			</div>
+			<div class="award table">
+				<div class="table-cell">
+					<div class="container">
+						<h1>AWARDS</h1>
+						<div>
+							<h2><img src="app/themes/portfolio/img/fwa.jpg"></h2>
+							<ul>
+								<li><span class="award-title">Month</span> <span>x1</span></li>
+								<li><span class="award-title">Day</span> <span>x6</span></li>
+							</ul>
+						</div>
+						<div>
+							<h2><img src="app/themes/portfolio/img/awwwards.jpg"></h2>
+							<ul>
+								<li><span class="award-title">Month</span> <span>x1</span></li>
+								<li><span class="award-title">Day</span> <span>x3</span></li>
+								<li><span class="award-title">Developer award</span> <span>x1</span></li>
+								<li><span class="award-title">Honorable Mention</span> <span>x1</span></li>
+							</ul>
+						</div>
+						<div>
+							<h2><img src="app/themes/portfolio/img/css-awards.jpg"></h2>
+							<ul>
+								<li><span class="award-title">Month</span> <span>x1</span></li>
+								<li><span class="award-title">Day</span> <span>x1</span></li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -63,6 +93,13 @@
 		          	<div class="text">
 		              	<h1>{{project.title}}</h1>
 		              	<p>{{project.content}}</p>
+		              	{% if project.get_field('tags') is not empty %}
+		              	<ul class="tech-tags">
+		              		{% for tag in project.get_field('tags') %}
+		              			<li>{{tag.tag}}</li>
+		              		{% endfor %}
+		              	</ul>
+	              		{% endif %}
 		          	</div>
 		          	<div class="images">
 		             	{% for image in project.get_field('images') %}
