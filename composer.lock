@@ -1,41 +1,95 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "da496c774313fd09d92ab43bd6fad9a4",
+    "content-hash": "2749aa931e62570a1e4b185410d4b6a5",
     "packages": [
         {
-            "name": "asm89/twig-cache-extension",
-            "version": "0.1.0",
+            "name": "altorouter/altorouter",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/asm89/twig-cache-extension.git",
-                "reference": "35da9579dc0648e5bb52d02530ff81352f7e1247"
+                "url": "https://github.com/dannyvankooten/AltoRouter.git",
+                "reference": "09d9d946c546bae6d22a7654cdb3b825ffda54b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/asm89/twig-cache-extension/zipball/35da9579dc0648e5bb52d02530ff81352f7e1247",
-                "reference": "35da9579dc0648e5bb52d02530ff81352f7e1247",
+                "url": "https://api.github.com/repos/dannyvankooten/AltoRouter/zipball/09d9d946c546bae6d22a7654cdb3b825ffda54b4",
+                "reference": "09d9d946c546bae6d22a7654cdb3b825ffda54b4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "AltoRouter.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Danny van Kooten",
+                    "email": "dannyvankooten@gmail.com",
+                    "homepage": "http://dannyvankooten.com/"
+                },
+                {
+                    "name": "Koen Punt",
+                    "homepage": "https://github.com/koenpunt"
+                },
+                {
+                    "name": "niahoo",
+                    "homepage": "https://github.com/niahoo"
+                }
+            ],
+            "description": "A lightning fast router for PHP",
+            "homepage": "https://github.com/dannyvankooten/AltoRouter",
+            "keywords": [
+                "lightweight",
+                "router",
+                "routing"
+            ],
+            "time": "2014-04-16T09:44:40+00:00"
+        },
+        {
+            "name": "asm89/twig-cache-extension",
+            "version": "1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/asm89/twig-cache-extension.git",
+                "reference": "630ea7abdc3fc62ba6786c02590a1560e449cf55"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/asm89/twig-cache-extension/zipball/630ea7abdc3fc62ba6786c02590a1560e449cf55",
+                "reference": "630ea7abdc3fc62ba6786c02590a1560e449cf55",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
-                "twig/twig": "1.*"
+                "twig/twig": "^1.0|^2.0"
             },
             "require-dev": {
-                "doctrine/cache": "1.*"
+                "doctrine/cache": "~1.0"
+            },
+            "suggest": {
+                "psr/cache-implementation": "To make use of PSR-6 cache implementation via PsrCacheAdapter."
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.1-dev"
+                    "dev-master": "1.3-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Asm89\\Twig\\CacheExtension\\": "lib/"
+                "psr-4": {
+                    "": "lib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -45,18 +99,17 @@
             "authors": [
                 {
                     "name": "Alexander",
-                    "email": "iam.asm89@gmail.com",
-                    "homepage": "http://asm89.github.io/"
+                    "email": "iam.asm89@gmail.com"
                 }
             ],
-            "description": "Caching template fragments with Twig.",
+            "description": "Cache fragments of templates directly within Twig.",
             "homepage": "https://github.com/asm89/twig-cache-extension",
             "keywords": [
                 "cache",
                 "extension",
                 "twig"
             ],
-            "time": "2013-11-13 20:03:36"
+            "time": "2017-01-10T22:04:15+00:00"
         },
         {
             "name": "composer/installers",
@@ -140,7 +193,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2014-02-24 04:21:34"
+            "time": "2014-02-24T04:21:34+00:00"
         },
         {
             "name": "dannyvankooten/php-router",
@@ -152,22 +205,23 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dannyvankooten/PHP-Router/zipball/fcc14e939241342c627d45b30ed863c7f6f15da0",
+                "url": "https://api.github.com/repos/dannyvankooten/PHP-Router/zipball/e9a479820b871ae4493fec30d5e433456767a505",
                 "reference": "e9a479820b871ae4493fec30d5e433456767a505",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
-                "symfony/yaml": "@dev"
+                "fig/http-message-util": "^1.1",
+                "php": "^5.3.0|^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*",
-                "squizlabs/php_codesniffer": "~1.5.4"
+                "malukenho/docheader": "^0.1.5",
+                "phpunit/phpunit": "4.8.*",
+                "squizlabs/php_codesniffer": "2.*"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "PHPRouter\\": "src/PHPRouter/"
+                    "PHPRouter\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -188,41 +242,97 @@
             "description": "Simple PHP Router, supports REST and reverse routing.",
             "homepage": "https://github.com/dannyvankooten/PHP-Router",
             "keywords": [
-                "php",
                 "rest",
                 "router",
                 "routing"
             ],
-            "time": "2015-02-03 11:21:58"
+            "time": "2018-04-29T17:59:54+00:00"
         },
         {
-            "name": "jarednova/timber",
-            "version": "0.20.9",
+            "name": "fig/http-message-util",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jarednova/timber.git",
-                "reference": "65db95be873993e1404a78fd21688994f9dc93d2"
+                "url": "https://github.com/php-fig/http-message-util.git",
+                "reference": "20b2c280cb6914b7b83089720df44e490f4b42f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jarednova/timber/zipball/65db95be873993e1404a78fd21688994f9dc93d2",
-                "reference": "65db95be873993e1404a78fd21688994f9dc93d2",
+                "url": "https://api.github.com/repos/php-fig/http-message-util/zipball/20b2c280cb6914b7b83089720df44e490f4b42f0",
+                "reference": "20b2c280cb6914b7b83089720df44e490f4b42f0",
                 "shasum": ""
             },
             "require": {
-                "asm89/twig-cache-extension": "~0.1",
+                "php": "^5.3 || ^7.0",
+                "psr/http-message": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fig\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Utility classes and constants for use with PSR-7 (psr/http-message)",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2017-02-09T16:10:21+00:00"
+        },
+        {
+            "name": "jarednova/timber",
+            "version": "0.22.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/timber/timber.git",
+                "reference": "06e7faded55fcbcedb34d753bc93987cab4ee978"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/timber/timber/zipball/06e7faded55fcbcedb34d753bc93987cab4ee978",
+                "reference": "06e7faded55fcbcedb34d753bc93987cab4ee978",
+                "shasum": ""
+            },
+            "require": {
+                "asm89/twig-cache-extension": "~1.0",
                 "composer/installers": "~1.0",
-                "dannyvankooten/php-router": "dev-master#e9a479820b871ae4493fec30d5e433456767a505",
                 "php": ">=5.3.0",
-                "twig/twig": "~1.15"
+                "twig/twig": "1.*",
+                "upstatement/routes": "0.3"
             },
             "require-dev": {
-                "advancedcustomfields/acf5-beta": "5.0",
-                "phpunit/phpunit": "3.7.*",
-                "satooshi/php-coveralls": "dev-master",
-                "wp-cli/wp-cli": "*"
+                "jarednova/markdowndocs": "dev-master",
+                "phpdocumentor/phpdocumentor": "2.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "1.0.*",
+                "wp-cli/wp-cli": "*",
+                "wpackagist-plugin/advanced-custom-fields": "4.*"
             },
             "type": "wordpress-plugin",
+            "autoload": {
+                "classmap": [
+                    "lib/"
+                ]
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
@@ -242,7 +352,8 @@
                 "timber",
                 "twig"
             ],
-            "time": "2015-01-05 19:29:16"
+            "abandoned": "timber/timber",
+            "time": "2016-03-13T15:44:19+00:00"
         },
         {
             "name": "johnpbloch/wordpress",
@@ -250,16 +361,54 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnpbloch/wordpress.git",
-                "reference": "bbc5e56449860b183aafbe7df97ca137594073a4"
+                "reference": "112d9d57074c937db28c7e6f624a33181566641b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress/zipball/bbc5e56449860b183aafbe7df97ca137594073a4",
-                "reference": "bbc5e56449860b183aafbe7df97ca137594073a4",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress/zipball/112d9d57074c937db28c7e6f624a33181566641b",
+                "reference": "112d9d57074c937db28c7e6f624a33181566641b",
                 "shasum": ""
             },
             "require": {
+                "johnpbloch/wordpress-core": "4.0.1",
                 "johnpbloch/wordpress-core-installer": "~0.2",
+                "php": ">=5.3.2"
+            },
+            "type": "package",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "WordPress Community",
+                    "homepage": "http://wordpress.org/about/"
+                }
+            ],
+            "description": "WordPress is web software you can use to create a beautiful website or blog.",
+            "homepage": "http://wordpress.org/",
+            "keywords": [
+                "blog",
+                "cms",
+                "wordpress"
+            ],
+            "time": "2017-03-18T04:48:01+00:00"
+        },
+        {
+            "name": "johnpbloch/wordpress-core",
+            "version": "4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/johnpbloch/wordpress-core.git",
+                "reference": "69927af706b8ae06f1ed68de6fb6ad8d3afa23ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/69927af706b8ae06f1ed68de6fb6ad8d3afa23ea",
+                "reference": "69927af706b8ae06f1ed68de6fb6ad8d3afa23ea",
+                "shasum": ""
+            },
+            "require": {
                 "php": ">=5.3.2"
             },
             "type": "wordpress-core",
@@ -277,26 +426,27 @@
             "homepage": "http://wordpress.org/",
             "keywords": [
                 "blog",
-                "cms"
+                "cms",
+                "wordpress"
             ],
-            "time": "2014-11-20 17:45:59"
+            "time": "2017-02-12T04:49:46+00:00"
         },
         {
             "name": "johnpbloch/wordpress-core-installer",
-            "version": "0.2.0",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnpbloch/wordpress-core-installer.git",
-                "reference": "a4c08e91be99e858c7778c2f52a4d73820147c2e"
+                "reference": "a04c2c383ef13aae077f36799ed2eafdebd618d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress-core-installer/zipball/a4c08e91be99e858c7778c2f52a4d73820147c2e",
-                "reference": "a4c08e91be99e858c7778c2f52a4d73820147c2e",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core-installer/zipball/a04c2c383ef13aae077f36799ed2eafdebd618d2",
+                "reference": "a04c2c383ef13aae077f36799ed2eafdebd618d2",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "1.0.0"
+                "composer-plugin-api": "^1.0"
             },
             "conflict": {
                 "composer/installers": "<1.0.6"
@@ -324,25 +474,81 @@
                 }
             ],
             "description": "A custom installer to handle deploying WordPress with composer",
-            "time": "2013-09-09 15:04:54"
+            "keywords": [
+                "wordpress"
+            ],
+            "time": "2015-06-11T15:15:30+00:00"
         },
         {
-            "name": "roots/soil",
-            "version": "3.0.3",
+            "name": "psr/http-message",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/roots/soil.git",
-                "reference": "f4cb5aff4a781b1e739eb4f019eaaf11694635a9"
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/roots/soil/zipball/f4cb5aff4a781b1e739eb4f019eaaf11694635a9",
-                "reference": "f4cb5aff4a781b1e739eb4f019eaaf11694635a9",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "homepage": "https://github.com/php-fig/http-message",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2016-08-06T14:39:51+00:00"
+        },
+        {
+            "name": "roots/soil",
+            "version": "3.7.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/roots/soil.git",
+                "reference": "d0e409e70dafff4ceeaa8ef941ee319e350317dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/roots/soil/zipball/d0e409e70dafff4ceeaa8ef941ee319e350317dd",
+                "reference": "d0e409e70dafff4ceeaa8ef941ee319e350317dd",
                 "shasum": ""
             },
             "require": {
                 "composer/installers": "~1.0",
-                "php": ">=5.3.0"
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "^2.5.1"
             },
             "type": "wordpress-plugin",
             "notification-url": "https://packagist.org/downloads/",
@@ -361,86 +567,47 @@
                     "homepage": "https://github.com/retlehs"
                 }
             ],
-            "description": "Clean up WordPress markup, relative URLs, nice search",
-            "homepage": "http://roots.io/plugins/soil/",
+            "description": "A WordPress plugin which contains a collection of modules to apply theme-agnostic front-end modifications",
+            "homepage": "https://roots.io/plugins/soil/",
             "keywords": [
                 "wordpress"
             ],
-            "time": "2015-01-24 16:42:29"
+            "time": "2017-08-14T01:36:41+00:00"
         },
         {
-            "name": "symfony/yaml",
-            "version": "v2.6.4",
-            "target-dir": "Symfony/Component/Yaml",
+            "name": "twig/twig",
+            "version": "v1.35.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Yaml.git",
-                "reference": "60ed7751671113cf1ee7d7778e691642c2e9acd8"
+                "url": "https://github.com/twigphp/Twig.git",
+                "reference": "b48680b6eb7d16b5025b9bfc4108d86f6b8af86f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/60ed7751671113cf1ee7d7778e691642c2e9acd8",
-                "reference": "60ed7751671113cf1ee7d7778e691642c2e9acd8",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/b48680b6eb7d16b5025b9bfc4108d86f6b8af86f",
+                "reference": "b48680b6eb7d16b5025b9bfc4108d86f6b8af86f",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.6-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\Yaml\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Symfony Yaml Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-01-25 04:39:26"
-        },
-        {
-            "name": "twig/twig",
-            "version": "v1.18.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/twigphp/Twig.git",
-                "reference": "4cf7464348e7f9893a93f7096a90b73722be99cf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/4cf7464348e7f9893a93f7096a90b73722be99cf",
-                "reference": "4cf7464348e7f9893a93f7096a90b73722be99cf",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.4"
+            "require-dev": {
+                "psr/container": "^1.0",
+                "symfony/debug": "^2.7",
+                "symfony/phpunit-bridge": "^3.3"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.18-dev"
+                    "dev-master": "1.35-dev"
                 }
             },
             "autoload": {
                 "psr-0": {
                     "Twig_": "lib/"
+                },
+                "psr-4": {
+                    "Twig\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -470,19 +637,70 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-01-25 17:32:08"
+            "time": "2018-03-20T04:25:58+00:00"
+        },
+        {
+            "name": "upstatement/routes",
+            "version": "0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Upstatement/routes.git",
+                "reference": "40d003b69c0f5c52fb4b15e5d1fa4d5c522c9475"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Upstatement/routes/zipball/40d003b69c0f5c52fb4b15e5d1fa4d5c522c9475",
+                "reference": "40d003b69c0f5c52fb4b15e5d1fa4d5c522c9475",
+                "shasum": ""
+            },
+            "require": {
+                "altorouter/altorouter": "1.1.0",
+                "composer/installers": "~1.0",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "satooshi/php-coveralls": "dev-master",
+                "wp-cli/wp-cli": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Routes": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jared Novack",
+                    "email": "jared@upstatement.com",
+                    "homepage": "http://upstatement.com"
+                }
+            ],
+            "description": "Manage rewrites and routes in WordPress with this dead-simple plugin",
+            "homepage": "http://routes.upstatement.com",
+            "keywords": [
+                "redirects",
+                "rewrite",
+                "routes",
+                "routing"
+            ],
+            "time": "2015-03-07T13:41:29+00:00"
         },
         {
             "name": "wpackagist-plugin/advanced-custom-field-repeater-collapser",
             "version": "1.4.1",
             "source": {
                 "type": "svn",
-                "url": "http://plugins.svn.wordpress.org/advanced-custom-field-repeater-collapser/",
+                "url": "https://plugins.svn.wordpress.org/advanced-custom-field-repeater-collapser/",
                 "reference": "tags/1.4.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://downloads.wordpress.org/plugin/advanced-custom-field-repeater-collapser.1.4.1.zip",
+                "url": "https://downloads.wordpress.org/plugin/advanced-custom-field-repeater-collapser.1.4.1.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -497,12 +715,12 @@
             "version": "4.4.0",
             "source": {
                 "type": "svn",
-                "url": "http://plugins.svn.wordpress.org/advanced-custom-fields/",
-                "reference": "trunk"
+                "url": "https://plugins.svn.wordpress.org/advanced-custom-fields/",
+                "reference": "tags/4.4.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://downloads.wordpress.org/plugin/advanced-custom-fields.zip",
+                "url": "https://downloads.wordpress.org/plugin/advanced-custom-fields.4.4.0.zip",
                 "reference": null,
                 "shasum": null
             },

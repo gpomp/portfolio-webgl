@@ -20,9 +20,10 @@
 }
 
 .icon-char(@filename) {
-	@arrow-left: "\E001";
-	@arrow-right: "\E002";
-	@circlefull-linkedin: "\E003";
+	@arrow-bottom: "\E001";
+	@arrow-left: "\E002";
+	@arrow-right: "\E003";
+	@circlefull-linkedin: "\E004";
 	
 	content: @@filename;
 }
@@ -36,6 +37,9 @@
 	}
 }
 
+.icon-arrow-bottom {
+	.icon(arrow-bottom);
+}
 .icon-arrow-left {
 	.icon(arrow-left);
 }

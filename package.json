@@ -6,7 +6,7 @@
   "dependencies": {
     "detect-dom-ready": "^1.0.2",
     "dom-classes": "0.0.1",
-    "dom-event": "github:npm-dom/dom-event#57047342232ac4b7e5b9f0c9f2837aab1ff4e706",
+    "dom-event": "git://github.com/npm-dom/dom-event.git",
     "dom-select": "^1.1.1",
     "domify": "^1.4.0",
     "glsl-curl-noise": "git://github.com/cabbibo/glsl-curl-noise.git",
@@ -28,6 +28,7 @@
     "gulp-uglify": "^1.5.4",
     "gulp-util": "^3.0.8",
     "gulp-watch": "^2.0.0",
+    "lesshat": "^4.1.0",
     "noisejs": "^2.1.0",
     "raf": "^3.4.0",
     "run-sequence": "^1.2.2",

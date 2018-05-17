@@ -30,13 +30,18 @@
 	},
 	"config": {
 		"preferred-install": "dist",
-		"generate-salts": true
+		"generate-salts": true,
+		"secure-http": false
 	},
 	"autoload": {
-		"psr-0": {"Roots\\Bedrock\\Installer": "scripts"}
+		"psr-0": {
+			"Roots\\Bedrock\\Installer": "scripts"
+		}
 	},
 	"scripts": {
-		"post-root-package-install": ["Roots\\Bedrock\\Installer::addSalts"]
+		"post-root-package-install": [
+			"Roots\\Bedrock\\Installer::addSalts"
+		]
 	},
 	"repositories": [
 		{
@@ -56,9 +61,15 @@
 	},
 	"extra": {
 		"installer-paths": {
-			"web/app/mu-plugins/{$name}/": ["type:wordpress-muplugin"],
-			"web/app/plugins/{$name}/": ["type:wordpress-plugin"],
-			"web/app/themes/{$name}/": ["type:wordpress-theme"]
+			"web/app/mu-plugins/{$name}/": [
+				"type:wordpress-muplugin"
+			],
+			"web/app/plugins/{$name}/": [
+				"type:wordpress-plugin"
+			],
+			"web/app/themes/{$name}/": [
+				"type:wordpress-theme"
+			]
 		},
 		"wordpress-install-dir": "web/wp"
 	}
